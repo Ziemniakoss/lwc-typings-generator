@@ -30,7 +30,9 @@
 	],
 	"homepage": "https://github.com/Ziemniakoss/sfdx-metadata-splitter",
 	"keywords": [
-		"sfdx-plugin"
+		"sfdx-plugin",
+		"typings",
+		"lwc"
 	],
 	"license": "MIT",
 	"oclif": {
