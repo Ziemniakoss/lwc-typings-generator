@@ -1,7 +1,7 @@
 import { SfdxCommand } from "@salesforce/command";
 import { LWC_METADATA_FILE_EXTENSION } from "../../../utils/constants";
 import { findAllFilesWithExtension } from "../../../utils/filesUtils";
-import JsConfigGenerator from "../../JsConfigGenerator";
+import JsConfigGenerator from "../../../JsConfigGenerator";
 import { join, basename } from "path";
 
 export default class GenerateJsConfigs extends SfdxCommand {

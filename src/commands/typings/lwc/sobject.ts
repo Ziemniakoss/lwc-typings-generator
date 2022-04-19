@@ -14,11 +14,6 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 			description: "Comma separated sObject names",
 			required: true,
 		}),
-		// depth: flags.integer({
-		// 	char:"d",
-		// 	description: "Depth of schema typings, max 5",
-		// 	default: 1
-		// })
 	};
 
 	async run() {
