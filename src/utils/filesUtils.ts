@@ -1,5 +1,5 @@
-import { promises, lstatSync } from "fs";
-import { join } from "path";
+import { promises, lstatSync, existsSync } from "fs";
+import { dirname, join } from "path";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github"];
 
@@ -41,4 +41,14 @@ export async function findAllFiles(basePath: string) {
 	}
 
 	return files;
+}
+export function getResourcesFolder(): string {
+	return join(getRootPluginFolder(), "resources");
+}
+export function getRootPluginFolder(): string {
+	let currentDir = __dirname;
+	while (!existsSync(join(currentDir, "package.json"))) {
+		currentDir = dirname(currentDir);
+	}
+	return currentDir;
 }

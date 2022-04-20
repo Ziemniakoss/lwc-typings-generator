@@ -1,6 +1,7 @@
 import { SfdxCommand } from "@salesforce/command";
-import { basename, dirname, join } from "path";
+import { basename, join } from "path";
 import { existsSync, promises } from "fs";
+import { getResourcesFolder } from "../../../utils/filesUtils";
 
 export default class GenerateStdLib extends SfdxCommand {
 	protected static requiresProject = true;
@@ -10,11 +11,7 @@ export default class GenerateStdLib extends SfdxCommand {
 	}
 
 	async createBaseComponentTypings() {
-		const sourceDir = join(
-			this.getRootPluginFolder(),
-			"resources",
-			"lightning"
-		);
+		const sourceDir = join(getResourcesFolder(), "lightning");
 		const componentFiles = (await promises.readdir(sourceDir)).map((file) =>
 			join(sourceDir, file)
 		);
@@ -44,13 +41,5 @@ export default class GenerateStdLib extends SfdxCommand {
 			await promises.mkdir(typingsFolder);
 		}
 		return typingsFolder;
-	}
-
-	getRootPluginFolder(): string {
-		let currentDir = __dirname;
-		while (!existsSync(join(currentDir, "package.json"))) {
-			currentDir = dirname(currentDir);
-		}
-		return currentDir;
 	}
 }
