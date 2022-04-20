@@ -16,6 +16,7 @@ const standardTypesMap = {
 
 export class ApexTypingsGenerator {
 	private readonly sObjectsNames: Readonly<string[]>;
+	//@ts-ignore
 	private readonly connection: Connection;
 
 	constructor(sObjectsNames: string[], connection: Connection) {
