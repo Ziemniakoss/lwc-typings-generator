@@ -37,7 +37,7 @@ export class ApexTypingsGenerator {
 
 	async generateTypings(classOrPath: string, typingsFolder: string) {
 		const parser = await this.getParser();
-		const { name, content } = await this.getClassContent(classOrPath);
+		const {name, content} = await this.getClassContent(classOrPath);
 		const t = parser.parse(content);
 		return Promise.all([
 			this.generateAuraEnabledMethodsTypings(name, typingsFolder, t),
@@ -133,7 +133,6 @@ export class ApexTypingsGenerator {
 			if (child.type == "type_identifier") {
 				typeIdentifier = child.text.toString().toLowerCase();
 			} else if (child.type == "type_arguments") {
-				console.log("YES");
 				for (const typeArgument of child.children.filter(
 					(c) => c.type != null
 				)) {
@@ -144,8 +143,6 @@ export class ApexTypingsGenerator {
 			}
 		}
 		genericTypes = genericTypes.filter((type) => type != null);
-		console.log("AAAAAAAA", typeIdentifier);
-		console.log(typeIdentifier, genericTypes);
 		if (typeIdentifier == "map") {
 			return `Record<${genericTypes.join(",")}>`;
 		} else if (typeIdentifier == "set" || typeIdentifier == "list") {
@@ -186,7 +183,6 @@ export class ApexTypingsGenerator {
 			`\texport default function ${name}(${paramsTypings}):Promise<any>;\n` +
 			`}\n`;
 		const fullPath = join(folder, `${className}.${name}.d.ts`);
-		console.log(fullPath);
 		return promises.writeFile(fullPath, typings);
 	}
 
@@ -237,3 +233,4 @@ export class ApexTypingsGenerator {
 		});
 	}
 }
+
