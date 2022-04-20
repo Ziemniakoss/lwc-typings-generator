@@ -37,7 +37,7 @@ export class ApexTypingsGenerator {
 
 	async generateTypings(classOrPath: string, typingsFolder: string) {
 		const parser = await this.getParser();
-		const {name, content} = await this.getClassContent(classOrPath);
+		const { name, content } = await this.getClassContent(classOrPath);
 		const t = parser.parse(content);
 		return Promise.all([
 			this.generateAuraEnabledMethodsTypings(name, typingsFolder, t),
@@ -233,4 +233,3 @@ export class ApexTypingsGenerator {
 		});
 	}
 }
-
