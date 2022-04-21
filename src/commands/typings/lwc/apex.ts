@@ -24,14 +24,13 @@ export default class GenerateApexTypings extends SfdxCommand {
 			"Generating typings for apex classes",
 			"fetching sobject names"
 		);
-		// const sObjectNames = await this.org
-		// 	.getConnection()
-		// 	.metadata
-		// 	.list({type: "CustomObject"})
-		// 	.then(metadata => metadata.map(m => m.fullName))
+		const sObjectNames = await this.org
+			.getConnection()
+			.metadata.list({ type: "CustomObject" })
+			.then((metadata) => metadata.map((m) => m.fullName));
 		const typignsPath = join(this.project.getPath(), ".sfdx", "lwc-typings");
 		const generator = new ApexTypingsGenerator(
-			/*sObjectNames*/ [],
+			sObjectNames,
 			this.org.getConnection()
 		);
 		const apexClassesOrPaths = await this.getClassesOrPathsNames();

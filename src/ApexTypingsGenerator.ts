@@ -53,18 +53,24 @@ export class ApexTypingsGenerator {
 		const innerClassesNames = await this.getInnerClassesNames(parsedFile);
 		const r = await this.getAuraEnabledMethodsQuery();
 		const x = r.matches(parsedFile.rootNode);
-		const promises = [];
+		let typings = "";
 		for (const methodCapture of x) {
-			promises.push(
-				this.generateAuraEnabledMethodTypings(
-					className,
-					typingsFolder,
-					methodCapture,
-					innerClassesNames
-				)
+			typings += this.generateAuraEnabledMethodTypings(
+				className,
+				methodCapture,
+				innerClassesNames
 			);
 		}
-		return Promise.all(promises);
+		const apexTypingsFolder = join(typingsFolder, "apex");
+		if (!existsSync(apexTypingsFolder)) {
+			await promises.mkdir(apexTypingsFolder);
+		}
+		const folder = join(apexTypingsFolder, "methods");
+		if (!existsSync(folder)) {
+			await promises.mkdir(folder);
+		}
+		const outPath = join(folder, `${className}.d.ts`);
+		return promises.writeFile(outPath, typings);
 	}
 
 	private generateParamsTypingString(
@@ -152,12 +158,11 @@ export class ApexTypingsGenerator {
 		return "any";
 	}
 
-	private async generateAuraEnabledMethodTypings(
+	private generateAuraEnabledMethodTypings(
 		className: string,
-		typingsFolder: string,
 		methodDeclarationCapture,
 		innerClasses: string[]
-	) {
+	): string {
 		let name = "";
 		let paramsTypings = "";
 		for (const capture of methodDeclarationCapture.captures) {
@@ -171,34 +176,37 @@ export class ApexTypingsGenerator {
 				);
 			}
 		}
-		const outputPath = join(typingsFolder, "apex");
-		if (!existsSync(outputPath)) {
-			await promises.mkdir(outputPath);
-		}
-		const folder = join(outputPath, "methods");
-		if (!existsSync(folder)) {
-			await promises.mkdir(folder);
-		}
-		const typings =
-			`declare module "@salesforce/apex${className}.${name}"{\n` +
+		return (
+			`declare module "@salesforce/apex/${className}.${name}"{\n` +
 			`\texport default function ${name}(${paramsTypings}):Promise<any>;\n` +
-			`}\n`;
-		const fullPath = join(folder, `${className}.${name}.d.ts`);
-		return promises.writeFile(fullPath, typings);
+			`}\n`
+		);
 	}
 
 	async getAuraEnabledMethodsQuery() {
 		const query = `
 		(method_declaration
-			(modifiers
-		    	(marker_annotation
-		        	name: (identifier) @annotation
-		            (#match? @annotation "[aA][uU][rR][aA][eE][nN][aA][bB][lL][eE][dD]")
-		        )
-		    )
-		    name: (identifier) @name
-		    parameters: (formal_parameters) @params
-		) @method_declaration`;
+	(modifiers
+		(annotation
+			name: (identifier) @annotation
+			(#match? @annotation "[aA][uU][rR][aA][eE][nN][aA][bB][lL][eE][dD]")
+		)
+	) @mod
+    (#match? @mod "[sS][tT][Aa][tT][iI[cC]")
+	name: (identifier) @name
+	parameters: (formal_parameters) @params
+) @method_declaration
+(method_declaration
+	(modifiers
+		(marker_annotation
+			name: (identifier) @annotation
+			(#match? @annotation "[aA][uU][rR][aA][eE][nN][aA][bB][lL][eE][dD]")
+		)
+	) @mod
+    (#match? @mod "[sS][tT][Aa][tT][iI[cC]")
+	name: (identifier) @name
+	parameters: (formal_parameters) @params
+) @method_declaration`;
 		return this.getApexLanguage().then((language) => language.query(query));
 	}
 
