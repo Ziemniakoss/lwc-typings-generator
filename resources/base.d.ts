@@ -3,11 +3,11 @@ type LightningCombobox = import("lightning/combobox").default;
 type LightningDatatable = import("lightning/datatable").default;
 // customImportsHere
 declare module "lwc" {
-	interface ShadowRootTheGoodPart extends NodeSelector {
+	interface Template{
 		readonly activeElement: Element | null;
 		readonly delegatesFocus: boolean;
 
-		// customQuerySelectorsHere
+// customQuerySelectorsHere
 
 		querySelector(query: "lightning-input"): LightningInput | null;
 
@@ -17,7 +17,8 @@ declare module "lwc" {
 
 		querySelector(query: string): LightningElement | null;
 
-		// customQuerySelectorAllHere
+// customQuerySelectorAllHere
+
 
 		querySelectorAll(query: "lightning-input"): LightningInput[];
 
@@ -31,7 +32,7 @@ declare module "lwc" {
 	/**
 	 * Base class for the Lightning Web Component JavaScript class
 	 */
-	export class LightningElement extends HTMLElementTheGoodPart {
+	export class LightningElement  {
 		dispatchEvent(evt: Event): boolean;
 
 		connectedCallback(): void;
@@ -47,7 +48,7 @@ declare module "lwc" {
 		 */
 		render(): any;
 
-		readonly template: ShadowRootTheGoodPart;
+		readonly template: Template;
 	}
 
 	/**

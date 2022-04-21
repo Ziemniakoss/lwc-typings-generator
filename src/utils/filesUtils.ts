@@ -1,7 +1,7 @@
 import { promises, lstatSync, existsSync } from "fs";
 import { dirname, join } from "path";
 
-const SKIPPED_FOLDERS = ["node_modules", ".git", ".github"];
+const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
 
 export async function findAllFilesWithExtension(
 	basePath: string,

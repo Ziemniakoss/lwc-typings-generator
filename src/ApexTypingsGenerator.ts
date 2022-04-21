@@ -111,6 +111,8 @@ export class ApexTypingsGenerator {
 				return this.generateGenericTsType(className, typeNode, innerClasses);
 			case "scoped_type_identifier":
 				return "apex__" + typeNode.text.replace(".", "__");
+			case "array_type":
+				return this.generateTsType(className, typeNode.childForFieldName("element"), innerClasses)+"[]"
 		}
 		if (typeNode.type == "type_identifier") {
 			const id = typeNode.text;

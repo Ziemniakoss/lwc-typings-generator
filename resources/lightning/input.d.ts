@@ -15,7 +15,7 @@ declare module "lightning/input" {
 	/**
 	 * For full docs, see [official docs](https://developer.salesforce.com/docs/component-library/bundle/lightning-input/specification)
 	 */
-	export declare class Input {
+	export default class Input {
 		focus();
 		blur();
 		checkValidity();
