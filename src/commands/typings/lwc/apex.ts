@@ -12,10 +12,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 			"Generating typings for apex classes",
 			"fetching sobject names"
 		);
-		const sObjectNames = await this.org
-			.getConnection()
-			.metadata.list({ type: "CustomObject" })
-			.then((metadata) => metadata.map((m) => m.fullName.toLowerCase()));
+		const sObjectNames = await this.getAllSObjectNames()
 		const typignsPath = join(this.project.getPath(), ".sfdx", "lwc-typings");
 		const generator = new ApexTypingsGenerator(
 			sObjectNames,
@@ -31,5 +28,12 @@ export default class GenerateApexTypings extends SfdxCommand {
 			this.ux.log(classOrPath);
 		}
 		this.ux.stopSpinner("have fun!");
+	}
+
+	async getAllSObjectNames() :Promise<string[]>{
+		const globalDescribe = await this.org.getConnection()
+			.describeGlobal()
+		return globalDescribe.sobjects.map(sObject => sObject.name.toLowerCase())
+
 	}
 }
