@@ -93,7 +93,7 @@ export class ApexTypingsGenerator {
 		if (params.length == 0) {
 			return "";
 		}
-		return `params: {${params.join(",")}}`;
+		return `params: {\n\t\t${params.join(",\n\t\t")}\n\t}`;
 	}
 
 	generateTsType(className: string, typeNode, innerClasses: string[]): string {
@@ -165,6 +165,7 @@ export class ApexTypingsGenerator {
 	): string {
 		let name = "";
 		let paramsTypings = "";
+		let methodDeclarationNode
 		for (const capture of methodDeclarationCapture.captures) {
 			if (capture.name == "name") {
 				name = capture.node.text;
@@ -174,11 +175,14 @@ export class ApexTypingsGenerator {
 					capture.node,
 					innerClasses
 				);
+			} else if(capture.name=="method_declaration") {
+				methodDeclarationNode = capture.node
 			}
 		}
+		const returnType = this.generateTsType(className, methodDeclarationNode.childForFieldName("type"), innerClasses)
 		return (
 			`declare module "@salesforce/apex/${className}.${name}"{\n` +
-			`\texport default function ${name}(${paramsTypings}):Promise<any>;\n` +
+			`\texport default function ${name}(${paramsTypings}):Promise<${returnType}>;\n` +
 			`}\n`
 		);
 	}

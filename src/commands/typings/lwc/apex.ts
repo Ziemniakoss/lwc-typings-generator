@@ -27,7 +27,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 		const sObjectNames = await this.org
 			.getConnection()
 			.metadata.list({ type: "CustomObject" })
-			.then((metadata) => metadata.map((m) => m.fullName));
+			.then((metadata) => metadata.map((m) => m.fullName.toLowerCase()));
 		const typignsPath = join(this.project.getPath(), ".sfdx", "lwc-typings");
 		const generator = new ApexTypingsGenerator(
 			sObjectNames,
