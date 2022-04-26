@@ -1,3 +1,3 @@
 declare module "@salesforce/apex" {
-	export function refreshApex(cachedApex)
+	export function refreshApex(cachedApex);
 }

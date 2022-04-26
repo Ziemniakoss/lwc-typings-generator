@@ -1,4 +1,4 @@
-import { promises, lstatSync, existsSync } from "fs";
+import { promises, lstatSync, existsSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
@@ -51,4 +51,14 @@ export function getRootPluginFolder(): string {
 		currentDir = dirname(currentDir);
 	}
 	return currentDir;
+}
+
+export function mkdirs(path: string) {
+	const parentDir = dirname(path);
+	if (!existsSync(parentDir)) {
+		mkdirs(parentDir);
+	}
+	if (!existsSync(path)) {
+		mkdirSync(path);
+	}
 }

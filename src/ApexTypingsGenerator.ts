@@ -112,7 +112,13 @@ export class ApexTypingsGenerator {
 			case "scoped_type_identifier":
 				return "apex__" + typeNode.text.replace(".", "__");
 			case "array_type":
-				return this.generateTsType(className, typeNode.childForFieldName("element"), innerClasses)+"[]"
+				return (
+					this.generateTsType(
+						className,
+						typeNode.childForFieldName("element"),
+						innerClasses
+					) + "[]"
+				);
 		}
 		if (typeNode.type == "type_identifier") {
 			const id = typeNode.text;
@@ -167,7 +173,7 @@ export class ApexTypingsGenerator {
 	): string {
 		let name = "";
 		let paramsTypings = "";
-		let methodDeclarationNode
+		let methodDeclarationNode;
 		for (const capture of methodDeclarationCapture.captures) {
 			if (capture.name == "name") {
 				name = capture.node.text;
@@ -177,11 +183,15 @@ export class ApexTypingsGenerator {
 					capture.node,
 					innerClasses
 				);
-			} else if(capture.name=="method_declaration") {
-				methodDeclarationNode = capture.node
+			} else if (capture.name == "method_declaration") {
+				methodDeclarationNode = capture.node;
 			}
 		}
-		const returnType = this.generateTsType(className, methodDeclarationNode.childForFieldName("type"), innerClasses)
+		const returnType = this.generateTsType(
+			className,
+			methodDeclarationNode.childForFieldName("type"),
+			innerClasses
+		);
 		return (
 			`declare module "@salesforce/apex/${className}.${name}"{\n` +
 			`\texport default function ${name}(${paramsTypings}):Promise<${returnType}>;\n` +
