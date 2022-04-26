@@ -1,6 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import { ApexTypingsGenerator } from "../../../ApexTypingsGenerator";
-import { basename, join } from "path";
+import { join } from "path";
 import { findAllFilesWithExtension } from "../../../utils/filesUtils";
 
 export default class GenerateApexTypings extends SfdxCommand {
@@ -22,14 +22,12 @@ export default class GenerateApexTypings extends SfdxCommand {
 			this.project.getPath(),
 			".cls"
 		);
+		const generationPromises = []
 		for (const classOrPath of apexClassesOrPaths) {
-			let status = classOrPath.endsWith(".cls")
-				? basename(classOrPath)
-				: classOrPath;
-			this.ux.setSpinnerStatus(`generating for ${status}`);
-			await generator.generateTypings(classOrPath, typignsPath);
-			this.ux.log(classOrPath);
+			const generationPromise =generator.generateTypings(classOrPath, typignsPath);
+			generationPromises.push(generationPromise)
 		}
+		await Promise.all(generationPromises)
 		this.ux.stopSpinner("have fun!");
 	}
 
