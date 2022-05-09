@@ -1,7 +1,11 @@
 import { SfdxCommand } from "@salesforce/command";
-import { ApexTypingsGenerator } from "../../../ApexTypingsGenerator";
+import { ApexTypingsGenerator } from "../../../apexTypingsGeneration/ApexTypingsGenerator";
 import { join } from "path";
 import { findAllFilesWithExtension } from "../../../utils/filesUtils";
+import WiredMethodTypingsGenerator
+	from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
+import ApexClassTypingsGenerator
+	from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 
 export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -15,8 +19,9 @@ export default class GenerateApexTypings extends SfdxCommand {
 		const sObjectNames = await this.getAllSObjectNames();
 		const typignsPath = join(this.project.getPath(), ".sfdx", "lwc-typings");
 		const generator = new ApexTypingsGenerator(
-			sObjectNames,
-			this.org.getConnection()
+			this.org.getConnection(),
+			new WiredMethodTypingsGenerator(sObjectNames),
+			new ApexClassTypingsGenerator(sObjectNames)
 		);
 		const apexClassesOrPaths = await findAllFilesWithExtension(
 			this.project.getPath(),
@@ -24,7 +29,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 		);
 		const generationPromises = []
 		for (const classOrPath of apexClassesOrPaths) {
-			const generationPromise =generator.generateTypings(classOrPath, typignsPath);
+			const generationPromise =generator.generateTypingsForPath(classOrPath, typignsPath)
 			generationPromises.push(generationPromise)
 		}
 		await Promise.all(generationPromises)
@@ -32,6 +37,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 	}
 
 	async getAllSObjectNames(): Promise<string[]> {
+		return ["Account"]
 		const globalDescribe = await this.org.getConnection().describeGlobal();
 		return globalDescribe.sobjects.map((sObject) => sObject.name.toLowerCase());
 	}

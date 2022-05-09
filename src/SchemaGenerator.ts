@@ -1,6 +1,7 @@
 import { DescribeSObjectResult } from "jsforce";
 import { join } from "path";
 import { existsSync, promises } from "fs";
+import {mkdirs} from "./utils/filesUtils";
 
 export default class SchemaGenerator {
 	async generateSchemaTypings(
@@ -40,13 +41,8 @@ export default class SchemaGenerator {
 	}
 
 	async getSchemaFolder(typingsFolder: string): Promise<string> {
-		if (!existsSync(typingsFolder)) {
-			await promises.mkdir(typingsFolder);
-		}
 		const folder = join(typingsFolder, "schema");
-		if (!existsSync(folder)) {
-			await promises.mkdir(folder);
-		}
+		mkdirs(folder)
 		return folder;
 	}
 }
