@@ -1,14 +1,7 @@
 import IWiredMethodsTypingsGenerator from "./IWiredMethodsTypingsGenerator";
 
-import {getQuery} from "../../utils/apexParsingUtils";
-const standardTypesMap = {
-	string: "string",
-	object: "any",
-	sobject: "any",
-	list: "any",
-	date: "string | Date",
-	id: "string",
-};
+import {generateTsType, getQuery} from "../../utils/apexParsingUtils";
+
 export default class WiredMethodTypingsGenerator implements IWiredMethodsTypingsGenerator {
 	constructor(private readonly sObjectsNames:string[]) {
 	}
@@ -48,10 +41,12 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 				methodDeclarationNode = capture.node;
 			}
 		}
-		const returnType = this.generateTsType(
+		console.log("Return type")
+		const returnType = generateTsType(
 			className,
 			methodDeclarationNode.childForFieldName("type"),
-			innerClasses
+			innerClasses,
+			this.sObjectsNames
 		);
 		return (
 			`declare module "@salesforce/apex/${className}.${name}"{\n` +
@@ -69,10 +64,11 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 			if (param.type != "formal_parameter") {
 				continue;
 			}
-			const typeTypings = this.generateTsType(
+			const typeTypings = generateTsType(
 				className,
 				param.childForFieldName("type"),
-				innerClasses
+				innerClasses,
+				this.sObjectsNames
 			);
 			params.push(`${param.childForFieldName("name").text}?: ${typeTypings}`);
 		}
@@ -81,77 +77,6 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 		}
 		return `params: {\n\t\t${params.join(",\n\t\t")}\n\t}`;
 	}
-
-	generateTsType(className: string, typeNode, innerClasses: string[]): string {
-		switch (typeNode.type) {
-			case "<":
-			case ">":
-			case ",":
-				return undefined;
-			case "integral_type":
-			case "floating_point_type":
-				return "number";
-			case "boolean":
-				return "boolean";
-			case "generic_type":
-				return this.generateGenericTsType(className, typeNode, innerClasses);
-			case "scoped_type_identifier":
-				return `apex.${typeNode.text}`
-			case "array_type":
-				return (
-					this.generateTsType(
-						className,
-						typeNode.childForFieldName("element"),
-						innerClasses
-					) + "[]"
-				);
-		}
-		if (typeNode.type == "type_identifier") {
-			const id = typeNode.text;
-			if (this.sObjectsNames.includes(id)) {
-				return `schema.${id}`;
-			}
-			if (innerClasses.includes(id)) {
-				return `apex.${className}.${id}`;
-			}
-			if (standardTypesMap[id] != null) {
-				return standardTypesMap[id];
-			}
-			return `apex.${id}`;
-		}
-		return "any";
-	}
-
-	generateGenericTsType(
-		className: string,
-		genericTypeNode,
-		innerClasses: string[]
-	): string {
-		let typeIdentifier: string;
-		let genericTypes = [];
-		for (const child of genericTypeNode.children) {
-			if (child.type == "type_identifier") {
-				typeIdentifier = child.text.toString().toLowerCase();
-			} else if (child.type == "type_arguments") {
-				for (const typeArgument of child.children.filter(
-					(c) => c.type != null
-				)) {
-					genericTypes.push(
-						this.generateTsType(className, typeArgument, innerClasses)
-					);
-				}
-			}
-		}
-		genericTypes = genericTypes.filter((type) => type != null);
-		if (typeIdentifier == "map") {
-			return `Record<${genericTypes.join(",")}>`;
-		} else if (typeIdentifier == "set" || typeIdentifier == "list") {
-			return `${genericTypes.join(",")}[]`;
-		}
-		return "any";
-	}
-
-
 
 	async getAuraEnabledMethodsQuery() {
 		const query = `
@@ -194,6 +119,5 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 			.matches(parsedClass.rootNode)
 			.map((match) => match.captures.map((capture) => capture.node.text))
 			.flat()
-			.map((name) => name.toLowerCase());
 	}
 }
