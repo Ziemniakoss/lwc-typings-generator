@@ -39,6 +39,6 @@ export default class GenerateApexTypings extends SfdxCommand {
 
 	async getAllSObjectNames(): Promise<string[]> {
 		const globalDescribe = await this.org.getConnection().describeGlobal();
-		return globalDescribe.sobjects.map((sObject) => sObject.name.toLowerCase());
+		return globalDescribe.sobjects.map((sObject) => sObject.name);
 	}
 }
