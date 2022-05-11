@@ -13,7 +13,8 @@ declare namespace apex {
 	declare type Date = d | string;
 }
 
+type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T
 declare interface Wired<T> {
-	data: Awaited<ReturnType<T>>;
+	data: PromiseResult<ReturnType<T>>;
 	error: string;
 }
