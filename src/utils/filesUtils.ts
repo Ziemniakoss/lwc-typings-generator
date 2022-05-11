@@ -21,6 +21,9 @@ export async function findAllFiles(basePath: string) {
 	const dirs = [];
 	const files = [];
 	for (const fileOrDir of await promises.readdir(basePath)) {
+		if (fileOrDir.startsWith(".")) {
+			continue;
+		}
 		const fullFileOrDirPath = join(basePath, fileOrDir);
 		const fileOrDirStats = lstatSync(fullFileOrDirPath);
 		if (fileOrDirStats.isFile()) {
