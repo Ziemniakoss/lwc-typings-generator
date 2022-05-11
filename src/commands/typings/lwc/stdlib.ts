@@ -1,7 +1,7 @@
 import { SfdxCommand } from "@salesforce/command";
 import { basename, join } from "path";
 import { existsSync, promises } from "fs";
-import { getResourcesFolder } from "../../../utils/filesUtils";
+import { getResourcesFolder, mkdirs } from "../../../utils/filesUtils";
 
 export default class GenerateStdLib extends SfdxCommand {
 	protected static requiresProject = true;
@@ -26,9 +26,7 @@ export default class GenerateStdLib extends SfdxCommand {
 		const componentFiles = (await promises.readdir(from)).map((file) =>
 			join(from, file)
 		);
-		if (!existsSync(to)) {
-			await promises.mkdir(to);
-		}
+		mkdirs(to);
 		return Promise.all(
 			componentFiles.map((file) => {
 				const outputFile = join(to, basename(file));

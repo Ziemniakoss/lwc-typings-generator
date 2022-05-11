@@ -46,7 +46,6 @@ export default class WiredMethodTypingsGenerator
 				methodDeclarationNode = capture.node;
 			}
 		}
-		console.log("Return type");
 		const returnType = generateTsType(
 			className,
 			methodDeclarationNode.childForFieldName("type"),
