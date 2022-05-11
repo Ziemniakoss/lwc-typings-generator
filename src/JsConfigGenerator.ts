@@ -41,7 +41,8 @@ export default class JsConfigGenerator {
 				paths: {},
 			},
 			include: [
-				"**.js",
+				"*.js",
+				"*.d.ts",
 				`${relative(dirname(lwcPath), dirWithStdLib)}${sep}**${sep}*.d.ts`,
 			],
 		};
