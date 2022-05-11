@@ -16,5 +16,5 @@ declare namespace apex {
 type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T
 declare interface Wired<T> {
 	data: PromiseResult<ReturnType<T>>;
-	error: string;
+	error: any;
 }
