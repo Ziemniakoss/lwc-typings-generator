@@ -175,15 +175,6 @@ class NavigableComponent extends LwcComponentBase {
 	__navigate__(pageReference: WebPageTypePageReference);
 	/**
 	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: PageReference);
-	/**
-	 * Don't use directly.
 	 * Use only for reference.
 	 * ```js
 	 *this[NavigationMixin.GenerateUrl]({
@@ -239,17 +230,6 @@ class NavigableComponent extends LwcComponentBase {
 	 * ```
 	 */
 	__generateUrl__(pageReference: WebPageTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: PageReference): Promise<string>;
 }
 
 declare module "lightning/navigation" {
