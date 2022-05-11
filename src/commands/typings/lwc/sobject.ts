@@ -24,7 +24,9 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		);
 		const typingsFolder = join(this.project.getPath(), ".sfdx", "lwc-typings");
 		const schemaGenerator = new SchemaGenerator();
-		const sObjectTypingsGenerator = new SObjectTypingsGenerator(new FieldTypingsGeneratorFactory());
+		const sObjectTypingsGenerator = new SObjectTypingsGenerator(
+			new FieldTypingsGeneratorFactory()
+		);
 		const sObjects = this.flags.sobject.split(",").map((s) => s.trim());
 		const describesMap = await this.fetchSObjectDefinitions(sObjects);
 

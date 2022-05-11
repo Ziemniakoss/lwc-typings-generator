@@ -1,5 +1,5 @@
-import {join} from "path";
-import {getResourcesFolder} from "./filesUtils";
+import { join } from "path";
+import { getResourcesFolder } from "./filesUtils";
 
 const Parser = require("web-tree-sitter");
 
@@ -15,7 +15,7 @@ export async function getParser(): Promise<any> {
 	return parser;
 }
 
-export async function getQuery(query:string){
+export async function getQuery(query: string) {
 	return getApexLanguage().then((language) => language.query(query));
 }
 
@@ -26,28 +26,37 @@ const standardTypesMap = {
 	list: "any",
 	date: "apex.Date",
 	integer: "apex.Integer",
-	decimal:"apex.Decimla",
-	address:"apex.Address",
-	double:"apex.Double",
+	decimal: "apex.Decimla",
+	address: "apex.Address",
+	double: "apex.Double",
 	id: "apex.Id",
 };
-export function generateTsType(className: string, typeNode, innerClasses: string[],sObjectsNames:string[]): string {
-	console.log(innerClasses)
+export function generateTsType(
+	className: string,
+	typeNode,
+	innerClasses: string[],
+	sObjectsNames: string[]
+): string {
 	switch (typeNode.type) {
 		case "<":
 		case ">":
 		case ",":
 			return undefined;
 		case "integral_type":
-			return "apex.Integer"
+			return "apex.Integer";
 		case "floating_point_type":
 			return "apex.Double";
 		case "boolean":
 			return "apex.Boolean";
 		case "generic_type":
-			return generateGenericTsType(className, typeNode, innerClasses,sObjectsNames);
+			return generateGenericTsType(
+				className,
+				typeNode,
+				innerClasses,
+				sObjectsNames
+			);
 		case "scoped_type_identifier":
-			return `apex.${typeNode.text}`
+			return `apex.${typeNode.text}`;
 		case "array_type":
 			return (
 				generateTsType(
@@ -66,7 +75,7 @@ export function generateTsType(className: string, typeNode, innerClasses: string
 		if (innerClasses.includes(id)) {
 			return `apex.${className}.${id}`;
 		}
-		const idInLowerCase = id.toLowerCase()
+		const idInLowerCase = id.toLowerCase();
 		if (standardTypesMap[idInLowerCase] != null) {
 			return standardTypesMap[idInLowerCase];
 		}
@@ -79,7 +88,7 @@ export function generateGenericTsType(
 	className: string,
 	genericTypeNode,
 	innerClasses: string[],
-	sObjectNames:string[]
+	sObjectNames: string[]
 ): string {
 	let typeIdentifier: string;
 	let genericTypes = [];
@@ -87,9 +96,7 @@ export function generateGenericTsType(
 		if (child.type == "type_identifier") {
 			typeIdentifier = child.text.toString();
 		} else if (child.type == "type_arguments") {
-			for (const typeArgument of child.children.filter(
-				(c) => c.type != null
-			)) {
+			for (const typeArgument of child.children.filter((c) => c.type != null)) {
 				genericTypes.push(
 					generateTsType(className, typeArgument, innerClasses, sObjectNames)
 				);
@@ -104,4 +111,3 @@ export function generateGenericTsType(
 	}
 	return "any";
 }
-

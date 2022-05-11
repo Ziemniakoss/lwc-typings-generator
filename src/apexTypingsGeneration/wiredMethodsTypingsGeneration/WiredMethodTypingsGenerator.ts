@@ -1,12 +1,17 @@
 import IWiredMethodsTypingsGenerator from "./IWiredMethodsTypingsGenerator";
 
-import {generateTsType, getQuery} from "../../utils/apexParsingUtils";
+import { generateTsType, getQuery } from "../../utils/apexParsingUtils";
 
-export default class WiredMethodTypingsGenerator implements IWiredMethodsTypingsGenerator {
-	constructor(private readonly sObjectsNames:string[]) {
-	}
+export default class WiredMethodTypingsGenerator
+	implements IWiredMethodsTypingsGenerator
+{
+	constructor(private readonly sObjectsNames: string[]) {}
 
-	async generateWiredMethodsTypings(namespace: string, className: string, parsedClass) :Promise<string>{
+	async generateWiredMethodsTypings(
+		namespace: string,
+		className: string,
+		parsedClass
+	): Promise<string> {
 		const innerClassesNames = await this.getInnerClassesNames(parsedClass);
 		const r = await this.getAuraEnabledMethodsQuery();
 		const x = r.matches(parsedClass.rootNode);
@@ -18,7 +23,7 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 				innerClassesNames
 			);
 		}
-		return typings
+		return typings;
 	}
 	private generateAuraEnabledMethodTypings(
 		className: string,
@@ -41,7 +46,7 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 				methodDeclarationNode = capture.node;
 			}
 		}
-		console.log("Return type")
+		console.log("Return type");
 		const returnType = generateTsType(
 			className,
 			methodDeclarationNode.childForFieldName("type"),
@@ -102,7 +107,7 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 	name: (identifier) @name
 	parameters: (formal_parameters) @params
 ) @method_declaration`;
-		return getQuery(query)
+		return getQuery(query);
 	}
 
 	async getInnerClassesNames(parsedClass): Promise<string[]> {
@@ -114,10 +119,10 @@ export default class WiredMethodTypingsGenerator implements IWiredMethodsTypings
 		        )
 		    )
 		)`;
-		const q = await getQuery(query)
+		const q = await getQuery(query);
 		return q
 			.matches(parsedClass.rootNode)
 			.map((match) => match.captures.map((capture) => capture.node.text))
-			.flat()
+			.flat();
 	}
 }

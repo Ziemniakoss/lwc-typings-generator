@@ -1,12 +1,13 @@
-import {ChildRelationship, DescribeSObjectResult } from "jsforce";
-import {join} from "path";
-import {promises} from "fs";
-import {mkdirs} from "../utils/filesUtils";
+import { ChildRelationship, DescribeSObjectResult } from "jsforce";
+import { join } from "path";
+import { promises } from "fs";
+import { mkdirs } from "../utils/filesUtils";
 import IFieldTypingsGeneratorFactory from "./IFieldTypingsGeneratorFactory";
 
 export default class SObjectTypingsGenerator {
-	constructor(private fieldTypingsGeneratorFactory: IFieldTypingsGeneratorFactory) {
-	}
+	constructor(
+		private fieldTypingsGeneratorFactory: IFieldTypingsGeneratorFactory
+	) {}
 
 	async generateSObjectTypings(
 		sObjectDescribe: DescribeSObjectResult,
@@ -25,12 +26,16 @@ export default class SObjectTypingsGenerator {
 				sObjectDescribe.childRelationships
 			);
 		for (const field of sObjectDescribe.fields) {
-			const fieldTypingsGenerator = this.fieldTypingsGeneratorFactory.getFieldTypingsGenerator(sObjectDescribe, field)
+			const fieldTypingsGenerator =
+				this.fieldTypingsGeneratorFactory.getFieldTypingsGenerator(
+					sObjectDescribe,
+					field
+				);
 			typings += fieldTypingsGenerator.generateTypings(sObjectDescribe, field);
 		}
 
 		const folder = join(typingsFolder, "sobject_interfaces");
-		mkdirs(folder)
+		mkdirs(folder);
 		return promises.writeFile(
 			join(folder, `${sObjectDescribe.name}.d.ts`),
 			typings + "\n\t}\n}\n"

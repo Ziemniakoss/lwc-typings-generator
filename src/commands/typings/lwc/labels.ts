@@ -10,7 +10,7 @@ export default class GenerateLabelsTypings extends SfdxCommand {
 		this.ux.startSpinner("Generating typings for labels");
 		await new LabelsTypingsGenerator().generateForAll(
 			this.org.getConnection(),
-			join(this.project.getPath(),".sfdx", "lwc-typings")
+			join(this.project.getPath(), ".sfdx", "lwc-typings")
 		);
 		this.ux.stopSpinner("have a great day!");
 	}

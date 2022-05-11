@@ -1,5 +1,5 @@
-import {DescribeSObjectResult, Field} from "jsforce";
+import { DescribeSObjectResult, Field } from "jsforce";
 
 export default interface IFieldTypingsGenerator {
-	generateTypings(sObjectDescribe:DescribeSObjectResult, field:Field):string
+	generateTypings(sObjectDescribe: DescribeSObjectResult, field: Field): string;
 }

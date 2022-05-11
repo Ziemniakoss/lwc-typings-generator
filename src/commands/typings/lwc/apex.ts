@@ -2,10 +2,8 @@ import { SfdxCommand } from "@salesforce/command";
 import { ApexTypingsGenerator } from "../../../apexTypingsGeneration/ApexTypingsGenerator";
 import { join } from "path";
 import { findAllFilesWithExtension } from "../../../utils/filesUtils";
-import WiredMethodTypingsGenerator
-	from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
-import ApexClassTypingsGenerator
-	from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
+import WiredMethodTypingsGenerator from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
+import ApexClassTypingsGenerator from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 
 export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -27,12 +25,15 @@ export default class GenerateApexTypings extends SfdxCommand {
 			this.project.getPath(),
 			".cls"
 		);
-		const generationPromises = []
+		const generationPromises = [];
 		for (const classOrPath of apexClassesOrPaths) {
-			const generationPromise =generator.generateTypingsForPath(classOrPath, typignsPath)
-			generationPromises.push(generationPromise)
+			const generationPromise = generator.generateTypingsForPath(
+				classOrPath,
+				typignsPath
+			);
+			generationPromises.push(generationPromise);
 		}
-		await Promise.all(generationPromises)
+		await Promise.all(generationPromises);
 		this.ux.stopSpinner("have fun!");
 	}
 
