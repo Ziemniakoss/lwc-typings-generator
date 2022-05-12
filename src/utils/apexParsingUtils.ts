@@ -94,7 +94,7 @@ export function generateGenericTsType(
 	let genericTypes = [];
 	for (const child of genericTypeNode.children) {
 		if (child.type == "type_identifier") {
-			typeIdentifier = child.text.toString();
+			typeIdentifier = child.text.toString().toLowerCase();
 		} else if (child.type == "type_arguments") {
 			for (const typeArgument of child.children.filter((c) => c.type != null)) {
 				genericTypes.push(
