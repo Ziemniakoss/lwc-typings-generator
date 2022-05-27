@@ -1,10 +1,10 @@
 declare module "lightning/prompt" {
-	type PromptTheme = "default" | "error" | "warning" | "info"
+	type PromptTheme = "default" | "error" | "warning" | "info";
 	interface LightningPromptConfig {
-		message:string
-		label:string
-		theme?:PromptTheme
-		defaultValue?:string
+		message: string;
+		label: string;
+		theme?: PromptTheme;
+		defaultValue?: string;
 	}
 	interface LightningPromptType {
 		/**
@@ -12,8 +12,8 @@ declare module "lightning/prompt" {
 		 * @param config
 		 * @return null if user clicked cancel
 		 */
-		open:(config:LightningPromptConfig) => Promise<string | null>
+		open: (config: LightningPromptConfig) => Promise<string | null>;
 	}
-	const LightningPrompt: LightningPromptType
-	export default LightningPrompt
+	const LightningPrompt: LightningPromptType;
+	export default LightningPrompt;
 }
