@@ -4,7 +4,7 @@ declare namespace apex {
 	declare type Decimal = number;
 	declare type Double = number;
 	declare type Boolean = boolean;
-	declare type Datetime = string |d;
+	declare type Datetime = string | d;
 	declare type Integer = number;
 	declare type Long = number;
 	declare type String = string;
@@ -13,13 +13,13 @@ declare namespace apex {
 	declare type Date = d | string;
 }
 interface FetchResponse {
-	body:any //TODO maybe better type
-	ok:boolean
-	status:number
-	statusText:string
+	body: any; //TODO maybe better type
+	ok: boolean;
+	status: number;
+	statusText: string;
 }
 
-type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T
+type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T;
 declare interface Wired<T> {
 	data: PromiseResult<ReturnType<T>>;
 	error: FetchResponse;
