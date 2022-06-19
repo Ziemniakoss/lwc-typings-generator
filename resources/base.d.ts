@@ -1,4 +1,3 @@
-
 interface Template {
 	readonly activeElement: Element | null;
 
