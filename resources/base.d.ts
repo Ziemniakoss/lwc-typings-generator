@@ -1,31 +1,19 @@
-type LightningInput = import("lightning/input").default;
-type LightningCombobox = import("lightning/combobox").default;
-type LightningDatatable = import("lightning/datatable").default;
-// customImportsHere
-
 interface Template {
 	readonly activeElement: Element | null;
+
 	readonly delegatesFocus: boolean;
 
-	// customQuerySelectorsHere
+	addEventListener(type: string, listener: Function, options);
 
-	querySelector(query: "lightning-input"): LightningInput | null;
+	removeEventListener(type: string, listener: Function, options);
 
-	querySelector(query: "lightning-combobox"): LightningCombobox | null;
+	querySelector<Query extends keyof LwcElementTadNameMap>(
+		query: Query
+	): LwcElementTadNameMap[Query] | null;
 
-	querySelector(query: "lightning-datatable"): LightningDatatable | null;
-
-	querySelector(query: string): LwcComponentBase | null;
-
-	// customQuerySelectorAllHere
-
-	querySelectorAll(query: "lightning-input"): LightningInput[];
-
-	querySelectorAll(query: "lightning-combobox"): LightningCombobox[];
-
-	querySelectorAll(query: "lightning-datatable"): LightningDatatable[];
-
-	querySelectorAll(query: string): LwcComponentBase[];
+	querySelectorAll<Query extends keyof LwcElementTadNameMap>(
+		query: Query
+	): LwcElementTadNameMap[Query][];
 }
 
 class LwcComponentBase {
