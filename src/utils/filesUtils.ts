@@ -1,5 +1,6 @@
 import { promises, lstatSync, existsSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
+import { SfdxCommand } from "@salesforce/command";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
 
@@ -45,9 +46,11 @@ export async function findAllFiles(basePath: string) {
 
 	return files;
 }
+
 export function getResourcesFolder(): string {
 	return join(getRootPluginFolder(), "resources");
 }
+
 export function getRootPluginFolder(): string {
 	let currentDir = __dirname;
 	while (!existsSync(join(currentDir, "package.json"))) {
@@ -64,4 +67,12 @@ export function mkdirs(path: string) {
 	if (!existsSync(path)) {
 		mkdirSync(path);
 	}
+}
+
+export function getTypingsDir(project: SfdxCommand["project"]): string {
+	const typingsFolder = join(project.getPath(), ".sfdx", "lwc-typings");
+	if (!existsSync(typingsFolder)) {
+		mkdirSync(typingsFolder);
+	}
+	return typingsFolder;
 }

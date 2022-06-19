@@ -1,63 +1,20 @@
-type LightningInput = import("lightning/input").default;
-type LightningCombobox = import("lightning/combobox").default;
-type LightningDatatable = import("lightning/datatable").default;
-type LightningFormattedDateTime = import("lightning/formattedDateTime").default;
-type LightningFormattedNumber = import("lightning/formattedNumber").default;
-type LightningFormattedText = import("lightning/formattedText").default;
-type LightningFormattedUrl = import("lightning/formattedUrl").default;
-// customImportsHere
 
 interface Template {
 	readonly activeElement: Element | null;
+
 	readonly delegatesFocus: boolean;
 
-	// customQuerySelectorsHere
+	addEventListener(type: string, listener: Function, options);
 
-	querySelector(query: "lightning-input"): LightningInput | null;
+	removeEventListener(type: string, listener: Function, options);
 
-	querySelector(query: "lightning-combobox"): LightningCombobox | null;
+	querySelector<Query extends keyof LwcElementTadNameMap>(
+		query: Query
+	): LwcElementTadNameMap[Query] | null;
 
-	querySelector(query: "lightning-datatable"): LightningDatatable | null;
-
-	querySelector(
-		query: "lightning-formatted-date-time"
-	): LightningFormattedDateTime | null;
-
-	querySelector(
-		query: "lightning-formatted-number"
-	): LightningFormattedNumber | null;
-
-	querySelector(
-		query: "lightning-formatted-text"
-	): LightningFormattedText | number;
-
-	querySelector(
-		query: "lightning-formatted-url"
-	): LightningFormattedUrl | number;
-
-	querySelector(query: string): LwcComponentBase | null;
-
-	// customQuerySelectorAllHere
-
-	querySelectorAll(query: "lightning-input"): LightningInput[];
-
-	querySelectorAll(query: "lightning-combobox"): LightningCombobox[];
-
-	querySelectorAll(query: "lightning-datatable"): LightningDatatable[];
-
-	querySelectorAll(
-		query: "lightning-formatted-date-time"
-	): LightningFormattedDateTime[];
-
-	querySelectorAll(
-		query: "lightning-formatted-number"
-	): LightningFormattedNumber[];
-
-	querySelectorAll(query: "lightning-formatted-text"): LightningFormattedText[];
-
-	querySelectorAll(query: "lightning-formatted-url"): LightningFormattedUrl[];
-
-	querySelectorAll(query: string): LwcComponentBase[];
+	querySelectorAll<Query extends keyof LwcElementTadNameMap>(
+		query: Query
+	): LwcElementTadNameMap[Query][];
 }
 
 class LwcComponentBase {
