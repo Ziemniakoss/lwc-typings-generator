@@ -2,6 +2,11 @@ import { SfdxCommand } from "@salesforce/command";
 import StandardLibraryGenerator from "../../StandardLibraryGenerator";
 import JsConfigGenerator from "../../JsConfigGenerator";
 import LabelsTypingsGenerator from "../../LabelsTypingsGenerator";
+import {ApexTypingsGenerator} from "../../apexTypingsGeneration/ApexTypingsGenerator";
+import WiredMethodTypingsGenerator
+	from "../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
+import ApexClassTypingsGenerator
+	from "../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -12,13 +17,16 @@ export default class GenerateLwcTypings extends SfdxCommand {
 	async run() {
 		this.ux.startSpinner("Generating typings for apex,stdlib and labels");
 		await Promise.all([
+			this.generateApexTypings(),
 			this.generateStdblib(),
 			this.generateLabelsTypings(),
 			this.generateJsConfigs(),
 		]);
 		this.ux.stopSpinner("done");
 	}
-	//TODO apex?
+	private async generateApexTypings() {
+		return new ApexTypingsGenerator(new WiredMethodTypingsGenerator(), new ApexClassTypingsGenerator()).generateTypingsForProject(this.org.getConnection(), this.project)
+	}
 
 	private async generateStdblib() {
 		return new StandardLibraryGenerator().generateStandardLibrary(
