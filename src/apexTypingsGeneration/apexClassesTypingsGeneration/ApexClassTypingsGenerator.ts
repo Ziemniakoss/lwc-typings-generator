@@ -5,7 +5,7 @@ export default class ApexClassTypingsGenerator
 	implements IApexClassTypingsGenerator
 {
 	async generateClassTypings(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		parsedClass
@@ -67,7 +67,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private async generateTypingsForInnerClass(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		innerClassNode,
@@ -105,7 +105,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	async generateTypingsForProperties(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		parsedClass,
 		innerClassesNames: string[],
@@ -153,7 +153,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private generateTypingsForProperty(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		propertyName: string,
 		propertyNode,
@@ -169,7 +169,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private async generateTypingsForFields(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		parsedClass,
 		innerClassesNames: string[],
@@ -217,7 +217,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private generateTypingsForField(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		fieldName: string,
 		fieldNode,

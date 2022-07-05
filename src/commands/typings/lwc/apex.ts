@@ -1,9 +1,7 @@
-import {SfdxCommand} from "@salesforce/command";
-import {ApexTypingsGenerator} from "../../../apexTypingsGeneration/ApexTypingsGenerator";
-import WiredMethodTypingsGenerator
-	from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
-import ApexClassTypingsGenerator
-	from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
+import { SfdxCommand } from "@salesforce/command";
+import { ApexTypingsGenerator } from "../../../apexTypingsGeneration/ApexTypingsGenerator";
+import WiredMethodTypingsGenerator from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
+import ApexClassTypingsGenerator from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 
 export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -17,8 +15,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 		await new ApexTypingsGenerator(
 			new WiredMethodTypingsGenerator(),
 			new ApexClassTypingsGenerator()
-		).generateTypingsForProject(this.org.getConnection(), this.project)
+		).generateTypingsForProject(this.org.getConnection(), this.project);
 		this.ux.stopSpinner("have fun!");
 	}
-
 }

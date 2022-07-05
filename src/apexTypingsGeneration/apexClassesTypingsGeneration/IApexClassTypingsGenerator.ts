@@ -1,6 +1,6 @@
 export default interface IApexClassTypingsGenerator {
 	generateClassTypings(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		parsedClass

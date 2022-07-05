@@ -1,6 +1,6 @@
 export default interface IWiredMethodsTypingsGenerator {
 	generateWiredMethodsTypings(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string,
 		className: string,
 		parsedClass

@@ -1,5 +1,5 @@
 import { basename, join } from "path";
-import {findAllFilesWithExtension, mkdirs} from "../utils/filesUtils";
+import { findAllFilesWithExtension, mkdirs } from "../utils/filesUtils";
 import { Connection } from "jsforce";
 import { promises } from "fs";
 import { getParser } from "../utils/apexParsingUtils";
@@ -12,10 +12,12 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 	constructor(
 		private readonly wiredMethodsTypingsGenerator: IWiredMethodsTypingsGenerator,
 		private readonly apexClassTypingsGenerator: IApexClassTypingsGenerator
-	) {
-	}
+	) {}
 
-	async generateTypingsForProject(connection: Connection, project: SfdxProject) {
+	async generateTypingsForProject(
+		connection: Connection,
+		project: SfdxProject
+	) {
 		const sObjectNames = await this.getAllSObjectNames(connection);
 		const typignsPath = join(project.getPath(), ".sfdx", "lwc-typings");
 		const apexClassesOrPaths = await findAllFilesWithExtension(
@@ -43,7 +45,7 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 	}
 
 	async generateTypingsForPath(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		path: string,
 		typingsFolder: string
 	): Promise<any> {
@@ -53,11 +55,17 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 			promises.readFile(path, "utf-8"),
 			getParser(),
 		]).then(([classContent, parser]) => parser.parse(classContent));
-		return this.generate(sObjectNames, null, className, typingsFolder, parsedClass);
+		return this.generate(
+			sObjectNames,
+			null,
+			className,
+			typingsFolder,
+			parsedClass
+		);
 	}
 
 	async generate(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		typingsFolder: string,
@@ -85,7 +93,7 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 		return promises.writeFile(filePath, typings);
 	}
 
-	async getAllSObjectNames(connection:Connection): Promise<string[]> {
+	async getAllSObjectNames(connection: Connection): Promise<string[]> {
 		const globalDescribe = await connection.describeGlobal();
 		return globalDescribe.sobjects.map((sObject) => sObject.name);
 	}

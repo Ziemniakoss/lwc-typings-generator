@@ -6,7 +6,7 @@ export default class WiredMethodTypingsGenerator
 	implements IWiredMethodsTypingsGenerator
 {
 	async generateWiredMethodsTypings(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		namespace: string,
 		className: string,
 		parsedClass
@@ -26,7 +26,7 @@ export default class WiredMethodTypingsGenerator
 		return typings;
 	}
 	private generateAuraEnabledMethodTypings(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		methodDeclarationCapture,
 		innerClasses: string[]
@@ -61,7 +61,7 @@ export default class WiredMethodTypingsGenerator
 		);
 	}
 	private generateParamsTypingString(
-		sObjectNames:string[],
+		sObjectNames: string[],
 		className: string,
 		paramsCapture,
 		innerClasses: string[]
