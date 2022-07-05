@@ -3,6 +3,7 @@ import { join } from "path";
 import { existsSync, rmSync, promises } from "fs";
 import { mkdirs } from "./utils/filesUtils";
 import { splitIntoSubArrays } from "./utils/collectionUtils";
+import {SfdxCommand} from "@salesforce/command";
 
 const READ_OPERATION_LIMIT = 10;
 const GENERATED_BY_STRING =
@@ -42,7 +43,8 @@ export default class LabelsTypingsGenerator {
 		return promises.writeFile(filePath, typings);
 	}
 
-	async generateForAll(connection: Connection, typingsFolder: string) {
+	async generateForAll(connection: Connection, project: SfdxCommand["project"]) {
+		const typingsFolder = join(project.getPath(), ".sfdx", "lwc-typings")
 		const labelTypingsDir = join(typingsFolder, "labels");
 		if (existsSync(labelTypingsDir)) {
 			rmSync(labelTypingsDir, { recursive: true });

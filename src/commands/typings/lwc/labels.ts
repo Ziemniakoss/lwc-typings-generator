@@ -1,5 +1,4 @@
 import { SfdxCommand } from "@salesforce/command";
-import { join } from "path";
 import LabelsTypingsGenerator from "../../../LabelsTypingsGenerator";
 
 export default class GenerateLabelsTypings extends SfdxCommand {
@@ -10,7 +9,7 @@ export default class GenerateLabelsTypings extends SfdxCommand {
 		this.ux.startSpinner("Generating typings for labels");
 		await new LabelsTypingsGenerator().generateForAll(
 			this.org.getConnection(),
-			join(this.project.getPath(), ".sfdx", "lwc-typings")
+			this.project
 		);
 		this.ux.stopSpinner("have a great day!");
 	}
