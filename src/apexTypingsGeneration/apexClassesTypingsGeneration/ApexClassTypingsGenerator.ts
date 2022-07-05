@@ -4,9 +4,8 @@ import { generateTsType, getQuery } from "../../utils/apexParsingUtils";
 export default class ApexClassTypingsGenerator
 	implements IApexClassTypingsGenerator
 {
-	constructor(private readonly sObjectsNames: string[]) {}
-
 	async generateClassTypings(
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		parsedClass
@@ -20,12 +19,14 @@ export default class ApexClassTypingsGenerator
 
 		typings += await Promise.all([
 			this.generateTypingsForFields(
+				sObjectNames,
 				className,
 				parsedClass.rootNode,
 				innerClassesNames,
 				true
 			),
 			this.generateTypingsForProperties(
+				sObjectNames,
 				className,
 				parsedClass.rootNode,
 				innerClassesNames,
@@ -51,6 +52,7 @@ export default class ApexClassTypingsGenerator
 		for (const innerClassNode of innerClassesNodes) {
 			innerClassesTypingsGenerationPromises.push(
 				this.generateTypingsForInnerClass(
+					sObjectNames,
 					namespace,
 					className,
 					innerClassNode,
@@ -65,6 +67,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private async generateTypingsForInnerClass(
+		sObjectNames: string[],
 		namespace: string | null,
 		className: string,
 		innerClassNode,
@@ -79,12 +82,14 @@ export default class ApexClassTypingsGenerator
 
 		typings += await Promise.all([
 			this.generateTypingsForFields(
+				sObjectNames,
 				className,
 				innerClassNode,
 				innerClassesNames,
 				false
 			),
 			this.generateTypingsForProperties(
+				sObjectNames,
 				className,
 				innerClassNode,
 				innerClassesNames,
@@ -100,6 +105,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	async generateTypingsForProperties(
+		sObjectNames: string[],
 		className: string,
 		parsedClass,
 		innerClassesNames: string[],
@@ -135,6 +141,7 @@ export default class ApexClassTypingsGenerator
 				return (
 					indent +
 					this.generateTypingsForProperty(
+						sObjectNames,
 						className,
 						fieldName,
 						fieldNode,
@@ -146,6 +153,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private generateTypingsForProperty(
+		sObjectNames: string[],
 		className: string,
 		propertyName: string,
 		propertyNode,
@@ -155,12 +163,13 @@ export default class ApexClassTypingsGenerator
 			className,
 			propertyNode.childForFieldName("type"),
 			innerClassesNames,
-			this.sObjectsNames
+			sObjectNames
 		);
 		return `${propertyName}: ${tsType}`;
 	}
 
 	private async generateTypingsForFields(
+		sObjectNames: string[],
 		className: string,
 		parsedClass,
 		innerClassesNames: string[],
@@ -196,6 +205,7 @@ export default class ApexClassTypingsGenerator
 				return (
 					indent +
 					this.generateTypingsForField(
+						sObjectNames,
 						className,
 						fieldName,
 						fieldNode,
@@ -207,6 +217,7 @@ export default class ApexClassTypingsGenerator
 	}
 
 	private generateTypingsForField(
+		sObjectNames: string[],
 		className: string,
 		fieldName: string,
 		fieldNode,
@@ -216,7 +227,7 @@ export default class ApexClassTypingsGenerator
 			className,
 			fieldNode.childForFieldName("type"),
 			innerClassesNames,
-			this.sObjectsNames
+			sObjectNames
 		);
 		return `${fieldName}: ${tsType}`;
 	}

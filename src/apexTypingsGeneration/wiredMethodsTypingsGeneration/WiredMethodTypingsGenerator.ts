@@ -5,9 +5,8 @@ import { generateTsType, getQuery } from "../../utils/apexParsingUtils";
 export default class WiredMethodTypingsGenerator
 	implements IWiredMethodsTypingsGenerator
 {
-	constructor(private readonly sObjectsNames: string[]) {}
-
 	async generateWiredMethodsTypings(
+		sObjectNames: string[],
 		namespace: string,
 		className: string,
 		parsedClass
@@ -18,6 +17,7 @@ export default class WiredMethodTypingsGenerator
 		let typings = "";
 		for (const methodCapture of x) {
 			typings += this.generateAuraEnabledMethodTypings(
+				sObjectNames,
 				className,
 				methodCapture,
 				innerClassesNames
@@ -26,6 +26,7 @@ export default class WiredMethodTypingsGenerator
 		return typings;
 	}
 	private generateAuraEnabledMethodTypings(
+		sObjectNames: string[],
 		className: string,
 		methodDeclarationCapture,
 		innerClasses: string[]
@@ -38,6 +39,7 @@ export default class WiredMethodTypingsGenerator
 				name = capture.node.text;
 			} else if (capture.name == "params") {
 				paramsTypings = this.generateParamsTypingString(
+					sObjectNames,
 					className,
 					capture.node,
 					innerClasses
@@ -50,7 +52,7 @@ export default class WiredMethodTypingsGenerator
 			className,
 			methodDeclarationNode.childForFieldName("type"),
 			innerClasses,
-			this.sObjectsNames
+			sObjectNames
 		);
 		return (
 			`declare module "@salesforce/apex/${className}.${name}"{\n` +
@@ -59,6 +61,7 @@ export default class WiredMethodTypingsGenerator
 		);
 	}
 	private generateParamsTypingString(
+		sObjectNames: string[],
 		className: string,
 		paramsCapture,
 		innerClasses: string[]
@@ -72,7 +75,7 @@ export default class WiredMethodTypingsGenerator
 				className,
 				param.childForFieldName("type"),
 				innerClasses,
-				this.sObjectsNames
+				sObjectNames
 			);
 			params.push(`${param.childForFieldName("name").text}?: ${typeTypings}`);
 		}

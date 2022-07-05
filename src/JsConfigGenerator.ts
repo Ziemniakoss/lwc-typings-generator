@@ -1,5 +1,8 @@
 import { relative, dirname, basename, join, sep } from "path";
 import { promises } from "fs";
+import { SfdxCommand } from "@salesforce/command";
+import { findAllFilesWithExtension } from "./utils/filesUtils";
+import { LWC_METADATA_FILE_EXTENSION } from "./utils/constants";
 
 interface CompilerOptions {
 	experimentalDecorators: boolean;
@@ -12,6 +15,22 @@ interface JsConfig {
 }
 
 export default class JsConfigGenerator {
+	async generateJsConfigs(project: SfdxCommand["project"]) {
+		const stdlibPath = join(project.getPath(), ".sfdx", "lwc-typings");
+		const lwcMetadataFilesPaths = await findAllFilesWithExtension(
+			project.getPath(),
+			LWC_METADATA_FILE_EXTENSION
+		);
+		const jsConfigGenerator = new JsConfigGenerator();
+		for (const lwcMetadataFile of lwcMetadataFilesPaths) {
+			await jsConfigGenerator.generateJsConfig(
+				lwcMetadataFile,
+				lwcMetadataFilesPaths,
+				stdlibPath
+			);
+		}
+	}
+
 	async generateJsConfig(
 		lwcPath: string,
 		allLwcPaths: string[],
@@ -33,7 +52,7 @@ export default class JsConfigGenerator {
 		return this.writeJsConfig(lwcPath, jsConfig);
 	}
 
-	getBaseJsconfig(lwcPath: string, dirWithStdLib: string): JsConfig {
+	private getBaseJsconfig(lwcPath: string, dirWithStdLib: string): JsConfig {
 		return {
 			compilerOptions: {
 				experimentalDecorators: true,
@@ -48,7 +67,7 @@ export default class JsConfigGenerator {
 		};
 	}
 
-	async writeJsConfig(lwcPath: string, jsConfig: JsConfig) {
+	private async writeJsConfig(lwcPath: string, jsConfig: JsConfig) {
 		const containingDir = dirname(lwcPath);
 		const path = join(containingDir, "jsconfig.json");
 		return promises.writeFile(path, JSON.stringify(jsConfig, null, 4));
