@@ -1,5 +1,9 @@
 import { basename, join } from "path";
-import { findAllFilesWithExtension, mkdirs } from "../utils/filesUtils";
+import {
+	findAllFilesWithExtension,
+	getTypingsDir,
+	mkdirs,
+} from "../utils/filesUtils";
 import { Connection } from "jsforce";
 import { promises } from "fs";
 import { getParser } from "../utils/apexParsingUtils";
@@ -19,7 +23,7 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 		project: SfdxProject
 	) {
 		const sObjectNames = await this.getAllSObjectNames(connection);
-		const typignsPath = join(project.getPath(), ".sfdx", "lwc-typings");
+		const typingPath = await getTypingsDir(project);
 		const apexClassesOrPaths = await findAllFilesWithExtension(
 			project.getPath(),
 			".cls"
@@ -29,7 +33,7 @@ export class ApexTypingsGenerator implements IApexTypingsGenerator {
 			const generationPromise = this.generateTypingsForPath(
 				sObjectNames,
 				classOrPath,
-				typignsPath
+				typingPath
 			);
 			generationPromises.push(generationPromise);
 		}

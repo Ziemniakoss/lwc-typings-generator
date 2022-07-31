@@ -1,7 +1,7 @@
 import { Connection } from "jsforce";
 import { join } from "path";
 import { existsSync, rmSync, promises } from "fs";
-import { mkdirs } from "./utils/filesUtils";
+import { getTypingsDir, mkdirs } from "./utils/filesUtils";
 import { splitIntoSubArrays } from "./utils/collectionUtils";
 import { SfdxCommand } from "@salesforce/command";
 
@@ -47,7 +47,7 @@ export default class LabelsTypingsGenerator {
 		connection: Connection,
 		project: SfdxCommand["project"]
 	) {
-		const typingsFolder = join(project.getPath(), ".sfdx", "lwc-typings");
+		const typingsFolder = await getTypingsDir(project);
 		const labelTypingsDir = join(typingsFolder, "labels");
 		if (existsSync(labelTypingsDir)) {
 			rmSync(labelTypingsDir, { recursive: true });

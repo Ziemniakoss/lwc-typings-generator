@@ -9,7 +9,7 @@ export default class StandardLibraryGenerator {
 		project: SfdxCommand["project"],
 		connection: Connection
 	) {
-		const typingsDir = getTypingsDir(project);
+		const typingsDir = await getTypingsDir(project);
 		return Promise.all([
 			this.generateBaseLightningComponentFile(typingsDir, connection),
 			this.generateStdlib(typingsDir),
