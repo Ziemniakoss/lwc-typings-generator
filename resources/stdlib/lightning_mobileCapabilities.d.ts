@@ -1,12 +1,12 @@
-declare module 'lightning/mobileCapabilities' {
-	type BarcodeType = string
+declare module "lightning/mobileCapabilities" {
+	type BarcodeType = string;
 
 	/**
 	 * Scanned barcode
 	 */
 	interface Barcode {
-		type: BarcodeType
-		value: string
+		type: BarcodeType;
+		value: string;
 	}
 
 	/**
@@ -16,37 +16,48 @@ declare module 'lightning/mobileCapabilities' {
 		/**
 		 * Types of accepted barcodes
 		 */
-		barcodeTypes: BarcodeType[]
+		barcodeTypes: BarcodeType[];
 
 		/**
 		 * Optional text displayed in scanning interface
 		 */
-		instructionText?: string
+		instructionText?: string;
 
 		/**
 		 * Optional text displayed on scanning success
 		 */
-		successText?: string
+		successText?: string;
 	}
 
 	type BarcodeScannerFailureCode =
-		"userDismissedScanner" |
-		"userDeniedPermission" |
-		"userDisabledPermissions" |
-		"unknownReason"
+		| "userDismissedScanner"
+		| "userDeniedPermission"
+		| "userDisabledPermissions"
+		| "unknownReason";
 
 	interface BarcodeScannerFailure {
-		code: BarcodeScannerFailureCode
-		message:String
+		code: BarcodeScannerFailureCode;
+		message: String;
 	}
 
 	/**
 	 *
 	 */
 	interface BarcodeScanner {
-		readonly barcodeTypes: Record<"CODE_128" | "CODE_39" | "CODE_93" | "DATA_MATRIX" | "EAN_13" | "ITF" | "QR" | "UPC_A" | "UPC_E", BarcodeType>
+		readonly barcodeTypes: Record<
+			| "CODE_128"
+			| "CODE_39"
+			| "CODE_93"
+			| "DATA_MATRIX"
+			| "EAN_13"
+			| "ITF"
+			| "QR"
+			| "UPC_A"
+			| "UPC_E",
+			BarcodeType
+		>;
 
-		isAvailable():boolean
+		isAvailable(): boolean;
 
 		/**
 		 * Tries to scan barcode.
@@ -55,17 +66,16 @@ declare module 'lightning/mobileCapabilities' {
 		 * @see {@link BarcodeScannerFailure}
 		 * @param config
 		 */
-		beginCapture(config:BarcodeScannerOptions):Promise<Barcode>
+		beginCapture(config: BarcodeScannerOptions): Promise<Barcode>;
 
-		resumeCapture():Promise<Barcode>
+		resumeCapture(): Promise<Barcode>;
 
 		/**
 		 * End scanning session.
 		 * After ending session by calling this method, you can reuse BarcodeScanner instance by calling beginCapture again
 		 */
-		endCapture()
+		endCapture();
 	}
 
-
-	export function getBarcodeScanner(): BarcodeScanner
+	export function getBarcodeScanner(): BarcodeScanner;
 }
