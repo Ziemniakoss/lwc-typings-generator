@@ -4,6 +4,7 @@ import LabelsTypingsGenerator from "../../../LabelsTypingsGenerator";
 export default class GenerateLabelsTypings extends SfdxCommand {
 	protected static requiresProject = true;
 	protected static requiresUsername = true;
+	public static description = "Generate typings for custom labels";
 
 	async run() {
 		this.ux.startSpinner("Generating typings for labels");
