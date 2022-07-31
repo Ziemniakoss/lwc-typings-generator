@@ -8,6 +8,7 @@ import { getTypingsDir } from "../../../utils/filesUtils";
 export default class GenerateSObjectTypings extends SfdxCommand {
 	protected static requiresProject = true;
 	protected static requiresUsername = true;
+	public static description = "Generate typings for SObjects";
 
 	public static flagsConfig = {
 		sobject: flags.string({

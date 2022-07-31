@@ -6,6 +6,8 @@ import ApexClassTypingsGenerator from "../../../apexTypingsGeneration/apexClasse
 export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
 	protected static requiresUsername = true;
+	public static description =
+		"Generate typings for Apex classes and aura enabled methods";
 
 	async run() {
 		this.ux.startSpinner(
