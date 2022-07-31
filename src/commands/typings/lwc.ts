@@ -6,6 +6,7 @@ import { ApexTypingsGenerator } from "../../apexTypingsGeneration/ApexTypingsGen
 import WiredMethodTypingsGenerator from "../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
 import ApexClassTypingsGenerator from "../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 import StaticResourcesTypingGenerator from "../../StaticResourcesTypingGenerator";
+import CustomPermissionsTypingsGenerator from "../../CustomPermissionsTypingsGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -23,7 +24,8 @@ export default class GenerateLwcTypings extends SfdxCommand {
 			this.generateLabelsTypings(),
 			this.generateJsConfigs(),
 			this.generateStaticResourcesTypings(),
-		]);
+			this.generateCustomPermissionsTypings()
+		]).catch(error => this.ux.error(error));
 		this.ux.stopSpinner("done");
 	}
 
@@ -39,6 +41,10 @@ export default class GenerateLwcTypings extends SfdxCommand {
 			this.project,
 			this.org.getConnection()
 		);
+	}
+
+	private async generateCustomPermissionsTypings() {
+		return new CustomPermissionsTypingsGenerator().generateTypingsForProject(this.org.getConnection(), this.project)
 	}
 
 	private async generateStaticResourcesTypings() {

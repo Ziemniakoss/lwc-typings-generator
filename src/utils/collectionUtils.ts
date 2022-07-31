@@ -14,3 +14,11 @@ export function splitIntoSubArrays<T>(
 	result.push(current);
 	return result;
 }
+
+export function wrapInArray(a):any[] {
+	if(a == null) {
+		return []
+	}
+	// @ts-ignore
+	return Array.isArray(a) ? a : [a]
+}
