@@ -15,10 +15,10 @@ export function splitIntoSubArrays<T>(
 	return result;
 }
 
-export function wrapInArray(a):any[] {
-	if(a == null) {
-		return []
+export function wrapInArray(a): any[] {
+	if (a == null) {
+		return [];
 	}
 	// @ts-ignore
-	return Array.isArray(a) ? a : [a]
+	return Array.isArray(a) ? a : [a];
 }
