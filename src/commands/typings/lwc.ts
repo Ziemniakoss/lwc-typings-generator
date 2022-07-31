@@ -14,7 +14,9 @@ export default class GenerateLwcTypings extends SfdxCommand {
 		"Collective command for LWC typings generation. Generates Apex, labels, static resources and stdlib typings and all required JsConfigs";
 
 	async run() {
-		this.ux.startSpinner("Generating typings for apex,stdlib and labels");
+		this.ux.startSpinner(
+			"Generating typings for apex, stdlib, static resources and labels"
+		);
 		await Promise.all([
 			this.generateApexTypings(),
 			this.generateStdblib(),
