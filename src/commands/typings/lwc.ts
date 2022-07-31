@@ -6,24 +6,34 @@ import { ApexTypingsGenerator } from "../../apexTypingsGeneration/ApexTypingsGen
 import WiredMethodTypingsGenerator from "../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
 import ApexClassTypingsGenerator from "../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 import StaticResourcesTypingGenerator from "../../StaticResourcesTypingGenerator";
+import CustomPermissionsTypingsGenerator from "../../CustomPermissionsTypingsGenerator";
+import UserPermissionsTypingsGenerator from "../../UserPermissionsTypingsGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
 	protected static requiresUsername = true;
-	public static description =
-		"Collective command for LWC typings generation. Generates Apex, labels, static resources and stdlib typings and all required JsConfigs";
+	public static description = `Collective typings generation command.
+Generates typings for:
+- Apex classes and aura enabled methods
+- Standard Library
+- Custom Labels
+- Static Resources
+- Custom Permissions
+- User Permissions
+and generates proper JSConfigs.
+`;
 
 	async run() {
-		this.ux.startSpinner(
-			"Generating typings for apex, stdlib, static resources and labels"
-		);
+		this.ux.startSpinner("Generating LWC typings");
 		await Promise.all([
 			this.generateApexTypings(),
 			this.generateStdblib(),
 			this.generateLabelsTypings(),
 			this.generateJsConfigs(),
 			this.generateStaticResourcesTypings(),
-		]);
+			this.generateCustomPermissionsTypings(),
+			this.generateUserPermsissionsTypings(),
+		]).catch((error) => this.ux.error(error));
 		this.ux.stopSpinner("done");
 	}
 
@@ -38,6 +48,20 @@ export default class GenerateLwcTypings extends SfdxCommand {
 		return new StandardLibraryGenerator().generateStandardLibrary(
 			this.project,
 			this.org.getConnection()
+		);
+	}
+
+	private async generateCustomPermissionsTypings() {
+		return new CustomPermissionsTypingsGenerator().generateTypingsForProject(
+			this.org.getConnection(),
+			this.project
+		);
+	}
+
+	private async generateUserPermsissionsTypings() {
+		return new UserPermissionsTypingsGenerator().generateTypingsForProject(
+			this.org.getConnection(),
+			this.project
 		);
 	}
 
