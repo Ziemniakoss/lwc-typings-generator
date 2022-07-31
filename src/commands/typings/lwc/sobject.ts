@@ -2,8 +2,8 @@ import { flags, SfdxCommand } from "@salesforce/command";
 import { DescribeSObjectResult } from "jsforce";
 import SchemaGenerator from "../../../SchemaGenerator";
 import SObjectTypingsGenerator from "../../../sObjectTypingsGeneration/SObjectTypingsGenerator";
-import { join } from "path";
 import FieldTypingsGeneratorFactory from "../../../sObjectTypingsGeneration/FieldTypingsGeneratorFactory";
+import { getTypingsDir } from "../../../utils/filesUtils";
 
 export default class GenerateSObjectTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -22,7 +22,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 			"Generating typings for sobjects",
 			"fetching describes"
 		);
-		const typingsFolder = join(this.project.getPath(), ".sfdx", "lwc-typings");
+		const typingsFolder = await getTypingsDir(this.project);
 		const schemaGenerator = new SchemaGenerator();
 		const sObjectTypingsGenerator = new SObjectTypingsGenerator(
 			new FieldTypingsGeneratorFactory()

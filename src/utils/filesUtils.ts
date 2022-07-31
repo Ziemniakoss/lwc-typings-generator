@@ -1,4 +1,4 @@
-import { promises, lstatSync, existsSync, mkdirSync } from "fs";
+import { existsSync, lstatSync, mkdirSync, promises } from "fs";
 import { dirname, join } from "path";
 import { SfdxCommand } from "@salesforce/command";
 
@@ -69,10 +69,26 @@ export function mkdirs(path: string) {
 	}
 }
 
-export function getTypingsDir(project: SfdxCommand["project"]): string {
-	const typingsFolder = join(project.getPath(), ".sfdx", "lwc-typings");
-	if (!existsSync(typingsFolder)) {
-		mkdirSync(typingsFolder);
-	}
+export async function getTypingsDir(
+	project: SfdxCommand["project"]
+): Promise<string> {
+	const pathToGeneratorConfig = join(
+		project.getPath(),
+		".config",
+		"lwc-typings-generation-config.json"
+	);
+	const typingsFolder = await promises
+		.readFile(pathToGeneratorConfig, "utf-8")
+		.then((content) => JSON.parse(content))
+		.then((parsedConfig) => {
+			const typingsPath = parsedConfig.typingsPath;
+			return Array.isArray(typingsPath)
+				? join(project.getPath(), ...typingsPath)
+				: join(project.getPath(), typingsPath);
+		})
+		.catch(() => {
+			return join(project.getPath(), ".sfdx", "lwc-typings");
+		});
+	mkdirs(typingsFolder);
 	return typingsFolder;
 }

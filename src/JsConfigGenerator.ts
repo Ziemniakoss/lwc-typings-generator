@@ -1,7 +1,7 @@
 import { relative, dirname, basename, join, sep } from "path";
 import { promises } from "fs";
 import { SfdxCommand } from "@salesforce/command";
-import { findAllFilesWithExtension } from "./utils/filesUtils";
+import { findAllFilesWithExtension, getTypingsDir } from "./utils/filesUtils";
 import { LWC_METADATA_FILE_EXTENSION } from "./utils/constants";
 
 interface CompilerOptions {
@@ -16,7 +16,7 @@ interface JsConfig {
 
 export default class JsConfigGenerator {
 	async generateJsConfigs(project: SfdxCommand["project"]) {
-		const stdlibPath = join(project.getPath(), ".sfdx", "lwc-typings");
+		const stdlibPath = await getTypingsDir(project);
 		const lwcMetadataFilesPaths = await findAllFilesWithExtension(
 			project.getPath(),
 			LWC_METADATA_FILE_EXTENSION
