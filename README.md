@@ -29,8 +29,6 @@ If for some reason you would want to go back to old typings, just delete jsconfi
 
 ## TODO
 
-- https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_salesforce_modules
 - message channels
-- static resources
 - internationalization
 - perrmissions
