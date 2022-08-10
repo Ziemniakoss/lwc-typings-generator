@@ -5,15 +5,19 @@ declare module "lightning/uiObjectInfoApi" {
 
 	export function getObjectInfos():Promise<uiApiResponses.ObjectInfo<any>[]> //TODO better typings
 
-	interface GetPicklistValuesConfig {
+	interface GetPicklistValuesConfig<T> {
 		recordTypeId:apex.Id | "012000000000000AAA"
-		fieldApiName:string | any //TODO better
+		fieldApiName: schema.FieldIdFromSchema | string
 		propertyOrFunction?
 
 	}
-	export function getPicklistValues<>(config:GetPicklistValuesConfig):Promise<uiApiResponses.PicklistValues<any>>
 
 
+	declare type PicklistValuesFromField<T extends schema.FieldIdFromSchema> = schema.SObjectsMap[T["objectApiName"]][T["fieldApiName"]]
+	export function getPicklistValues<T extends schema.FieldIdFromSchema>(
+		config:GetPicklistValuesConfig<T>
+	):Promise<uiApiResponses.PicklistValues<PicklistValuesFromField<T>>>
 
+	export function getPicklistValues(config:GetPicklistValuesConfig<string>):Promise<uiApiResponses.PicklistValues<any>>
 }
 

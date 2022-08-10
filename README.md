@@ -31,4 +31,6 @@ If for some reason you would want to go back to old typings, just delete jsconfi
 
 - message channels
 - internationalization
-- perrmissions
+- apexContinuation
+- https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.create_content_assets
+- deeper shema
