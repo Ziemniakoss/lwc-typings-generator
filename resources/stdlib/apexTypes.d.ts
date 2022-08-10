@@ -21,6 +21,6 @@ interface FetchResponse {
 
 type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T;
 declare interface Wired<T> {
-	data: PromiseResult<ReturnType<T>>;
+	data: T extends Function ? PromiseResult<ReturnType<T>> : T;
 	error: FetchResponse;
 }

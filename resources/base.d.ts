@@ -51,9 +51,9 @@ declare module "lwc" {
 	 */
 	export const track: PropertyDecorator;
 
-	export function wire(
+	export function wire<T>(
 		getType: (params?: T) => any,
-		config?: T
+		config?: T //TODO maybe accept  $fieldName strings?
 	): PropertyDecorator;
 }
 

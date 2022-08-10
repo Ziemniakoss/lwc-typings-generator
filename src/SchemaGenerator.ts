@@ -1,6 +1,6 @@
 import { DescribeSObjectResult } from "jsforce";
 import { join } from "path";
-import { existsSync, promises } from "fs";
+import { promises } from "fs";
 import { mkdirs } from "./utils/filesUtils";
 
 export default class SchemaGenerator {
@@ -11,36 +11,22 @@ export default class SchemaGenerator {
 	) {
 		const describe = describesMap.get(sObjectName.toLowerCase());
 
-		let typings = "";
-		for (const field of describe.fields) {
-			typings +=
-				`declare module "@salesforce/schema/${describe.name}.${field.name}" {\n` +
-				`\t const ${field.name}: FieldId\n` +
-				`\t export default ${field.name}\n` +
-				`}\n`;
-		}
-		const schemaFolder = await this.getSchemaFolder(typingsFolder);
+		const schemaFolder = this.getSchemaFolder(typingsFolder);
 		const fullPath = join(schemaFolder, `${describe.name}.d.ts`);
-		return promises.writeFile(fullPath, typings);
-	}
+		await promises.writeFile(fullPath, "");
 
-	async generateCommonTypings(typingsFolder: string) {
-		const schemaFolder = await this.getSchemaFolder(typingsFolder);
-		if (!existsSync(schemaFolder)) {
-			await promises.mkdir(schemaFolder);
+		for (const field of describe.fields) {
+			const fieldApiName = field.name;
+			const typings = `
+declare module "@salesforce/schema/${describe.name}.${fieldApiName}" {
+	const ${fieldApiName}: schema.FieldIdFromSchema<"${describe.name}", "${fieldApiName}">
+	export default ${fieldApiName}
+}`;
+			await promises.appendFile(fullPath, typings);
 		}
-		const typings =
-			"declare interface ObjectId {\n" +
-			"\tobjectApiName: string\n" +
-			"}\n" +
-			"declare interface FieldId {\n" +
-			"\tfieldApiName: string;\n" +
-			"\tobjectApiName: string\n" +
-			"}\n";
-		return promises.writeFile(join(schemaFolder, "common-types.d.ts"), typings);
 	}
 
-	async getSchemaFolder(typingsFolder: string): Promise<string> {
+	getSchemaFolder(typingsFolder: string): string {
 		const folder = join(typingsFolder, "schema");
 		mkdirs(folder);
 		return folder;
