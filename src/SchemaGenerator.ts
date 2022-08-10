@@ -1,6 +1,6 @@
 import { DescribeSObjectResult } from "jsforce";
 import { join } from "path";
-import {  promises } from "fs";
+import { promises } from "fs";
 import { mkdirs } from "./utils/filesUtils";
 
 export default class SchemaGenerator {
@@ -13,16 +13,16 @@ export default class SchemaGenerator {
 
 		const schemaFolder = this.getSchemaFolder(typingsFolder);
 		const fullPath = join(schemaFolder, `${describe.name}.d.ts`);
-		await promises.writeFile(fullPath, "")
+		await promises.writeFile(fullPath, "");
 
 		for (const field of describe.fields) {
-			const fieldApiName = field.name
+			const fieldApiName = field.name;
 			const typings = `
 declare module "@salesforce/schema/${describe.name}.${fieldApiName}" {
 	const ${fieldApiName}: schema.FieldIdFromSchema<"${describe.name}", "${fieldApiName}">
 	export default ${fieldApiName}
-}`
-			await promises.appendFile(fullPath, typings)
+}`;
+			await promises.appendFile(fullPath, typings);
 		}
 	}
 

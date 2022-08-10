@@ -1,6 +1,6 @@
 declare namespace schema {
 	declare interface ObjectIdFromSchema<SObjectApiName> {
-		objectApiName:SObjectApiName
+		objectApiName: SObjectApiName;
 	}
 
 	declare interface FieldIdFromSchema<SObjectApiName, FieldApiName> {
@@ -25,5 +25,7 @@ declare namespace schema {
 	declare type PicklistValues<
 		SObjectApiName extends schema.SObjectApiName,
 		FieldApiName extends keyof schema.SObjectMap[SObjectApiName]
-		> = uiApiResponses.PicklistValues<schema.SObjectsMap[SObjectApiName][FieldApiName]>
+	> = uiApiResponses.PicklistValues<
+		schema.SObjectsMap[SObjectApiName][FieldApiName]
+	>;
 }
