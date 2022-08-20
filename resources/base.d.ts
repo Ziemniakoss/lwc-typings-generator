@@ -73,8 +73,8 @@ interface AppTypePageReference extends PageReference {
 interface ObjectPageTypePageReference extends PageReference {
 	type: "standard__objectPage";
 	attributes: {
-		objectApiName: string; //TODO better typings
-		actionName: "home" | "list";
+		objectApiName: schema.SObjectApiName;
+		actionName: "home" | "list" | "new";
 	};
 	state?: {
 		filterName?: "Recent" | string;
