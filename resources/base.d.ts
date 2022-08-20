@@ -198,7 +198,7 @@ class NavigableComponent extends LwcComponentBase {
 	 *}).then((url) => console.log(url)
 	 * ```
 	 */
-	__generateUrl(pageReference:NavigationItemPageReference)
+	__generateUrl__(pageReference: NavigationItemPageReference);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
