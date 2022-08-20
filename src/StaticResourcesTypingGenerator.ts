@@ -1,9 +1,9 @@
-import {Connection, FileProperties} from "jsforce";
+import { Connection, FileProperties } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
 import { getTypingsDir } from "./utils/filesUtils";
 import { join } from "path";
 import { promises } from "fs";
-import {wrapInArray} from "./utils/collectionUtils";
+import { wrapInArray } from "./utils/collectionUtils";
 
 export default class StaticResourcesTypingGenerator {
 	async generateTypingsForProject(
@@ -18,7 +18,7 @@ export default class StaticResourcesTypingGenerator {
 		await promises.writeFile(typingsFile, "");
 
 		for (const staticResource of staticResources) {
-			console.log(staticResource.fullName)
+			console.log(staticResource.fullName);
 			const fullName = staticResource.fullName;
 			await promises.appendFile(
 				typingsFile,
@@ -31,10 +31,11 @@ export default class StaticResourcesTypingGenerator {
 		}
 	}
 
-	private async fetchStaticResources(connection:Connection):Promise<FileProperties[]> {
-		return connection
-			.metadata
+	private async fetchStaticResources(
+		connection: Connection
+	): Promise<FileProperties[]> {
+		return connection.metadata
 			.list({ type: "StaticResource" })
-			.then(staticResources => wrapInArray(staticResources))
+			.then((staticResources) => wrapInArray(staticResources));
 	}
 }
