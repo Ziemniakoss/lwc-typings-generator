@@ -3,6 +3,7 @@ import { Connection } from "jsforce";
 import { getResourcesFolder, getTypingsDir, mkdirs } from "./utils/filesUtils";
 import { promises } from "fs";
 import { basename, join } from "path";
+import {wrapInArray} from "./utils/collectionUtils";
 
 export default class StandardLibraryGenerator {
 	async generateStandardLibrary(
@@ -66,7 +67,7 @@ export default class StandardLibraryGenerator {
 		await connection.metadata
 			.list({ type: "LightningComponentBundle" })
 			.then((metadata) =>
-				metadata.map((m) => {
+				wrapInArray(metadata).map((m) => {
 					const namespace = m.namespacePrefix ?? "c";
 					const fullName = m.fullName;
 					const tagName = this.kebabCase(`${namespace}-${fullName}`);
