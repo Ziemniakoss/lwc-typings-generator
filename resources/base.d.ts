@@ -67,7 +67,14 @@ interface AppTypePageReference extends PageReference {
 	};
 }
 //TODO External Record Page Type
-//TODO External Record Relationship Page Type
+
+interface NavigationItemPageReference extends PageReference {
+	type: "standard__navItemPage";
+	attributes: {
+		apiName: Salesforce.TabApiName;
+	};
+}
+
 //TODO Navigation Item Page Type
 
 interface ObjectPageTypePageReference extends PageReference {
@@ -133,6 +140,15 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
+	__navigate__(pageReference: NavigationItemPageReference);
+	/**
+	 * Don't use directly.
+	 * Use only for reference
+	 * ```js
+	 *	this[NavigationMixin.GenerateUrl](pageReference)
+	 *		.then(url => this.url = url);
+	 * ```
+	 */
 	__navigate__(pageReference: ObjectPageTypePageReference);
 	/**
 	 * Don't use directly.
@@ -172,6 +188,17 @@ class NavigableComponent extends LwcComponentBase {
 	 * ```
 	 */
 	__generateUrl__(pageReference: AppTypePageReference): Promise<string>;
+	/**
+	 * Don't use directly.
+	 * Use only for reference.
+	 * ```js
+	 *this[NavigationMixin.GenerateUrl]({
+	 *    type: 'standard__recordPage',
+	 *    attributes
+	 *}).then((url) => console.log(url)
+	 * ```
+	 */
+	__generateUrl__(pageReference: NavigationItemPageReference);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
