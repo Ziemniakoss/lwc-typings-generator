@@ -18,7 +18,6 @@ export default class StaticResourcesTypingGenerator {
 		await promises.writeFile(typingsFile, "");
 
 		for (const staticResource of staticResources) {
-			console.log(staticResource.fullName);
 			const fullName = staticResource.fullName;
 			await promises.appendFile(
 				typingsFile,
