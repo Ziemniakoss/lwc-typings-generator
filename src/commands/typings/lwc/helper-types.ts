@@ -8,11 +8,11 @@ export default class GenerateHelperTypes extends SfdxCommand {
 		"Generate helper types, like salesforce.tabs namespace";
 
 	async run() {
-		this.ux.startSpinner("yeah boi");
+		this.ux.startSpinner("getting help");
 		await new HelperTypesGenerator().generateTypingsForProject(
 			this.org.getConnection(),
 			this.project
 		);
-		this.ux.stopSpinner();
+		this.ux.stopSpinner("helper types created");
 	}
 }
