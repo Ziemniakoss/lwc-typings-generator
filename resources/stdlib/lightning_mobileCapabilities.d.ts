@@ -1,3 +1,98 @@
+declare namespace lightning {
+	declare namespace mobileCapabilities {
+		declare namespace ContactServiceApi {
+			declare interface ContactName {
+				/**
+				 * A string representing the name to be displayed for the contact.
+				 * Only present on Android devices.
+				 */
+				displayName: string
+				/**
+				 * A string representing the contact’s family name (also known as “surname” or “last name”).
+				 */
+				familyName: string
+				/**
+				 * A string representing the contact’s given name (also known as “first name”).
+				 */
+				givenName: string
+				middleName: string
+				/**
+				 * A string representing the contact’s name prefix.
+				 */
+				namePrefix: string
+				/**
+				 * A string representing the contact’s name suffix.
+				 */
+				nameSuffix: string
+			}
+
+			/**
+			 * Labels disclosed in documentation.
+			 */
+			type KnownLabel = "home" |
+				"homepage" |
+				"work" |
+				"personal" |
+				"mobile"
+
+			declare type ContactLabeledValue = Record<KnownLabel, string>[]
+
+			declare interface ContactAddress {
+				type: string
+				streetAddress: string
+				locality: string
+				region: string
+				postalCode: string
+				country: string
+			}
+
+			interface ContactOrganization {
+				name: string
+				department: string
+				title: string
+			}
+
+			declare interface Contact {
+				id: string
+				name: ContactName
+				phoneNumbers: ContactLabeledValue
+				emails: ContactLabeledValue
+				addresses: ContactAddress
+				/**
+				 * An array of objects containing instant messaging (IM) usernames for the contact.
+				 */
+				ims: ContactLabeledValue
+				organizations: ContactOrganization
+				note: string
+				urls: ContactLabeledValue
+			}
+
+			declare interface ContactServiceFailure {
+				code: "USER_DISMISSED" |
+					"USER_DENIED_PERMISSION" |
+					"USER_DISABLED_PERMISSION" |
+					"USER_RESTRICTED_PERMISSION" |
+					"SERVICE_NOT_ENABLED" |
+					"UNKNOWN_REASON"
+				message: string
+			}
+
+			declare interface ContactsServiceOptions {
+				/**
+				 * Optional parameter, for Android only.
+				 * This only appears after an initial denial by the user.
+				 * To use the default permission message, pass in an empty object.
+				 *
+				 * The default permission message is “To import Contacts, permission is needed to access Contacts.
+				 * Tap Allow in the following permissions dialog.”
+				 */
+				permissionRationaleText?: string
+			}
+		}
+	}
+
+}
+
 declare module "lightning/mobileCapabilities" {
 	type BarcodeType = string;
 
@@ -44,8 +139,7 @@ declare module "lightning/mobileCapabilities" {
 	 *
 	 */
 	interface BarcodeScanner {
-		readonly barcodeTypes: Record<
-			| "CODE_128"
+		readonly barcodeTypes: Record<| "CODE_128"
 			| "CODE_39"
 			| "CODE_93"
 			| "DATA_MATRIX"
@@ -54,8 +148,7 @@ declare module "lightning/mobileCapabilities" {
 			| "QR"
 			| "UPC_A"
 			| "UPC_E",
-			BarcodeType
-		>;
+			BarcodeType>;
 
 		isAvailable(): boolean;
 
