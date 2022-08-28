@@ -6,75 +6,72 @@ declare namespace lightning {
 				 * A string representing the name to be displayed for the contact.
 				 * Only present on Android devices.
 				 */
-				displayName: string
+				displayName: string;
 				/**
 				 * A string representing the contact’s family name (also known as “surname” or “last name”).
 				 */
-				familyName: string
+				familyName: string;
 				/**
 				 * A string representing the contact’s given name (also known as “first name”).
 				 */
-				givenName: string
-				middleName: string
+				givenName: string;
+				middleName: string;
 				/**
 				 * A string representing the contact’s name prefix.
 				 */
-				namePrefix: string
+				namePrefix: string;
 				/**
 				 * A string representing the contact’s name suffix.
 				 */
-				nameSuffix: string
+				nameSuffix: string;
 			}
 
 			/**
 			 * Labels disclosed in documentation.
 			 */
-			type KnownLabel = "home" |
-				"homepage" |
-				"work" |
-				"personal" |
-				"mobile"
+			type KnownLabel = "home" | "homepage" | "work" | "personal" | "mobile";
 
-			declare type ContactLabeledValue = Record<KnownLabel, string>[]
+			declare type ContactLabeledValue = Record<KnownLabel, string>[];
 
 			declare interface ContactAddress {
-				type: string
-				streetAddress: string
-				locality: string
-				region: string
-				postalCode: string
-				country: string
+				type: string;
+				streetAddress: string;
+				locality: string;
+				region: string;
+				postalCode: string;
+				country: string;
 			}
 
 			interface ContactOrganization {
-				name: string
-				department: string
-				title: string
+				name: string;
+				department: string;
+				title: string;
 			}
 
 			declare interface Contact {
-				id: string
-				name: ContactName
-				phoneNumbers: ContactLabeledValue
-				emails: ContactLabeledValue
-				addresses: ContactAddress
+				id: string;
+				name: ContactName;
+				phoneNumbers: ContactLabeledValue;
+				emails: ContactLabeledValue;
+				addresses: ContactAddress;
 				/**
 				 * An array of objects containing instant messaging (IM) usernames for the contact.
 				 */
-				ims: ContactLabeledValue
-				organizations: ContactOrganization
-				note: string
-				urls: ContactLabeledValue
+				ims: ContactLabeledValue;
+				organizations: ContactOrganization;
+				note: string;
+				urls: ContactLabeledValue;
 			}
 
 			declare interface ContactServiceFailure {
-				code: "USER_DISMISSED" |
-					"USER_DENIED_PERMISSION" |
-					"USER_DISABLED_PERMISSION" |
-					"USER_RESTRICTED_PERMISSION" |
-					"SERVICE_NOT_ENABLED" |
-					"UNKNOWN_REASON"
-				message: string
+				code:
+					| "USER_DISMISSED"
+					| "USER_DENIED_PERMISSION"
+					| "USER_DISABLED_PERMISSION"
+					| "USER_RESTRICTED_PERMISSION"
+					| "SERVICE_NOT_ENABLED"
+					| "UNKNOWN_REASON";
+				message: string;
 			}
 
 			declare interface ContactsServiceOptions {
@@ -86,89 +83,98 @@ declare namespace lightning {
 				 * The default permission message is “To import Contacts, permission is needed to access Contacts.
 				 * Tap Allow in the following permissions dialog.”
 				 */
-				permissionRationaleText?: string
+				permissionRationaleText?: string;
+			}
+
+			declare interface ContactService {
+				isAvailable(): boolean;
+				getContacts(
+					options: lightning.mobileCapabilities.ContactServiceApi.ContactsServiceOptions
+				): Promise<lightning.mobileCapabilities.ContactServiceApi.Contact[]>;
+			}
+		}
+
+		declare namespace BarcodeScannerApi {
+			type BarcodeType = string;
+
+			/**
+			 * Scanned barcode
+			 */
+			declare interface Barcode {
+				type: BarcodeType;
+				value: string;
+			}
+
+			/**
+			 * Config for scanning session
+			 */
+			declare interface BarcodeScannerOptions {
+				/**
+				 * Types of accepted barcodes
+				 */
+				barcodeTypes: BarcodeType[];
+
+				/**
+				 * Optional text displayed in scanning interface
+				 */
+				instructionText?: string;
+
+				/**
+				 * Optional text displayed on scanning success
+				 */
+				successText?: string;
+			}
+
+			type BarcodeScannerFailureCode =
+				| "userDismissedScanner"
+				| "userDeniedPermission"
+				| "userDisabledPermissions"
+				| "unknownReason";
+
+			declare interface BarcodeScannerFailure {
+				code: BarcodeScannerFailureCode;
+				message: String;
+			}
+
+			declare interface BarcodeScanner {
+				readonly barcodeTypes: Record<
+					| "CODE_128"
+					| "CODE_39"
+					| "CODE_93"
+					| "DATA_MATRIX"
+					| "EAN_13"
+					| "ITF"
+					| "QR"
+					| "UPC_A"
+					| "UPC_E",
+					BarcodeType
+				>;
+
+				isAvailable(): boolean;
+
+				/**
+				 * Tries to scan barcode.
+				 * Rejected promise returns BarcodeScannerFailure
+				 *
+				 * @see {@link BarcodeScannerFailure}
+				 * @param config
+				 */
+				beginCapture(config: BarcodeScannerOptions): Promise<Barcode>;
+
+				resumeCapture(): Promise<Barcode>;
+
+				/**
+				 * End scanning session.
+				 * After ending session by calling this method, you can reuse BarcodeScanner instance by calling beginCapture again
+				 */
+				endCapture();
 			}
 		}
 	}
-
 }
 
 declare module "lightning/mobileCapabilities" {
-	type BarcodeType = string;
+	export function getBarcodeScanner(): lightning.mobileCapabilities.BarcodeScannerApi.BarcodeScanner;
 
-	/**
-	 * Scanned barcode
-	 */
-	interface Barcode {
-		type: BarcodeType;
-		value: string;
-	}
-
-	/**
-	 * Config for scanning session
-	 */
-	interface BarcodeScannerOptions {
-		/**
-		 * Types of accepted barcodes
-		 */
-		barcodeTypes: BarcodeType[];
-
-		/**
-		 * Optional text displayed in scanning interface
-		 */
-		instructionText?: string;
-
-		/**
-		 * Optional text displayed on scanning success
-		 */
-		successText?: string;
-	}
-
-	type BarcodeScannerFailureCode =
-		| "userDismissedScanner"
-		| "userDeniedPermission"
-		| "userDisabledPermissions"
-		| "unknownReason";
-
-	interface BarcodeScannerFailure {
-		code: BarcodeScannerFailureCode;
-		message: String;
-	}
-
-	/**
-	 *
-	 */
-	interface BarcodeScanner {
-		readonly barcodeTypes: Record<| "CODE_128"
-			| "CODE_39"
-			| "CODE_93"
-			| "DATA_MATRIX"
-			| "EAN_13"
-			| "ITF"
-			| "QR"
-			| "UPC_A"
-			| "UPC_E",
-			BarcodeType>;
-
-		isAvailable(): boolean;
-
-		/**
-		 * Tries to scan barcode.
-		 * Rejected promise returns BarcodeScannerFailure
-		 *
-		 * @see {@link BarcodeScannerFailure}
-		 * @param config
-		 */
-		beginCapture(config: BarcodeScannerOptions): Promise<Barcode>;
-
-		resumeCapture(): Promise<Barcode>;
-
-		/**
-		 * End scanning session.
-		 * After ending session by calling this method, you can reuse BarcodeScanner instance by calling beginCapture again
-		 */
-		endCapture();
-	}
-
-	export function getBarcodeScanner(): BarcodeScanner;
+	export function getContactsService(): lightning.mobileCapabilities.ContactServiceApi.ContactService;
 }
