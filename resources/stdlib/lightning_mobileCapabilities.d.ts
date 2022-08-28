@@ -170,6 +170,75 @@ declare namespace lightning {
 				endCapture();
 			}
 		}
+
+		declare namespace LocationServiceApi {
+			/**
+			 * https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_lightning_locationservice_data_types
+			 */
+			declare interface Coordinates {
+				latitude: number;
+				longitude: number;
+				accuracy?: number;
+				altitude?: number;
+				altitudeAccuracy?: number;
+				speed?: number;
+				speedAccuracy?: number;
+				heading?: number;
+				headingAccuracy?: number;
+			}
+
+			declare interface Location {
+				coords: Coordinates;
+				timestamp: number;
+			}
+
+			declare interface LocationServiceOptions {
+				/**
+				 * Whether to use high accuracy mode when determining location.
+				 * Set to true to prioritize location accuracy.
+				 * Set to false to prioritize battery life and response time.
+				 *
+				 * When enableHighAccuracy is set to false, accuracy is approximately to the nearest city block, or roughly 100 meters.
+				 * The impact of your component on battery use is minimal.
+				 * When enableHighAccuracy is set to true, accuracy is as high as the device’s positioning hardware can achieve and your app’s permissions allow.
+				 * If you’re making many requests, the impact of your component on battery use can be significant. Use high accuracy only when your feature needs it.
+				 */
+				enableHighAccuracy: boolean;
+			}
+
+			declare type LocationServiceFailureCode =
+				| "locationServiceDisabled"
+				| "userDisabledPermissions"
+				| "userDeniedPermission"
+				| "unavailableOnHardware"
+				| "nativeError";
+
+			declare interface LocationServiceFailure {
+				code: LocationServiceFailureCode;
+				message?: string;
+			}
+
+			declare interface LocationService {
+				isAvailable(): boolean;
+
+				getCurrentPosition(
+					options: lightning.mobileCapabilities.LocationServiceApi.LocationServiceOptions
+				): Promise<lightning.mobileCapabilities.LocationServiceApi.Location>;
+
+				/**
+				 * @return An integer identifier for the location subscription, which you can use to end the subscription when you want to stop receiving location updates.
+				 */
+				startWatchingPosition(
+					options: lightning.mobileCapabilities.LocationServiceApi.LocationServiceOptions,
+					callback: (
+						location: lightning.mobileCapabilities.LocationServiceApi.Location,
+						error: lightning.mobileCapabilities.LocationServiceApi.LocationServiceFailure
+					) => void
+				): number;
+
+				stopWatchingPosition(watchId: number): void;
+			}
+		}
 	}
 }
 
@@ -177,4 +246,6 @@ declare module "lightning/mobileCapabilities" {
 	export function getBarcodeScanner(): lightning.mobileCapabilities.BarcodeScannerApi.BarcodeScanner;
 
 	export function getContactsService(): lightning.mobileCapabilities.ContactServiceApi.ContactService;
+
+	export function getLocationService(): lightning.mobileCapabilities.LocationServiceApi.LocationService;
 }
