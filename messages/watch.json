@@ -1,0 +1,7 @@
+{
+	"description": "Dynamic LWC types generation",
+	"watching": "Watching for changes",
+	"regenerating": "Regenerating",
+	"initialGeneration": "Initial types generation",
+	"watcherInitialization": "Initializing files watcher"
+}
