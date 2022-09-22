@@ -71,13 +71,13 @@ interface AppTypePageReference extends PageReference {
  * A page that interacts with an external record.
  * Currently supports CMS Connect pages.
  */
-interface ExternalRecordPageType extends PageReference{
-	type: "comm__externalRecordPage"
+interface ExternalRecordPageType extends PageReference {
+	type: "comm__externalRecordPage";
 	attributes: {
-		recordId: string
-		objectType: "cms" // TODO add better explanation
-		objectInfo
-	}
+		recordId: string;
+		objectType: "cms"; // TODO add better explanation
+		objectInfo;
+	};
 }
 
 interface NavigationItemPageReference extends PageReference {
@@ -92,54 +92,55 @@ interface NavigationItemPageReference extends PageReference {
  * Currently only supports Quip Related List page.
  */
 interface ExternalRecordRelationshipPageType extends PageReference {
-	type: "comm__externalRecordRelationshipPage"
+	type: "comm__externalRecordRelationshipPage";
 	attributes: {
-		recordId: apex.Id
-		objectType: "quip" //TODO exmplanation why only this value
-	}
+		recordId: apex.Id;
+		objectType: "quip"; //TODO exmplanation why only this value
+	};
 }
 interface KnowledgeArticlePageType extends PageReference {
-	type: "standard__knowledgeArticlePage"
+	type: "standard__knowledgeArticlePage";
 	attributes: {
-		articleType:string
-		urlName:string
-	}
+		articleType: string;
+		urlName: string;
+	};
 }
 
 /**
  * A page for authentication into an Experience Builder site.
  */
 interface LoginPageType extends PageReference {
-	type: "comm__loginPage"
+	type: "comm__loginPage";
 	attributes: {
-		actionName: "login" | "logout"
-	}
+		actionName: "login" | "logout";
+	};
 }
 
 /**
  * A CMS content page in an Experience Builder site with a unique name.
  */
 interface ManagedContentPageType extends PageReference {
-	type: "standard__managedContentPage"
+	type: "standard__managedContentPage";
 	attributes: {
-		contentTypeName:string
-		contentKey:string
-	}
+		contentTypeName: string;
+		contentKey: string;
+	};
 }
 
 interface NamedPageInExperienceBuilderType extends PageReference {
-	type: "comm__namedPage"
+	type: "comm__namedPage";
 	attributes: {
-		name: "Home" |
-			"Account Management" |
-			"Contact Support" |
-			"Error" |
-			"Login" |
-			"My Account" |
-			"Top Articles" |
-			"Topic Catalog" |
-			"Custom Page"
-	}
+		name:
+			| "Home"
+			| "Account Management"
+			| "Contact Support"
+			| "Error"
+			| "Login"
+			| "My Account"
+			| "Top Articles"
+			| "Topic Catalog"
+			| "Custom Page";
+	};
 }
 
 /**
@@ -147,22 +148,18 @@ interface NamedPageInExperienceBuilderType extends PageReference {
  * If an error occurs, the error view loads and the URL isn’t updated.
  */
 interface StandardNamedPageType extends PageReference {
-	type: "standard__namedPage"
+	type: "standard__namedPage";
 	attributes: {
-		pageName: "home" |
-			"chatter" |
-			"today" |
-			"dataAssessment" |
-			"filePreview"
-	}
+		pageName: "home" | "chatter" | "today" | "dataAssessment" | "filePreview";
+	};
 	/**
 	 * Only applicable when pageName is filePreview.
 	 * See [offical docs](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.use_open_files)
 	 */
 	state?: {
-		recordIds:string
-		selectedRecordId:string
-	}
+		recordIds: string;
+		selectedRecordId: string;
+	};
 }
 
 //TODO Navigation Item Page Type
@@ -191,7 +188,7 @@ interface RecordPageTypePageReference extends PageReference {
 	type: "standard__recordPage";
 	attributes: {
 		recordId: apex.Id;
-		objectApiName?: schema.SObjectApiName
+		objectApiName?: schema.SObjectApiName;
 		actionName: "view" | "clone" | "edit";
 	};
 }
@@ -200,7 +197,7 @@ interface RecordRelationshipPageTypePageReference extends PageReference {
 	type: "standard__recordRelationshipPage";
 	attributes: {
 		actionName: "view";
-		objectApiName: schema.SObjectApiName
+		objectApiName: schema.SObjectApiName;
 		recordId: apex.Id;
 		relationshipApiName: string;
 	};
@@ -214,24 +211,24 @@ interface WebPageTypePageReference extends PageReference {
 }
 
 interface PageReferenceTypesMap {
-	comm__externalRecordPage:ExternalRecordPageType
-	comm__externalRecordRelationshipPage:ExternalRecordRelationshipPageType
-	comm__loginPage:LoginPageType
-	comm__namedPage:NamedPageInExperienceBuilderType
-	standard__app: AppTypePageReference
-	standard__knowledgeArticlePage:KnowledgeArticlePageType
-	standard__managedContentPage:ManagedContentPageType
-	standard__namedPage: StandardNamedPageType
-	standard__navItemPage:NavigationItemPageReference
-	standard__objectPage:ObjectPageTypePageReference
-	standard__recordPage:RecordPageTypePageReference
-	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
-	standard__webPage:WebPageTypePageReference
+	comm__externalRecordPage: ExternalRecordPageType;
+	comm__externalRecordRelationshipPage: ExternalRecordRelationshipPageType;
+	comm__loginPage: LoginPageType;
+	comm__namedPage: NamedPageInExperienceBuilderType;
+	standard__app: AppTypePageReference;
+	standard__knowledgeArticlePage: KnowledgeArticlePageType;
+	standard__managedContentPage: ManagedContentPageType;
+	standard__namedPage: StandardNamedPageType;
+	standard__navItemPage: NavigationItemPageReference;
+	standard__objectPage: ObjectPageTypePageReference;
+	standard__recordPage: RecordPageTypePageReference;
+	standard__recordRelationshipPage: RecordRelationshipPageTypePageReference;
+	standard__webPage: WebPageTypePageReference;
 }
 
 declare namespace lightning {
 	declare namespace navigation {
-		declare interface PageReferenceTypes extends PageReferenceTypesMap{}
+		declare interface PageReferenceTypes extends PageReferenceTypesMap {}
 	}
 }
 
@@ -244,7 +241,9 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
-	__navigate__<T extends keyof PageReferenceTypesMap>(aaa:PageReferenceTypesMap[T])
+	__navigate__<T extends keyof PageReferenceTypesMap>(
+		aaa: PageReferenceTypesMap[T]
+	);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
@@ -255,7 +254,9 @@ class NavigableComponent extends LwcComponentBase {
 	 *}).then((url) => console.log(url)
 	 * ```
 	 */
-	__generateUrl__<T extends  keyof PageReferenceTypesMap>(pageReference: PageReferenceTypesMap<T>): Promise<string>;
+	__generateUrl__<T extends keyof PageReferenceTypesMap>(
+		pageReference: PageReferenceTypesMap<T>
+	): Promise<string>;
 }
 
 declare module "lightning/navigation" {
