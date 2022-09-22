@@ -142,6 +142,21 @@ interface NamedPageInExperienceBuilderType extends PageReference {
 	}
 }
 
+/**
+ * A standard page with a unique name.
+ * If an error occurs, the error view loads and the URL isn’t updated.
+ */
+interface StandardNamedPageType extends PageReference {
+	type: "standard__namedPage"
+	attributes: {
+		pageName: "home" |
+			"chatter" |
+			"today" |
+			"dataAssessment" |
+			"filePreview"
+	}
+}
+
 //TODO Navigation Item Page Type
 
 interface ObjectPageTypePageReference extends PageReference {
@@ -199,6 +214,7 @@ interface PageReferenceTypesMap {
 	comm__loginPage:LoginPageType
 	standard__managedContentPage:ManagedContentPageType
 	comm__namedPage:NamedPageInExperienceBuilderType
+	standard__namedPage:StandardNamedPageType
 	standard__objectPage:ObjectPageTypePageReference
 	standard__recordPage:RecordPageTypePageReference
 	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
