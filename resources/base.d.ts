@@ -66,12 +66,99 @@ interface AppTypePageReference extends PageReference {
 		pageRef?: PageReference;
 	};
 }
-//TODO External Record Page Type
+
+/**
+ * A page that interacts with an external record.
+ * Currently supports CMS Connect pages.
+ */
+interface ExternalRecordPageType extends PageReference {
+	type: "comm__externalRecordPage";
+	attributes: {
+		recordId: string;
+		objectType: "cms"; // TODO add better explanation
+		objectInfo;
+	};
+}
 
 interface NavigationItemPageReference extends PageReference {
 	type: "standard__navItemPage";
 	attributes: {
 		apiName: Salesforce.TabApiName;
+	};
+}
+
+/**
+ * A page that interacts with an external relationship on a particular record in the org.
+ * Currently only supports Quip Related List page.
+ */
+interface ExternalRecordRelationshipPageType extends PageReference {
+	type: "comm__externalRecordRelationshipPage";
+	attributes: {
+		recordId: apex.Id;
+		objectType: "quip"; //TODO exmplanation why only this value
+	};
+}
+interface KnowledgeArticlePageType extends PageReference {
+	type: "standard__knowledgeArticlePage";
+	attributes: {
+		articleType: string;
+		urlName: string;
+	};
+}
+
+/**
+ * A page for authentication into an Experience Builder site.
+ */
+interface LoginPageType extends PageReference {
+	type: "comm__loginPage";
+	attributes: {
+		actionName: "login" | "logout";
+	};
+}
+
+/**
+ * A CMS content page in an Experience Builder site with a unique name.
+ */
+interface ManagedContentPageType extends PageReference {
+	type: "standard__managedContentPage";
+	attributes: {
+		contentTypeName: string;
+		contentKey: string;
+	};
+}
+
+interface NamedPageInExperienceBuilderType extends PageReference {
+	type: "comm__namedPage";
+	attributes: {
+		name:
+			| "Home"
+			| "Account Management"
+			| "Contact Support"
+			| "Error"
+			| "Login"
+			| "My Account"
+			| "Top Articles"
+			| "Topic Catalog"
+			| "Custom Page";
+	};
+}
+
+/**
+ * A standard page with a unique name.
+ * If an error occurs, the error view loads and the URL isn’t updated.
+ */
+interface StandardNamedPageType extends PageReference {
+	type: "standard__namedPage";
+	attributes: {
+		pageName: "home" | "chatter" | "today" | "dataAssessment" | "filePreview";
+	};
+	/**
+	 * Only applicable when pageName is filePreview.
+	 * See [offical docs](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.use_open_files)
+	 */
+	state?: {
+		recordIds: string;
+		selectedRecordId: string;
 	};
 }
 
@@ -101,7 +188,7 @@ interface RecordPageTypePageReference extends PageReference {
 	type: "standard__recordPage";
 	attributes: {
 		recordId: apex.Id;
-		objectApiName?: string; //TODO better typings
+		objectApiName?: schema.SObjectApiName;
 		actionName: "view" | "clone" | "edit";
 	};
 }
@@ -110,7 +197,7 @@ interface RecordRelationshipPageTypePageReference extends PageReference {
 	type: "standard__recordRelationshipPage";
 	attributes: {
 		actionName: "view";
-		objectApiName: string; //TODO better typings
+		objectApiName: schema.SObjectApiName;
 		recordId: apex.Id;
 		relationshipApiName: string;
 	};
@@ -122,6 +209,29 @@ interface WebPageTypePageReference extends PageReference {
 		url: string;
 	};
 }
+
+interface PageReferenceTypesMap {
+	comm__externalRecordPage: ExternalRecordPageType;
+	comm__externalRecordRelationshipPage: ExternalRecordRelationshipPageType;
+	comm__loginPage: LoginPageType;
+	comm__namedPage: NamedPageInExperienceBuilderType;
+	standard__app: AppTypePageReference;
+	standard__knowledgeArticlePage: KnowledgeArticlePageType;
+	standard__managedContentPage: ManagedContentPageType;
+	standard__namedPage: StandardNamedPageType;
+	standard__navItemPage: NavigationItemPageReference;
+	standard__objectPage: ObjectPageTypePageReference;
+	standard__recordPage: RecordPageTypePageReference;
+	standard__recordRelationshipPage: RecordRelationshipPageTypePageReference;
+	standard__webPage: WebPageTypePageReference;
+}
+
+declare namespace lightning {
+	declare namespace navigation {
+		declare interface PageReferenceTypes extends PageReferenceTypesMap {}
+	}
+}
+
 class NavigableComponent extends LwcComponentBase {
 	/**
 	 * Don't use directly.
@@ -131,52 +241,9 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
-	__navigate__(pageReference: AppTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: NavigationItemPageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: ObjectPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: RecordPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: RecordRelationshipPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: WebPageTypePageReference);
+	__navigate__<T extends keyof PageReferenceTypesMap>(
+		aaa: PageReferenceTypesMap[T]
+	);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
@@ -187,64 +254,9 @@ class NavigableComponent extends LwcComponentBase {
 	 *}).then((url) => console.log(url)
 	 * ```
 	 */
-	__generateUrl__(pageReference: AppTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: NavigationItemPageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: ObjectPageTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: RecordPageTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(
-		pageReference: RecordRelationshipPageTypePageReference
+	__generateUrl__<T extends keyof PageReferenceTypesMap>(
+		pageReference: PageReferenceTypesMap<T>
 	): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: WebPageTypePageReference): Promise<string>;
 }
 
 declare module "lightning/navigation" {
