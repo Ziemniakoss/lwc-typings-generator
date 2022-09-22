@@ -116,6 +116,32 @@ interface LoginPageType extends PageReference {
 	}
 }
 
+/**
+ * A CMS content page in an Experience Builder site with a unique name.
+ */
+interface ManagedContentPageType extends PageReference {
+	type: "standard__managedContentPage"
+	attributes: {
+		contentTypeName:string
+		contentKey:string
+	}
+}
+
+interface NamedPageInExperienceBuilderType extends PageReference {
+	type: "comm__namedPage"
+	attributes: {
+		name: "Home" |
+			"Account Management" |
+			"Contact Support" |
+			"Error" |
+			"Login" |
+			"My Account" |
+			"Top Articles" |
+			"Topic Catalog" |
+			"Custom Page"
+	}
+}
+
 //TODO Navigation Item Page Type
 
 interface ObjectPageTypePageReference extends PageReference {
@@ -171,6 +197,8 @@ interface PageReferenceTypesMap {
 	comm__externalRecordRelationshipPage:ExternalRecordRelationshipPageType
 	standard__knowledgeArticlePage:KnowledgeArticlePageType
 	comm__loginPage:LoginPageType
+	standard__managedContentPage:ManagedContentPageType
+	comm__namedPage:NamedPageInExperienceBuilderType
 	standard__objectPage:ObjectPageTypePageReference
 	standard__recordPage:RecordPageTypePageReference
 	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
