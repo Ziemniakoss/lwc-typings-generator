@@ -146,8 +146,19 @@ interface WebPageTypePageReference extends PageReference {
 		url: string;
 	};
 }
+
+interface PageReferenceTypesMap {
+	standard__app: AppTypePageReference
+	comm__externalRecordPage:ExternalRecordPageType
+	standard__navItemPage:NavigationItemPageReference
+	comm__externalRecordRelationshipPage:ExternalRecordRelationshipPageType
+	standard__objectPage:ObjectPageTypePageReference
+	standard__recordPage:RecordPageTypePageReference
+	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
+	standard__webPage:WebPageTypePageReference
+}
+
 class NavigableComponent extends LwcComponentBase {
-	//TODO maybe simplify this with map?
 	/**
 	 * Don't use directly.
 	 * Use only for reference
@@ -156,70 +167,7 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
-	__navigate__(pageReference: AppTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: ExternalRecordPageType);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: NavigationItemPageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: ExternalRecordRelationshipPageType);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: ObjectPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: RecordPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: RecordRelationshipPageTypePageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference
-	 * ```js
-	 *	this[NavigationMixin.GenerateUrl](pageReference)
-	 *		.then(url => this.url = url);
-	 * ```
-	 */
-	__navigate__(pageReference: WebPageTypePageReference);
+	__navigate__<T extends keyof PageReferenceTypesMap>(aaa:PageReferenceTypesMap[T])
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
@@ -230,86 +178,7 @@ class NavigableComponent extends LwcComponentBase {
 	 *}).then((url) => console.log(url)
 	 * ```
 	 */
-	__generateUrl__(pageReference: AppTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: ExternalRecordPageType);
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: NavigationItemPageReference);
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: ExternalRecordRelationshipPageType);
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: ObjectPageTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: RecordPageTypePageReference): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(
-		pageReference: RecordRelationshipPageTypePageReference
-	): Promise<string>;
-	/**
-	 * Don't use directly.
-	 * Use only for reference.
-	 * ```js
-	 *this[NavigationMixin.GenerateUrl]({
-	 *    type: 'standard__recordPage',
-	 *    attributes
-	 *}).then((url) => console.log(url)
-	 * ```
-	 */
-	__generateUrl__(pageReference: WebPageTypePageReference): Promise<string>;
+	__generateUrl__<T extends  keyof PageReferenceTypesMap>(pageReference: PageReferenceTypesMap<T>): Promise<string>;
 }
 
 declare module "lightning/navigation" {
