@@ -155,6 +155,14 @@ interface StandardNamedPageType extends PageReference {
 			"dataAssessment" |
 			"filePreview"
 	}
+	/**
+	 * Only applicable when pageName is filePreview.
+	 * See [offical docs](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.use_open_files)
+	 */
+	state?: {
+		recordIds:string
+		selectedRecordId:string
+	}
 }
 
 //TODO Navigation Item Page Type
@@ -206,19 +214,25 @@ interface WebPageTypePageReference extends PageReference {
 }
 
 interface PageReferenceTypesMap {
-	standard__app: AppTypePageReference
 	comm__externalRecordPage:ExternalRecordPageType
-	standard__navItemPage:NavigationItemPageReference
 	comm__externalRecordRelationshipPage:ExternalRecordRelationshipPageType
-	standard__knowledgeArticlePage:KnowledgeArticlePageType
 	comm__loginPage:LoginPageType
-	standard__managedContentPage:ManagedContentPageType
 	comm__namedPage:NamedPageInExperienceBuilderType
-	standard__namedPage:StandardNamedPageType
+	standard__app: AppTypePageReference
+	standard__knowledgeArticlePage:KnowledgeArticlePageType
+	standard__managedContentPage:ManagedContentPageType
+	standard__namedPage: StandardNamedPageType
+	standard__navItemPage:NavigationItemPageReference
 	standard__objectPage:ObjectPageTypePageReference
 	standard__recordPage:RecordPageTypePageReference
 	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
 	standard__webPage:WebPageTypePageReference
+}
+
+declare namespace lightning {
+	declare namespace navigation {
+		declare interface PageReferenceTypes extends PageReferenceTypesMap{}
+	}
 }
 
 class NavigableComponent extends LwcComponentBase {
