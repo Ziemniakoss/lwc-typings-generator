@@ -183,7 +183,7 @@ interface RecordPageTypePageReference extends PageReference {
 	type: "standard__recordPage";
 	attributes: {
 		recordId: apex.Id;
-		objectApiName?: string; //TODO better typings
+		objectApiName?: schema.SObjectApiName
 		actionName: "view" | "clone" | "edit";
 	};
 }
@@ -192,7 +192,7 @@ interface RecordRelationshipPageTypePageReference extends PageReference {
 	type: "standard__recordRelationshipPage";
 	attributes: {
 		actionName: "view";
-		objectApiName: string; //TODO better typings
+		objectApiName: schema.SObjectApiName
 		recordId: apex.Id;
 		relationshipApiName: string;
 	};
