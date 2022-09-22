@@ -66,13 +66,37 @@ interface AppTypePageReference extends PageReference {
 		pageRef?: PageReference;
 	};
 }
-//TODO External Record Page Type
+
+/**
+ * A page that interacts with an external record.
+ * Currently supports CMS Connect pages.
+ */
+interface ExternalRecordPageType extends PageReference{
+	type: "comm__externalRecordPage"
+	attributes: {
+		recordId: string
+		objectType: "cms" // TODO add better explanation
+		objectInfo
+	}
+}
 
 interface NavigationItemPageReference extends PageReference {
 	type: "standard__navItemPage";
 	attributes: {
 		apiName: Salesforce.TabApiName;
 	};
+}
+
+/**
+ * A page that interacts with an external relationship on a particular record in the org.
+ * Currently only supports Quip Related List page.
+ */
+interface ExternalRecordRelationshipPageType extends PageReference {
+	type: "comm__externalRecordRelationshipPage"
+	attributes: {
+		recordId: apex.Id
+		objectType: "quip" //TODO exmplanation why only this value
+	}
 }
 
 //TODO Navigation Item Page Type
@@ -123,6 +147,7 @@ interface WebPageTypePageReference extends PageReference {
 	};
 }
 class NavigableComponent extends LwcComponentBase {
+	//TODO maybe simplify this with map?
 	/**
 	 * Don't use directly.
 	 * Use only for reference
@@ -140,7 +165,25 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
+	__navigate__(pageReference: ExternalRecordPageType);
+	/**
+	 * Don't use directly.
+	 * Use only for reference
+	 * ```js
+	 *	this[NavigationMixin.GenerateUrl](pageReference)
+	 *		.then(url => this.url = url);
+	 * ```
+	 */
 	__navigate__(pageReference: NavigationItemPageReference);
+	/**
+	 * Don't use directly.
+	 * Use only for reference
+	 * ```js
+	 *	this[NavigationMixin.GenerateUrl](pageReference)
+	 *		.then(url => this.url = url);
+	 * ```
+	 */
+	__navigate__(pageReference: ExternalRecordRelationshipPageType);
 	/**
 	 * Don't use directly.
 	 * Use only for reference
@@ -198,7 +241,29 @@ class NavigableComponent extends LwcComponentBase {
 	 *}).then((url) => console.log(url)
 	 * ```
 	 */
+	__generateUrl__(pageReference: ExternalRecordPageType);
+	/**
+	 * Don't use directly.
+	 * Use only for reference.
+	 * ```js
+	 *this[NavigationMixin.GenerateUrl]({
+	 *    type: 'standard__recordPage',
+	 *    attributes
+	 *}).then((url) => console.log(url)
+	 * ```
+	 */
 	__generateUrl__(pageReference: NavigationItemPageReference);
+	/**
+	 * Don't use directly.
+	 * Use only for reference.
+	 * ```js
+	 *this[NavigationMixin.GenerateUrl]({
+	 *    type: 'standard__recordPage',
+	 *    attributes
+	 *}).then((url) => console.log(url)
+	 * ```
+	 */
+	__generateUrl__(pageReference: ExternalRecordRelationshipPageType);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
