@@ -98,6 +98,23 @@ interface ExternalRecordRelationshipPageType extends PageReference {
 		objectType: "quip" //TODO exmplanation why only this value
 	}
 }
+interface KnowledgeArticlePageType extends PageReference {
+	type: "standard__knowledgeArticlePage"
+	attributes: {
+		articleType:string
+		urlName:string
+	}
+}
+
+/**
+ * A page for authentication into an Experience Builder site.
+ */
+interface LoginPageType extends PageReference {
+	type: "comm__loginPage"
+	attributes: {
+		actionName: "login" | "logout"
+	}
+}
 
 //TODO Navigation Item Page Type
 
@@ -152,6 +169,8 @@ interface PageReferenceTypesMap {
 	comm__externalRecordPage:ExternalRecordPageType
 	standard__navItemPage:NavigationItemPageReference
 	comm__externalRecordRelationshipPage:ExternalRecordRelationshipPageType
+	standard__knowledgeArticlePage:KnowledgeArticlePageType
+	comm__loginPage:LoginPageType
 	standard__objectPage:ObjectPageTypePageReference
 	standard__recordPage:RecordPageTypePageReference
 	standard__recordRelationshipPage:RecordRelationshipPageTypePageReference
