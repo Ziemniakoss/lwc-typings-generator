@@ -255,7 +255,7 @@ class NavigableComponent extends LwcComponentBase {
 	 * ```
 	 */
 	__generateUrl__<T extends keyof PageReferenceTypesMap>(
-		pageReference: PageReferenceTypesMap<T>
+		pageReference: PageReferenceTypesMap[T]
 	): Promise<string>;
 }
 
