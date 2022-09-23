@@ -11,9 +11,13 @@ interface Template {
 		query: Query
 	): LwcElementTadNameMap[Query] | null;
 
+	querySelector(query: string): any | null;
+
 	querySelectorAll<Query extends keyof LwcElementTadNameMap>(
 		query: Query
 	): LwcElementTadNameMap[Query][];
+
+	querySelectorAll(query: string): any[];
 }
 
 class LwcComponentBase {
