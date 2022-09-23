@@ -13,7 +13,9 @@ declare module "lightning/pageReferenceUtils" {
 	 * ```
 	 * @return encoded default values
 	 */
-	export function encodeDefaultFieldValues(defaultValues:Record<string, any>):string
+	export function encodeDefaultFieldValues(
+		defaultValues: Record<string, any>
+	): string;
 
 	/**
 	 * Decodes values from encoded string and returns map of values.
@@ -25,6 +27,5 @@ declare module "lightning/pageReferenceUtils" {
 	 * ``
 	 * @param encodedValues
 	 */
-	export function decodeDefaultFieldValues(encodedValues:string):any
-
+	export function decodeDefaultFieldValues(encodedValues: string): any;
 }
