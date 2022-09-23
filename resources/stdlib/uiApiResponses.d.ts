@@ -150,4 +150,41 @@ declare namespace uiApiResponses {
 		url: string;
 		values: PicklistValue<Values>[];
 	}
+
+	declare interface Record<T extends schema.SObjectApiName> {
+		apiName: T;
+		childRelationships: R<string, uiApiResponses.RecordCollection>;
+		eTag: string;
+		weakEtag;
+		fields: R<keyof schema.SObjectMap[T], FieldValue>;
+		id: apex.Id;
+		lastModifiedById: apex.Id;
+		/**
+		 * The date and time when a user last modified this record.
+		 * Date and time information is in ISO 8601 format.
+		 */
+		lastModifiedDate: string;
+		recordTypeId: apex.Id;
+		recordTypeInfo: RecordTypeInfo;
+		systemModstamp: string;
+	}
+
+	/**
+	 * [docs](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_field_value.htm#ui_api_responses_field_value)
+	 */
+	declare interface FieldValue {
+		displayValue: string;
+		value;
+	}
+
+	declare interface RecordCollection {
+		count: number;
+		currentPageToken: string;
+		currentPageUrl: string;
+		nextPageToken: string;
+		nextPageUrl: string;
+		previousPageUrl: string;
+		records: uiApiResponses.Record<any>; //TODO what?
+	}
 }
+type R<Key, Value> = Record<Key, Value>;
