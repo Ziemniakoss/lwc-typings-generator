@@ -8,6 +8,7 @@ interface CompilerOptions {
 	experimentalDecorators: boolean;
 	baseUrl: string;
 	paths: Record<string, string[]>;
+	checkJs: boolean;
 }
 interface JsConfig {
 	compilerOptions: CompilerOptions;
@@ -57,6 +58,7 @@ export default class JsConfigGenerator {
 			compilerOptions: {
 				experimentalDecorators: true,
 				baseUrl: ".",
+				checkJs: true,
 				paths: {},
 			},
 			include: [
