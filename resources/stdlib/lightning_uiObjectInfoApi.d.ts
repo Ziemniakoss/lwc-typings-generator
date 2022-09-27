@@ -1,9 +1,9 @@
 declare module "lightning/uiObjectInfoApi" {
 	import { uiApiResponses } from "./uiApiResponses";
 
-	export function getObjectInfo<SObject>(): Promise<
-		uiApiResponses.ObjectInfo<SObject>
-	>;
+	export function getObjectInfo<T extends schema.SObjectApiName>(config: {
+		objectApiName: T | schema.ObjectIdFromSchema<T>;
+	}): Promise<uiObjectInfoApiResponses.ObjectInfo<schema.SObjectsMap[T]>>;
 
 	export function getObjectInfos(): Promise<uiApiResponses.ObjectInfo<any>[]>; //TODO better typings
 
