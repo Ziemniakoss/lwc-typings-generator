@@ -19,7 +19,16 @@ declare module "lightning/uiRecordApi" {
 
 	export async function deleteRecord(recordId: apex.Id);
 
-	//TODO generateRecordInputForCreate
+	export async function generateRecordInputForCreate<Obj>(
+		/**
+		 *  Record object that contains source data.
+		 *  To get data to build the Record object, use the getRecordCreateDefaults or getRecord.
+		 */
+		record: uiApiResponses.Record<Obj>,
+		objectInfo: uiObjectInfoApiResponses.ObjectInfo<
+			schema.SObjectsMap[Obj]
+		> = null
+	): uiApiRequests.RecordInput<Obj>;
 
 	//TODO generateRecordInputForUpdate
 
@@ -74,7 +83,7 @@ declare module "lightning/uiRecordApi" {
 	 */
 	export async function getRecords(
 		config: GetRecordsConfig
-	): Promise<uiApiResponses.BatchResults>
+	): Promise<uiApiResponses.BatchResults>;
 
 	//TODO getRecordCreateDefaults
 
