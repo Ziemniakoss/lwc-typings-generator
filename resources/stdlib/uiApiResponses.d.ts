@@ -1,3 +1,6 @@
+/**
+ * [Docs for namesapce](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_top_level.htm)
+ */
 declare namespace uiApiResponses {
 	/**
 	 * https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_child_relationship.htm#ui_api_responses_child_relationship
@@ -150,4 +153,184 @@ declare namespace uiApiResponses {
 		url: string;
 		values: PicklistValue<Values>[];
 	}
+
+	declare interface Record<T extends schema.SObjectApiName> {
+		apiName: T;
+		childRelationships: R<string, uiApiResponses.RecordCollection>;
+		eTag: string;
+		weakEtag;
+		fields: R<keyof schema.SObjectMap[T], FieldValue>;
+		id: apex.Id;
+		lastModifiedById: apex.Id;
+		/**
+		 * The date and time when a user last modified this record.
+		 * Date and time information is in ISO 8601 format.
+		 */
+		lastModifiedDate: string;
+		recordTypeId: apex.Id;
+		recordTypeInfo: RecordTypeInfo;
+		systemModstamp: string;
+	}
+
+	/**
+	 * [docs](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_field_value.htm#ui_api_responses_field_value)
+	 */
+	declare interface FieldValue {
+		displayValue: string;
+		value;
+	}
+
+	declare interface RecordCollection {
+		count: number;
+		currentPageToken: string;
+		currentPageUrl: string;
+		nextPageToken: string;
+		nextPageUrl: string;
+		previousPageUrl: string;
+		records: uiApiResponses.Record<any>; //TODO what?
+	}
+
+	declare interface RelatedListColumn {
+		fieldApiName: string;
+		label: string;
+		lookupId: string;
+		sortable: boolean;
+	}
+
+	declare interface ListFilterByInfo {
+		fieldApiName: string;
+		label: string;
+		operandLabels: string[];
+		operator:
+			| "Contains"
+			| "Equals"
+			| "Excludes"
+			| "GreaterOrEqual"
+			| "GreaterThan"
+			| "Includes"
+			| "LessOrEqual"
+			| "LessThan"
+			| "NotContain"
+			| "NotEqual"
+			| "StartsWith"
+			| "Within";
+	}
+
+	declare interface ListOrderByInfo {
+		fieldApiName: string;
+		isAscending: boolean;
+		label: string;
+	}
+
+	declare interface ListUserPreference {
+		columnWidths: R<string, number>;
+		columnWrap: R<string, number>;
+	}
+
+	declare interface RelatedListInfo {
+		cloneable: boolean;
+		creatable: boolean;
+		deletable: boolean;
+		displayColumns: uiApiResponses.RelatedListColumn[];
+		fieldApiName: string;
+		filterLogicString: string;
+		filteredByInfo: uiApiResponses.ListFilterByInfo[];
+		label: string;
+		listReference: uiApiResponses.ListReference;
+		objectApiNames: schema.SObjectApiName[];
+		orderedByInfo: uiApiResponses.ListOrderByInfo[];
+		updatable: boolean;
+		userPreferences: uiApiResponses.ListUserPreference;
+		visibility: string;
+		visibilityEditable: boolean;
+	}
+
+	declare interface ListReference {
+		id: apex.Id;
+		listViewApiName: string;
+		objectApiName: schema.SObjectApiName;
+		type: string;
+	}
+
+	declare interface RelatedListRecordCount {
+		count: number;
+		hasMore: boolean;
+		listReference: uiApiResponses.ListReference;
+	}
+
+	declare interface ErrorMessage {
+		errorCode: string;
+		message: string;
+	}
+
+	declare interface BatchResultItem {
+		/**
+		 * Http status code
+		 */
+		statusCode: number;
+		result:
+			| uiApiResponses.Record<any>
+			| uiApiResponses.ErrorMessage
+			| uiApiResponses.RelatedListInfo
+			| uiApiResponses.RelatedListRecordCount;
+	}
+
+	/**
+	 * [full docs](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_batch_results.htm#ui_api_responses_batch_results)
+	 */
+	declare interface BatchResults {
+		hasErrors: boolean;
+		results: BatchResultItem[];
+	}
+
+	declare interface RecordLayoutSaveOption {
+		defaultValue: boolean;
+		isDisplayed: boolean;
+		label: string;
+		name: string;
+		restHeaderName: string;
+		soapHeaderName: string;
+	}
+
+	declare interface RecordLayoutItem {
+		editableForNem: boolean;
+		editableForUpdate: boolean;
+		label: string;
+		layoutComponents; //TODO https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_record_layout_item.htm#ui_api_responses_record_layout_item
+		lookupIdApiName: string;
+		required: boolean;
+		sortable: boolean;
+	}
+
+	declare interface RecordLayoutRow {
+		layoutItems: RecordLayoutItem[];
+	}
+
+	declare interface RecordLayoutSection {
+		collapsible: boolean;
+		columns: number;
+		heading: string;
+		id: string;
+		layoutRows: RecordLayoutRow[];
+		rows: number;
+		useHeading: boolean;
+	}
+
+	declare interface RecordLayout<Obj extends schema.SObjectApiName> {
+		id: apex.Id;
+		layoutType: "Compact" | "Full";
+		mode: "Create" | "Edit" | "View";
+		objectApiName: Obj;
+		recordTypeId: apex.Id;
+		saveOptions: RecordLayoutSaveOption[];
+		sections: RecordLayoutSection[];
+	}
+
+	declare interface RecordDefaults<Obj extends schema.SObjectApiName> {
+		layout: RecordLayout<Obj>;
+		objectInfo: uiObjectInfoApiResponses.ObjectInfo<schema.SObjectsMap[Obj]>;
+		objectInfos: uiObjectInfoApiResponses.ObjectInfo<any>[];
+		record: Record<Obj>;
+	}
 }
+type R<Key, Value> = Record<Key, Value>;
