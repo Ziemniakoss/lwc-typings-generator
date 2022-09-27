@@ -101,7 +101,14 @@ declare module "lightning/uiRecordApi" {
 		config: GetRecordsConfig
 	): Promise<uiApiResponses.BatchResults>;
 
-	//TODO getRecordCreateDefaults
+	export async function getRecordCreateDefaults<
+		Obj extends schema.SObjectApiName
+	>(config: {
+		objectApiName: Obj;
+		formFactor?: "Large" | "Medium" | "Small";
+		recordTypeId?: apex.Id;
+		optionalFields?; //TODO
+	}): Promise<uiApiResponses.RecordDefaults<Obj>>;
 
 	/**
 	 * Notify LDS that you changed record outside of LDS fuctionality.

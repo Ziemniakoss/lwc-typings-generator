@@ -282,5 +282,55 @@ declare namespace uiApiResponses {
 		hasErrors: boolean;
 		results: BatchResultItem[];
 	}
+
+	declare interface RecordLayoutSaveOption {
+		defaultValue: boolean;
+		isDisplayed: boolean;
+		label: string;
+		name: string;
+		restHeaderName: string;
+		soapHeaderName: string;
+	}
+
+	declare interface RecordLayoutItem {
+		editableForNem: boolean;
+		editableForUpdate: boolean;
+		label: string;
+		layoutComponents; //TODO https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_record_layout_item.htm#ui_api_responses_record_layout_item
+		lookupIdApiName: string;
+		required: boolean;
+		sortable: boolean;
+	}
+
+	declare interface RecordLayoutRow {
+		layoutItems: RecordLayoutItem[];
+	}
+
+	declare interface RecordLayoutSection {
+		collapsible: boolean;
+		columns: number;
+		heading: string;
+		id: string;
+		layoutRows: RecordLayoutRow[];
+		rows: number;
+		useHeading: boolean;
+	}
+
+	declare interface RecordLayout<Obj extends schema.SObjectApiName> {
+		id: apex.Id;
+		layoutType: "Compact" | "Full";
+		mode: "Create" | "Edit" | "View";
+		objectApiName: Obj;
+		recordTypeId: apex.Id;
+		saveOptions: RecordLayoutSaveOption[];
+		sections: RecordLayoutSection[];
+	}
+
+	declare interface RecordDefaults<Obj extends schema.SObjectApiName> {
+		layout: RecordLayout<Obj>;
+		objectInfo: uiObjectInfoApiResponses.ObjectInfo<schema.SObjectsMap[Obj]>;
+		objectInfos: uiObjectInfoApiResponses.ObjectInfo<any>[];
+		record: Record<Obj>;
+	}
 }
 type R<Key, Value> = Record<Key, Value>;
