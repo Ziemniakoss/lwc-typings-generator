@@ -19,18 +19,34 @@ declare module "lightning/uiRecordApi" {
 
 	export async function deleteRecord(recordId: apex.Id);
 
+	/**
+	 * @param record  A Record object that contains source data.
+	 * To get data to build the Record object, use the getRecordCreateDefaults or getRecord.
+	 *
+	 * @param objectInfo (Optional) The ObjectInfo corresponding to the apiName on the record.
+	 * If provided, only fields that are createable=true (excluding Id) are included in the response.
+	 */
 	export async function generateRecordInputForCreate<Obj>(
-		/**
-		 *  Record object that contains source data.
-		 *  To get data to build the Record object, use the getRecordCreateDefaults or getRecord.
-		 */
 		record: uiApiResponses.Record<Obj>,
 		objectInfo: uiObjectInfoApiResponses.ObjectInfo<
 			schema.SObjectsMap[Obj]
 		> = null
 	): uiApiRequests.RecordInput<Obj>;
 
-	//TODO generateRecordInputForUpdate
+	/**
+	 * @param record A Record object that contains source data.
+	 * To get data to build the Record object, use the getRecord wire adapters.
+	 *
+	 * @param objectInfo The ObjectInfo corresponding to the apiName on the record.
+	 * To get the object info, use the getObjectInfo wire adapter.
+	 * If provided, only fields that are updateable=true (excluding Id) are included in the response.
+	 */
+	export async function generateRecordInputForUpdate<Obj>(
+		record: uiApiResponses.Record<Obj>,
+		objectInfo: uiObjectInfoApiResponses.ObjectInfo<
+			schema.SObjectsMap[Obj]
+		> = null
+	): uiApiRequests.RecordInput<Obj>;
 
 	export function getFieldValue<
 		O extends schema.SObjectApiName,
