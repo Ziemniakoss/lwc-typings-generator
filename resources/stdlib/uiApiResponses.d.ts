@@ -1,3 +1,6 @@
+/**
+ * [Docs for namesapce](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_top_level.htm)
+ */
 declare namespace uiApiResponses {
 	/**
 	 * https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_child_relationship.htm#ui_api_responses_child_relationship
@@ -185,6 +188,99 @@ declare namespace uiApiResponses {
 		nextPageUrl: string;
 		previousPageUrl: string;
 		records: uiApiResponses.Record<any>; //TODO what?
+	}
+
+	declare interface RelatedListColumn {
+		fieldApiName: string;
+		label: string;
+		lookupId: string;
+		sortable: boolean;
+	}
+
+	declare interface ListFilterByInfo {
+		fieldApiName: string;
+		label: string;
+		operandLabels: string[];
+		operator:
+			| "Contains"
+			| "Equals"
+			| "Excludes"
+			| "GreaterOrEqual"
+			| "GreaterThan"
+			| "Includes"
+			| "LessOrEqual"
+			| "LessThan"
+			| "NotContain"
+			| "NotEqual"
+			| "StartsWith"
+			| "Within";
+	}
+
+	declare interface ListOrderByInfo {
+		fieldApiName: string;
+		isAscending: boolean;
+		label: string;
+	}
+
+	declare interface ListUserPreference {
+		columnWidths: R<string, number>;
+		columnWrap: R<string, number>;
+	}
+
+	declare interface RelatedListInfo {
+		cloneable: boolean;
+		creatable: boolean;
+		deletable: boolean;
+		displayColumns: uiApiResponses.RelatedListColumn[];
+		fieldApiName: string;
+		filterLogicString: string;
+		filteredByInfo: uiApiResponses.ListFilterByInfo[];
+		label: string;
+		listReference: uiApiResponses.ListReference;
+		objectApiNames: schema.SObjectApiName[];
+		orderedByInfo: uiApiResponses.ListOrderByInfo[];
+		updatable: boolean;
+		userPreferences: uiApiResponses.ListUserPreference;
+		visibility: string;
+		visibilityEditable: boolean;
+	}
+
+	declare interface ListReference {
+		id: apex.Id;
+		listViewApiName: string;
+		objectApiName: schema.SObjectApiName;
+		type: string;
+	}
+
+	declare interface RelatedListRecordCount {
+		count: number;
+		hasMore: boolean;
+		listReference: uiApiResponses.ListReference;
+	}
+
+	declare interface ErrorMessage {
+		errorCode: string;
+		message: string;
+	}
+
+	declare interface BatchResultItem {
+		/**
+		 * Http status code
+		 */
+		statusCode: number;
+		result:
+			| uiApiResponses.Record<any>
+			| uiApiResponses.ErrorMessage
+			| uiApiResponses.RelatedListInfo
+			| uiApiResponses.RelatedListRecordCount;
+	}
+
+	/**
+	 * [full docs](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_batch_results.htm#ui_api_responses_batch_results)
+	 */
+	declare interface BatchResults {
+		hasErrors: boolean;
+		results: BatchResultItem[];
 	}
 }
 type R<Key, Value> = Record<Key, Value>;

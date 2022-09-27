@@ -56,7 +56,25 @@ declare module "lightning/uiRecordApi" {
 		modes?: "Create" | "Edit" | "View";
 	}): Promise<uiApiResponses.Record<Obj>>;
 
-	//TODO getRecords
+	interface GetRecordsSingleConfig<Obj> {
+		/**
+		 * Ids of records with same SObject type
+		 */
+		recordIds: string[];
+		fields: schema.FieldIdFromSchema<Obj, any>[];
+		optionalFields?: schema.FieldIdFromSchema<Obje, any>[];
+	}
+
+	interface GetRecordsConfig {
+		records: GetRecordsSingleConfig<schema.SObjectApiName>[];
+	}
+
+	/**
+	 * [Full docs](https://developer.salesforce.com/docs/component-library/documentation/en/lwc/reference_wire_adapters_records)
+	 */
+	export async function getRecords(
+		config: GetRecordsConfig
+	): Promise<uiApiResponses.BatchResults>
 
 	//TODO getRecordCreateDefaults
 
