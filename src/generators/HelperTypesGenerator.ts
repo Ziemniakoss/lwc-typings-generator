@@ -6,13 +6,19 @@ import ITypingGenerator from "./ITypingGenerator";
 import IHelperTypesGenerator from "./helperTypesGenerators/IHelperTypesGenerator";
 import TabsHelperTypesGenerator from "./helperTypesGenerators/TabsHelperTypesGenerator";
 import { existsSync, promises } from "fs";
+import SObjectHelperTypesGenerator from "./helperTypesGenerators/SObjectHelperTypesGenerator";
+import MessageChannelsPayloadsHelperTypesGenerator from "./helperTypesGenerators/MessageChannelsPayloadsHelperTypesGenerator";
 
 export class HelperTypesGenerator implements ITypingGenerator {
 	private helperTypesGenerators: IHelperTypesGenerator[];
 
 	constructor(helperTypesGenerators?: IHelperTypesGenerator[]) {
 		if (helperTypesGenerators == null) {
-			this.helperTypesGenerators = [new TabsHelperTypesGenerator()];
+			this.helperTypesGenerators = [
+				new TabsHelperTypesGenerator(),
+				new SObjectHelperTypesGenerator(),
+				new MessageChannelsPayloadsHelperTypesGenerator(),
+			];
 		} else {
 			this.helperTypesGenerators = helperTypesGenerators;
 		}
