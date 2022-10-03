@@ -120,7 +120,7 @@ declare module "@salesforce/messageChannel/${channelFullName}" {
 		connection: Connection
 	): Promise<any> {
 		const typingsDir = await this.getFolder(project);
-		const { filesForMetadata, fullNamesWithoutLocalFiles } =
+		let { filesForMetadata, fullNamesWithoutLocalFiles } =
 			await getMetadataStorageSummary(
 				project,
 				connection,
@@ -130,13 +130,11 @@ declare module "@salesforce/messageChannel/${channelFullName}" {
 			);
 
 		const promises = [];
-		if (filesForMetadata.length > 0) {
-			promises.push(
-				...filesForMetadata.map((file) =>
-					this.generateForFile(project, connection, file, typingsDir)
-				)
-			);
-		}
+		promises.push(
+			...Object.values(filesForMetadata).map((file) =>
+				this.generateForFile(project, connection, file, typingsDir)
+			)
+		);
 		if (fullNamesWithoutLocalFiles.length > 0) {
 			promises.push(
 				this.generateForMetadata(

@@ -55,7 +55,7 @@ export class HelperTypesGenerator implements ITypingGenerator {
 		}
 		const rootTypingsDir = await this.getHelperTypesFolder(project);
 		const promises = this.helperTypesGenerators.map((generator) =>
-			generator.generateForProject(rootTypingsDir, connection)
+			generator.generateForProject(project, rootTypingsDir, connection)
 		); //TODO maybe allow deletion?
 		return Promise.all(promises);
 	}

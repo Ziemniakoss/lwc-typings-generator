@@ -4,11 +4,13 @@ import { METADATA_TYPES } from "../../utils/constants";
 import { wrapInArray } from "../../utils/collectionUtils";
 import { join } from "path";
 import { promises } from "fs";
+import { SfdxProject } from "@salesforce/core";
 
 export default class ApplicationsHelperTypesGenerator
 	implements IHelperTypesGenerator
 {
 	async generateForProject(
+		project: SfdxProject,
 		helperTypesRoot: string,
 		connection: Connection
 	): Promise<any> {

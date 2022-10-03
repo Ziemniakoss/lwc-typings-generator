@@ -1,4 +1,5 @@
 import { Connection } from "jsforce";
+import { SfdxProject } from "@salesforce/core";
 
 /**
  * Base for helper typings generators.
@@ -12,6 +13,7 @@ export default interface IHelperTypesGenerator {
 	 * @param connection connection used to fetch non-existent metadata types
 	 */
 	generateForProject(
+		project: SfdxProject,
 		helperTypesRoot: string,
 		connection: Connection
 	): Promise<any>;

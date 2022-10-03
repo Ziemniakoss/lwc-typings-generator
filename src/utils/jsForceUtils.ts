@@ -2,11 +2,13 @@ import { SfdxProject } from "@salesforce/core";
 import { Connection, FileProperties } from "jsforce";
 import { wrapInArray } from "./collectionUtils";
 import { findFile } from "./filesUtils";
-import { existsSync } from "fs";
+import { existsSync, promises } from "fs";
+import { join } from "path";
 
-interface MetadataStorageSummary {
-	filesForMetadata: string[];
+interface MetadataStorageSummary<T> {
+	filesForMetadata: Record<string, string>;
 	fullNamesWithoutLocalFiles: string[];
+	overrides: Record<string, T>;
 }
 
 /**
@@ -17,18 +19,28 @@ interface MetadataStorageSummary {
  * @param metadataType type of metadata to fetch
  * @param getFileName function that converts fullName of metadata to file name in which it should be stored
  */
-export async function getMetadataStorageSummary(
+export async function getMetadataStorageSummary<T>(
 	project: SfdxProject,
 	connection: Connection,
 	metadataType: string,
 	getFileName: (fullName: string) => string
-): Promise<MetadataStorageSummary> {
+): Promise<MetadataStorageSummary<T>> {
+	const overridesPath = join(
+		project.getPath(),
+		".config",
+		"overrides",
+		`${metadataType}.json`
+	);
+	const overridingReadingPromise: Promise<Record<string, T>> = promises
+		.readFile(overridesPath, "utf-8")
+		.then((content) => JSON.parse(content))
+		.catch((error) => ({}));
 	const metadata: FileProperties[] = await connection.metadata
 		.list({ type: metadataType })
 		.then(wrapInArray);
-	const filesForMetadata: string[] = [];
+	const filesForMetadata: Record<string, string> = {};
 	const fullNamesWithoutLocalFiles: string[] = [];
-	const promises = metadata.map((m) =>
+	const searchingPromises = metadata.map((m) =>
 		tryToFindLocalFile(
 			project,
 			m.fullName,
@@ -37,10 +49,11 @@ export async function getMetadataStorageSummary(
 			fullNamesWithoutLocalFiles
 		)
 	);
-	await Promise.all(promises);
+	await Promise.all(searchingPromises);
 	return {
 		filesForMetadata,
 		fullNamesWithoutLocalFiles,
+		overrides: await overridingReadingPromise, //TODO add option to override
 	};
 }
 
@@ -57,13 +70,13 @@ async function tryToFindLocalFile(
 	project: SfdxProject,
 	metadataFullName: string,
 	getFileName: (fullName: string) => string,
-	filesForMetadata: string[],
+	filesForMetadata: Record<string, string>,
 	fullNamesWithoutLocalFiles: string[]
 ) {
 	const fileNameForMetadata = getFileName(metadataFullName);
 	const fullFilePath = await findFile(fileNameForMetadata, project.getPath());
 	if (existsSync(fullFilePath)) {
-		filesForMetadata.push(fullFilePath);
+		filesForMetadata[metadataFullName] = fullFilePath;
 	} else {
 		fullNamesWithoutLocalFiles.push(metadataFullName);
 	}

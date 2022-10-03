@@ -3,9 +3,11 @@ import { Connection, FileProperties } from "jsforce";
 import { wrapInArray } from "../../utils/collectionUtils";
 import { join } from "path";
 import { promises } from "fs";
+import { SfdxProject } from "@salesforce/core";
 
 export default class TabsHelperTypesGenerator implements IHelperTypesGenerator {
 	async generateForProject(
+		project: SfdxProject,
 		helperTypesRoot: string,
 		connection: Connection
 	): Promise<any> {

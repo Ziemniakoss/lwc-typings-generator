@@ -2,11 +2,13 @@ import IHelperTypesGenerator from "./IHelperTypesGenerator";
 import { join } from "path";
 import { promises } from "fs";
 import { Connection } from "jsforce";
+import { SfdxProject } from "@salesforce/core";
 
 export default class SObjectHelperTypesGenerator
 	implements IHelperTypesGenerator
 {
 	async generateForProject(
+		project: SfdxProject,
 		helperTypesRoot: string,
 		connection: Connection
 	): Promise<any> {
