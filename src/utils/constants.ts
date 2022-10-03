@@ -10,6 +10,7 @@ export const FILE_EXTENSIONS = {
 export const METADATA_TYPES = {
 	MESSAGE_CHANNEL: "LightningMessageChannel",
 	CUSTOM_TAB: "CustomTab",
+	APPLICATION: "CustomApplication",
 };
 
 /**

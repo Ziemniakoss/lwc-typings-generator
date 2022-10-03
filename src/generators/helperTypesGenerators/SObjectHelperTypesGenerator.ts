@@ -11,7 +11,7 @@ export default class SObjectHelperTypesGenerator
 		connection: Connection
 	): Promise<any> {
 		const globalDescribe = await connection.describeGlobal();
-		const fullPath = join(helperTypesRoot, "helperTypes.d.ts");
+		const fullPath = join(helperTypesRoot, "sobjects.d.ts");
 		let sObjectsMapTypings =
 			"declare namespace schema {\n\tdeclare interface SObjectsMap {\n ";
 
