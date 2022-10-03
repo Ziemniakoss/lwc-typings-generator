@@ -8,7 +8,7 @@ import ApexClassTypingsGenerator from "../../apexTypingsGeneration/apexClassesTy
 import StaticResourcesTypingGenerator from "../../StaticResourcesTypingGenerator";
 import CustomPermissionsTypingsGenerator from "../../CustomPermissionsTypingsGenerator";
 import UserPermissionsTypingsGenerator from "../../UserPermissionsTypingsGenerator";
-import { HelperTypesGenerator } from "../../HelperTypesGenerator";
+import { HelperTypesGenerator } from "../../generators/HelperTypesGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -40,9 +40,10 @@ and generates proper JSConfigs.
 	}
 
 	private async generateHelperTypes() {
-		return new HelperTypesGenerator().generateTypingsForProject(
+		return new HelperTypesGenerator().generateForProject(
+			this.project,
 			this.org.getConnection(),
-			this.project
+			false
 		);
 	}
 

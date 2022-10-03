@@ -3,7 +3,6 @@ import { SfdxProject } from "@salesforce/core";
 import { Connection, FileProperties } from "jsforce";
 import {
 	deleteFiles,
-	findFile,
 	getFileNameWithoutExtension,
 	getTypingsDir,
 	getXmlFromFile,
@@ -17,6 +16,7 @@ import {
 	METADATA_TYPES,
 } from "../utils/constants";
 import { splitIntoSubArrays, wrapInArray } from "../utils/collectionUtils";
+import { getMetadataStorageSummary } from "../utils/jsForceUtils";
 
 export default class MessageChannelsTypingsGenerator
 	implements ITypingGenerator
@@ -120,35 +120,29 @@ declare module "@salesforce/messageChannel/${channelFullName}" {
 		connection: Connection
 	): Promise<any> {
 		const typingsDir = await this.getFolder(project);
-		const channelsMetadata: FileProperties[] = await connection.metadata
-			.list({ type: METADATA_TYPES.MESSAGE_CHANNEL })
-			.then(wrapInArray);
-		const filesWithMetadataDefinitions = [];
-		const metadataWithoutLocalFiles = [];
-		for (const channelMetadata of channelsMetadata) {
-			const fullName = channelMetadata.fullName;
-			const fileName = `${fullName}${FILE_EXTENSIONS.MESSAGE_CHANNEL_METADATA_FILE}`;
-			const fileWithMetadata = await findFile(fileName, project.getPath());
-			if (existsSync(fileWithMetadata)) {
-				filesWithMetadataDefinitions.push(fileWithMetadata);
-			} else {
-				metadataWithoutLocalFiles.push(fullName);
-			}
-		}
+		const { filesForMetadata, fullNamesWithoutLocalFiles } =
+			await getMetadataStorageSummary(
+				project,
+				connection,
+				METADATA_TYPES.MESSAGE_CHANNEL,
+				(fullName) =>
+					`${fullName}${FILE_EXTENSIONS.MESSAGE_CHANNEL_METADATA_FILE}`
+			);
+
 		const promises = [];
-		if (filesWithMetadataDefinitions.length > 0) {
+		if (filesForMetadata.length > 0) {
 			promises.push(
-				...filesWithMetadataDefinitions.map((file) =>
+				...filesForMetadata.map((file) =>
 					this.generateForFile(project, connection, file, typingsDir)
 				)
 			);
 		}
-		if (metadataWithoutLocalFiles.length > 0) {
+		if (fullNamesWithoutLocalFiles.length > 0) {
 			promises.push(
 				this.generateForMetadata(
 					project,
 					connection,
-					metadataWithoutLocalFiles,
+					fullNamesWithoutLocalFiles,
 					typingsDir
 				)
 			);

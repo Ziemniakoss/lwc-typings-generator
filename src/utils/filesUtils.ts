@@ -1,7 +1,7 @@
 import { existsSync, lstatSync, mkdirSync, promises } from "fs";
 import { basename, dirname, join } from "path";
-import { SfdxCommand } from "@salesforce/command";
 import { parseStringPromise } from "xml2js";
+import { SfdxProject } from "@salesforce/core";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
 
@@ -70,9 +70,7 @@ export function mkdirs(path: string) {
 	}
 }
 
-export async function getTypingsDir(
-	project: SfdxCommand["project"]
-): Promise<string> {
+export async function getTypingsDir(project: SfdxProject): Promise<string> {
 	const pathToGeneratorConfig = join(
 		project.getPath(),
 		".config",
