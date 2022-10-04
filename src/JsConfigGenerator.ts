@@ -8,8 +8,10 @@ interface CompilerOptions {
 	experimentalDecorators: boolean;
 	baseUrl: string;
 	paths: Record<string, string[]>;
+	lib: string[];
 	checkJs: boolean;
 }
+
 interface JsConfig {
 	compilerOptions: CompilerOptions;
 	include: string[];
@@ -60,6 +62,7 @@ export default class JsConfigGenerator {
 				baseUrl: ".",
 				checkJs: true,
 				paths: {},
+				lib: ["ES2022"],
 			},
 			include: [
 				"*.js",
