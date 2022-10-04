@@ -1,6 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import StandardLibraryGenerator from "../../StandardLibraryGenerator";
-import JsConfigGenerator from "../../JsConfigGenerator";
+import JsConfigGenerator from "../../generators/JsConfigGenerator";
 import LabelsTypingsGenerator from "../../LabelsTypingsGenerator";
 import { ApexTypingsGenerator } from "../../apexTypingsGeneration/ApexTypingsGenerator";
 import WiredMethodTypingsGenerator from "../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
@@ -90,6 +90,6 @@ and generates proper JSConfigs.
 	}
 
 	private async generateJsConfigs() {
-		return new JsConfigGenerator().generateJsConfigs(this.project);
+		return new JsConfigGenerator().generateForProject(this.project);
 	}
 }
