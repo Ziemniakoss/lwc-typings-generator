@@ -10,7 +10,7 @@ import CustomPermissionsTypingsGenerator from "../../../CustomPermissionsTypings
 import UserPermissionsTypingsGenerator from "../../../UserPermissionsTypingsGenerator";
 import StaticResourcesTypingGenerator from "../../../StaticResourcesTypingGenerator";
 import LabelsTypingsGenerator from "../../../LabelsTypingsGenerator";
-import JsConfigGenerator from "../../../JsConfigGenerator";
+import JsConfigGenerator from "../../../generators/JsConfigGenerator";
 import { PLUGIN_NAME } from "../../../utils/constants";
 
 const IGNORED_PATHS = ["**/node_modules", "**/.*", "**/jsconfig.json"];
@@ -163,6 +163,6 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	}
 
 	private async generateJsConfigs() {
-		return new JsConfigGenerator().generateJsConfigs(this.project);
+		return new JsConfigGenerator().generateForProject(this.project);
 	}
 }
