@@ -9,6 +9,7 @@ import { existsSync, promises } from "fs";
 
 /**
  * Generate typings for message channels payloads
+ * TODO shipped because I really need typings for message channels imports but I will finish this
  */
 export default class MessageChannelsPayloadsHelperTypesGenerator
 	implements IHelperTypesGenerator

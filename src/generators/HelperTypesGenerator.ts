@@ -7,7 +7,7 @@ import IHelperTypesGenerator from "./helperTypesGenerators/IHelperTypesGenerator
 import TabsHelperTypesGenerator from "./helperTypesGenerators/TabsHelperTypesGenerator";
 import { existsSync, promises } from "fs";
 import SObjectHelperTypesGenerator from "./helperTypesGenerators/SObjectHelperTypesGenerator";
-import MessageChannelsPayloadsHelperTypesGenerator from "./helperTypesGenerators/MessageChannelsPayloadsHelperTypesGenerator";
+// import MessageChannelsPayloadsHelperTypesGenerator from "./helperTypesGenerators/MessageChannelsPayloadsHelperTypesGenerator";
 import ApplicationsHelperTypesGenerator from "./helperTypesGenerators/ApplicationsHelperTypesGenerator";
 
 export class HelperTypesGenerator implements ITypingGenerator {
@@ -18,7 +18,7 @@ export class HelperTypesGenerator implements ITypingGenerator {
 			this.helperTypesGenerators = [
 				new TabsHelperTypesGenerator(),
 				new SObjectHelperTypesGenerator(),
-				new MessageChannelsPayloadsHelperTypesGenerator(),
+				// new MessageChannelsPayloadsHelperTypesGenerator(),
 				new ApplicationsHelperTypesGenerator(),
 			];
 		} else {
