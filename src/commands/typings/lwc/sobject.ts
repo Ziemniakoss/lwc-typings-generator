@@ -3,9 +3,7 @@ import { DescribeSObjectResult } from "jsforce";
 import SchemaGenerator from "../../../SchemaGenerator";
 import SObjectTypingsGenerator from "../../../sObjectTypingsGeneration/SObjectTypingsGenerator";
 import FieldTypingsGeneratorFactory from "../../../sObjectTypingsGeneration/FieldTypingsGeneratorFactory";
-import { getTypingsDir, mkdirs } from "../../../utils/filesUtils";
-import { join } from "path";
-import { appendFileSync, promises } from "fs";
+import { getTypingsDir } from "../../../utils/filesUtils";
 
 export default class GenerateSObjectTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -13,7 +11,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 	public static description = "Generate typings for SObjects";
 
 	public static flagsConfig = {
-		sobject: flags.string({
+		sobject: flags.array({
 			char: "s",
 			description: "Comma separated sObject names",
 			required: true,
@@ -30,7 +28,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		const sObjectTypingsGenerator = new SObjectTypingsGenerator(
 			new FieldTypingsGeneratorFactory()
 		);
-		const sObjects = this.flags.sobject.split(",").map((s) => s.trim());
+		const sObjects = this.flags.sobject.map((s) => s.trim());
 		const describesMap = await this.fetchSObjectDefinitions(sObjects);
 
 		this.ux.setSpinnerStatus("creating interfaces and schemas");
@@ -53,46 +51,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		this.ux.stopSpinner("Generated");
 	}
 
-	async generateHelperSchemaTypes(typingsFolder: string) {
-		const globalDescribe = await this.org.getConnection().describeGlobal();
-		const schemaFolder = join(typingsFolder, "schema");
-		mkdirs(schemaFolder);
-		const fullPath = join(schemaFolder, "helperTypes.d.ts");
-
-		await promises.writeFile(
-			fullPath,
-			"declare namespace schema {\n\tdeclare interface SObjectsMap {\n "
-		);
-
-		const sObjectDescribes = globalDescribe.sobjects;
-		sObjectDescribes.forEach((sObjectDescribe, index) => {
-			const apiName = sObjectDescribe.name;
-			let typings = `\t\t"${apiName}": schema.${apiName}`;
-			if (index != sObjectDescribes.length - 1) {
-				typings += ",\n";
-			} else {
-				typings += "\n";
-			}
-
-			appendFileSync(fullPath, typings);
-		});
-
-		await promises.appendFile(
-			fullPath,
-			"\n}\n\n\tdeclare type SObjectApiName ="
-		);
-		sObjectDescribes.forEach((sObjectDescribe, index) => {
-			const apiName = sObjectDescribe.name;
-			let sObjectTypings = null;
-			if (index == 0) {
-				sObjectTypings = `"${apiName}"`;
-			} else {
-				sObjectTypings = `\n\t\t| "${apiName}"`;
-			}
-			appendFileSync(fullPath, sObjectTypings);
-		});
-		await promises.appendFile(fullPath, "\n}\n\n");
-	}
+	async generateHelperSchemaTypes(typingsFolder: string) {}
 
 	async generateTypings(
 		sObjects: string[],

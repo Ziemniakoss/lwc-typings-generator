@@ -1,6 +1,7 @@
 import { existsSync, lstatSync, mkdirSync, promises } from "fs";
-import { dirname, join } from "path";
-import { SfdxCommand } from "@salesforce/command";
+import { basename, dirname, join } from "path";
+import { parseStringPromise } from "xml2js";
+import { SfdxProject } from "@salesforce/core";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
 
@@ -69,9 +70,7 @@ export function mkdirs(path: string) {
 	}
 }
 
-export async function getTypingsDir(
-	project: SfdxCommand["project"]
-): Promise<string> {
+export async function getTypingsDir(project: SfdxProject): Promise<string> {
 	const pathToGeneratorConfig = join(
 		project.getPath(),
 		".config",
@@ -91,4 +90,56 @@ export async function getTypingsDir(
 		});
 	mkdirs(typingsFolder);
 	return typingsFolder;
+}
+
+/**
+ * Deletes all files asynchronously
+ *
+ * @param files files to delete
+ */
+export async function deleteFiles(files: string[]) {
+	const promises = files
+		.filter((file) => existsSync(file))
+		.map((file) => promises.rm(file, { recursive: true, force: true }));
+	return Promise.all(promises);
+}
+
+export function getFileNameWithoutExtension(
+	fullPath: string,
+	extensionName: string
+): string {
+	const fileName = basename(fullPath);
+	if (fileName.endsWith(extensionName)) {
+		return fileName.substring(0, fileName.length - extensionName.length);
+	}
+	return fileName;
+}
+export async function findFile(
+	fileName: string,
+	directory: string
+): Promise<string | null> {
+	const dirContent = await promises
+		.readdir(directory)
+		.then((files) => files.map((file) => join(directory, file)));
+	const conntentsWithProps = await Promise.all(
+		dirContent.map((file) => ({ file, properties: promises.lstat(file) }))
+	);
+	const dirs = [];
+	for (const p of conntentsWithProps) {
+		const properties = await p.properties;
+		if (properties.isDirectory()) {
+			dirs.push(p.file);
+		} else if (properties.isFile() && basename(p.file) == fileName) {
+			return p.file;
+		}
+	}
+
+	const foundFilesInSubdirs = await Promise.all(
+		dirs.map((dirName) => findFile(fileName, dirName))
+	);
+	return foundFilesInSubdirs.find((file) => file != null);
+}
+
+export async function getXmlFromFile<T>(filePath: string): Promise<T> {
+	return promises.readFile(filePath, "utf-8").then(parseStringPromise);
 }

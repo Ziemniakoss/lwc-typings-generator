@@ -1,5 +1,5 @@
 import { SfdxCommand } from "@salesforce/command";
-import { HelperTypesGenerator } from "../../../HelperTypesGenerator";
+import { HelperTypesGenerator } from "../../../generators/HelperTypesGenerator";
 
 export default class GenerateHelperTypes extends SfdxCommand {
 	protected static requiresProject = true;
@@ -9,9 +9,10 @@ export default class GenerateHelperTypes extends SfdxCommand {
 
 	async run() {
 		this.ux.startSpinner("getting help");
-		await new HelperTypesGenerator().generateTypingsForProject(
+		await new HelperTypesGenerator().generateForProject(
+			this.project,
 			this.org.getConnection(),
-			this.project
+			true
 		);
 		this.ux.stopSpinner("helper types created");
 	}

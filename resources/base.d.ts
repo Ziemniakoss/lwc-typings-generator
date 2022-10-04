@@ -66,7 +66,7 @@ interface PageReference {}
 interface AppTypePageReference extends PageReference {
 	type: "standard__app";
 	attributes: {
-		appTarget: string; //TODO api names
+		appTarget: Salesforce.ApplicationApiName;
 		pageRef?: PageReference;
 	};
 }

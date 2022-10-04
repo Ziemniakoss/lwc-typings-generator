@@ -1,7 +1,7 @@
 import { SfdxCommand } from "@salesforce/command";
 import { watch } from "chokidar";
 import { Messages } from "@salesforce/core";
-import { HelperTypesGenerator } from "../../../HelperTypesGenerator";
+import { HelperTypesGenerator } from "../../../generators/HelperTypesGenerator";
 import { ApexTypingsGenerator } from "../../../apexTypingsGeneration/ApexTypingsGenerator";
 import WiredMethodTypingsGenerator from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
 import ApexClassTypingsGenerator from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
@@ -113,9 +113,10 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	}
 
 	private async generateHelperTypes() {
-		return new HelperTypesGenerator().generateTypingsForProject(
+		return new HelperTypesGenerator().generateForProject(
+			this.project,
 			this.org.getConnection(),
-			this.project
+			false
 		);
 	}
 
