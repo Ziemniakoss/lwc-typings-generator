@@ -24,6 +24,11 @@ interface JsConfig {
 	include: string[];
 }
 
+/**
+ * Included libs in compiler options section
+ */
+const LIBS = ["ES2022", "DOM"];
+
 export default class JsConfigGenerator implements ITypingGenerator {
 	private async generateJsConfig(
 		lwcPath: string,
@@ -53,7 +58,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 				baseUrl: ".",
 				checkJs: true,
 				paths: {},
-				lib: ["ES2022"],
+				lib: LIBS,
 			},
 			include: [
 				"*.js",

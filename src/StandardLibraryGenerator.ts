@@ -53,6 +53,10 @@ export default class StandardLibraryGenerator {
 			["lightning-combobox", `import("lightning/combobox").default`],
 			["lightning-input", `import("lightning/input").default`],
 			["lightning-datatable", `import("lightning/datatable").default`],
+			["lightning-modal", `import("lightning/modal").default`],
+			["lightning-modal-body", `import("lightning/modalBody").default`],
+			["lightning-modal-footer", `import("lightning/modalFooter").default`],
+			["lightning-modal-header", `import("lightning/modalHeader").default`],
 			[
 				"lightning-formatted-date-time",
 				`import("lightning/formattedDateTime").default`,
