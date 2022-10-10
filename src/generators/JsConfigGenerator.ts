@@ -15,7 +15,7 @@ interface CompilerOptions {
 	experimentalDecorators: boolean;
 	baseUrl: string;
 	paths: Record<string, string[]>;
-	lib: string[];
+	target: string;
 	checkJs: boolean;
 }
 
@@ -23,11 +23,6 @@ interface JsConfig {
 	compilerOptions: CompilerOptions;
 	include: string[];
 }
-
-/**
- * Included libs in compiler options section
- */
-const LIBS = ["ES2022", "DOM"];
 
 export default class JsConfigGenerator implements ITypingGenerator {
 	private async generateJsConfig(
@@ -58,7 +53,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 				baseUrl: ".",
 				checkJs: true,
 				paths: {},
-				lib: LIBS,
+				target: "ES2022",
 			},
 			include: [
 				"*.js",
