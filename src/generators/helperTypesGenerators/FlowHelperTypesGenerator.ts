@@ -15,7 +15,6 @@ export default class FlowHelperTypesGenerator implements IHelperTypesGenerator {
 		const flowsMetadata: FileProperties[] = await connection.metadata
 			.list({ type: METADATA_TYPES.FLOW })
 			.then(wrapInArray);
-		flowsMetadata.forEach((a) => console.log(a.fullName));
 		const typingsHeader = `declare namespace Salesforce {\n\tdeclare type FlowApiName =`;
 		let apiNames: string;
 		if (flowsMetadata.length == 0) {
