@@ -11,6 +11,7 @@ export const METADATA_TYPES = {
 	MESSAGE_CHANNEL: "LightningMessageChannel",
 	CUSTOM_TAB: "CustomTab",
 	APPLICATION: "CustomApplication",
+	FLOW: "flow",
 };
 
 /**
