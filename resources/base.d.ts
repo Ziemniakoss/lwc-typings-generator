@@ -21,7 +21,7 @@ interface Template {
 }
 
 class LwcComponentBase {
-	dispatchEvent(evt: Event): boolean;
+	dispatchEvent(evt: CustomEvent): boolean;
 
 	connectedCallback(): void;
 
