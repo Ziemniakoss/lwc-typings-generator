@@ -10,6 +10,6 @@ declare module "@salesforce/user/Id" {
  * https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.get_current_user
  */
 declare module "@salesforce/user/isGuest" {
-	const IS_GUEST: apex.Id;
+	const IS_GUEST: boolean;
 	export default IS_GUEST;
 }
