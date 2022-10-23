@@ -49,7 +49,7 @@ export default class SObjectTypingsGenerator {
 		let typings = "";
 		for (const relationship of relationships ?? []) {
 			if (relationship.relationshipName != null) {
-				typings += `\t\t${relationship.relationshipName}: ${relationship.childSObject}[];\n`;
+				typings += `\t\t${relationship.relationshipName}?: ${relationship.childSObject}[];\n`;
 			}
 		}
 		return typings;

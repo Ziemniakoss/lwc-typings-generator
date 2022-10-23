@@ -11,6 +11,6 @@ export default class PicklistFieldTypingsGenerator
 		const picklistValues = field.picklistValues
 			.map((p) => `"${p.value}"`)
 			.join(" | ");
-		return `\t\t${field.name}: ${picklistValues};\n`;
+		return `\t\t${field.name}?: ${picklistValues};\n`;
 	}
 }

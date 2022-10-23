@@ -8,7 +8,7 @@ export default class StandardFieldTypingsGenerator
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
 	): string {
-		return `\t\t${field.name}: ${this.getJsType(field)};\n`;
+		return `\t\t${field.name}?: ${this.getJsType(field)};\n`;
 	}
 	getJsType(field: Field): string {
 		switch (field.type) {
