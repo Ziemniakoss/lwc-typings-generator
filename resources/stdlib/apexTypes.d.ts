@@ -20,7 +20,15 @@ interface FetchResponse {
 }
 
 type PromiseResult<T> = T extends PromiseLike<infer U> ? U : T;
-declare interface Wired<T> {
+
+type CurrentPageReferenceMethod =
+	typeof import("lightning/navigation").CurrentPageReference;
+
+declare type Wired<T> = T extends CurrentPageReferenceMethod
+	? ReturnType<CurrentPageReferenceMethod>
+	: WiredValue<T>;
+
+interface WiredValue<T> {
 	data: T extends Function ? PromiseResult<ReturnType<T>> : T;
 	error: FetchResponse;
 }
