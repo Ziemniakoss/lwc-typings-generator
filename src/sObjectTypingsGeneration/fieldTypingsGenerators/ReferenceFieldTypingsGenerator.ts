@@ -16,9 +16,9 @@ export default class ReferenceFieldTypingsGenerator
 				return apiName;
 			})
 			.join(" | ");
-		let typings = `\t\t${field.name}: ${joinedReferenceToApiNames};\n`;
+		let typings = `\t\t${field.name}?: ${joinedReferenceToApiNames};\n`;
 		if (field.relationshipName != null) {
-			typings += `\t\t${field.relationshipName}: (${joinedReferenceToApiNames});\n`;
+			typings += `\t\t${field.relationshipName}?: (${joinedReferenceToApiNames});\n`;
 		}
 		return typings;
 	}
