@@ -287,4 +287,19 @@ declare module "lightning/navigation" {
 		declare const GenerateUrl = "__generateUrl__";
 	}
 	export function NavigationMixin(base: any): typeof NavigableComponent;
+
+	/***
+	 * Use with @wire to get current page reference
+	 *
+	 * ```js
+	 * @wire(CurrentPageReference)
+	 * setCurrentPageReference(currentPageReference) {
+	 *      this.currentPageReference = currentPageReference;
+	 * 	    this.checkForStuffToBeLoaded();
+	 * }
+	 * ```
+	 */
+	export function CurrentPageReference(): Parameters<
+		NavigableComponent["__navigate__"]
+	>[0];
 }
