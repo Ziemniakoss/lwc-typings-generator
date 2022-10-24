@@ -15,6 +15,7 @@ interface CompilerOptions {
 	experimentalDecorators: boolean;
 	baseUrl: string;
 	paths: Record<string, string[]>;
+	noResolve: boolean;
 	target: string;
 	checkJs: boolean;
 }
@@ -51,6 +52,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			compilerOptions: {
 				experimentalDecorators: true,
 				baseUrl: ".",
+				noResolve: true,
 				checkJs: true,
 				paths: {},
 				target: "ES2022",
