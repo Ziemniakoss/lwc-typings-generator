@@ -6,9 +6,9 @@
 	"bugs": "https://github.com/Ziemniakoss/lwc-typings-generator/issues",
 	"dependencies": {
 		"@salesforce/command": "^4.2.2",
+		"apex-parser": "^2.15.0",
 		"chokidar": "^3.5.3",
 		"tslib": "^2.3.1",
-		"web-tree-sitter": "^0.20.5",
 		"xml2js": "^0.4.23"
 	},
 	"devDependencies": {

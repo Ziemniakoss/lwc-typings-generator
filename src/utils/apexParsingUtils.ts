@@ -1,5 +1,13 @@
 import { join } from "path";
 import { getResourcesFolder } from "./filesUtils";
+import {
+	ApexLexer,
+	ApexParser,
+	CaseInsensitiveInputStream,
+	CommonTokenStream,
+	CompilationUnitContext,
+} from "apex-parser";
+import { promises } from "fs";
 
 const Parser = require("web-tree-sitter");
 
@@ -110,4 +118,30 @@ export function generateGenericTsType(
 		return `${genericTypes.join(",")}[]`;
 	}
 	return "any";
+}
+
+/**
+ * Parse apex using antlr grammar
+ *
+ * @param apexContent content of apex class
+ */
+export function parseApex(apexContent: string): CompilationUnitContext {
+	let lexer = new ApexLexer(
+		new CaseInsensitiveInputStream(null, "public class Hello {}")
+	);
+	let tokens = new CommonTokenStream(lexer);
+
+	let parser = new ApexParser(tokens);
+	return parser.compilationUnit();
+}
+
+/**
+ * Parse apex class defined in specified file
+ *
+ * @param path path to apex class
+ */
+export async function parseApexFromFile(
+	path: string
+): Promise<CompilationUnitContext> {
+	return promises.readFile(path, "utf-8").then(parseApex);
 }
