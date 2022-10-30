@@ -22,3 +22,11 @@ export function wrapInArray(a): any[] {
 	// @ts-ignore
 	return Array.isArray(a) ? a : [a];
 }
+
+export function groupBy<T, K>(array:T[], keyCalculator:(obj:T) =>K): Map<K, T> {
+	const result = new Map<K, T>()
+	for(const element of array) {
+		result.set(keyCalculator(element), element)
+	}
+	return result
+}
