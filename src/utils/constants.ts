@@ -14,8 +14,11 @@ export const METADATA_TYPES = {
 	APPLICATION: "CustomApplication",
 	FLOW: "Flow",
 	GLOBAL_VALUE_SET: "GlobalValueSet",
-	APEX_CLASS: "ApexClass"
+	APEX_CLASS: "ApexClass",
+	SOBJECT: "CustomObject",
 };
+
+export const AURA_ENABLED_ANNOTATION_NAME = "auraEnabled".toLowerCase();
 
 /**
  * How many records can be read with one query

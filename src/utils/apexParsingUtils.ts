@@ -5,10 +5,12 @@ import {
 	ApexParser,
 	CaseInsensitiveInputStream,
 	CommonTokenStream,
-	CompilationUnitContext,
+	TypeNameContext,
+	TypeRefContext,
 } from "apex-parser";
 import { promises } from "fs";
 
+//TODO remove
 const Parser = require("web-tree-sitter");
 
 export function getApexLanguage() {
@@ -34,11 +36,81 @@ const standardTypesMap = {
 	list: "any",
 	date: "apex.Date",
 	integer: "apex.Integer",
-	decimal: "apex.Decimla",
+	decimal: "apex.Decimal",
 	address: "apex.Address",
 	double: "apex.Double",
 	id: "apex.Id",
 };
+
+/**
+ * Convert Antlr type reference context to string containing typescript type
+ */
+export function convertToTsType(
+	typeRefContext: TypeRefContext,
+	className: string,
+	innerClassesNames: Set<string>,
+	sObjectNamesMap: Map<string, string>
+): string {
+	if (typeRefContext == null) {
+		// This means that void was declared
+		return "never";
+	}
+
+	let fullTypeName = typeRefContext
+		.typeName()
+		.map((typeName) => typeName.text)
+		.join(".");
+	const typeSuffix = fullTypeName.endsWith("[]") ? "[]" : "";
+	const fullTypeNameLowerCase = fullTypeName.toLowerCase();
+	if (sObjectNamesMap.has(fullTypeNameLowerCase)) {
+		return `schema.${sObjectNamesMap.get(fullTypeNameLowerCase)}${typeSuffix}`;
+	}
+	if (innerClassesNames.has(fullTypeName)) {
+		return `apex.${className}.${fullTypeName}`;
+	}
+	const typeNames = typeRefContext.typeName();
+	if (typeNames.length == 1) {
+		if (standardTypesMap[fullTypeNameLowerCase]) {
+			return `${standardTypesMap[fullTypeNameLowerCase]}${typeSuffix}`;
+		}
+
+		return (
+			convertTypeNameToTsType(
+				typeRefContext.typeName()[0],
+				className,
+				innerClassesNames,
+				sObjectNamesMap
+			) + typeSuffix
+		);
+	}
+	return `apex.${fullTypeName}${typeSuffix}`;
+}
+
+//@ts-ignore
+function convertTypeNameToTsType(
+	typeNameCtx: TypeNameContext,
+	className: string,
+	innerClassesNames: Set<string>,
+	sObjectNamesMap: Map<string, string>
+): string {
+	const typeArgument = typeNameCtx.typeArguments();
+	const typeArgumentsType =
+		typeArgument
+			.typeList()
+			?.typeRef()
+			?.map((typeRef) =>
+				convertToTsType(typeRef, className, innerClassesNames, sObjectNamesMap)
+			)
+			?.join(",") ?? "any";
+	if (typeNameCtx.LIST()) {
+		return typeArgumentsType + "[]";
+	} else if (typeNameCtx.SET()) {
+		return typeArgumentsType + "[]";
+	} else if (typeNameCtx.MAP()) {
+		return `Record<${typeArgumentsType}>`;
+	}
+}
+
 export function generateTsType(
 	className: string,
 	typeNode,
@@ -92,6 +164,7 @@ export function generateTsType(
 	return "any";
 }
 
+//TODO delete
 export function generateGenericTsType(
 	className: string,
 	genericTypeNode,
@@ -120,19 +193,23 @@ export function generateGenericTsType(
 	return "any";
 }
 
+type ParseApexReturnType = {
+	lexer: ApexLexer;
+	tokens: CommonTokenStream;
+	parser: ApexParser;
+};
+
 /**
  * Parse apex using antlr grammar
  *
  * @param apexContent content of apex class
  */
-export function parseApex(apexContent: string): CompilationUnitContext {
-	let lexer = new ApexLexer(
-		new CaseInsensitiveInputStream(null, "public class Hello {}")
-	);
+export function parseApex(apexContent: string): ParseApexReturnType {
+	let lexer = new ApexLexer(new CaseInsensitiveInputStream(null, apexContent));
 	let tokens = new CommonTokenStream(lexer);
 
 	let parser = new ApexParser(tokens);
-	return parser.compilationUnit();
+	return { lexer, tokens, parser };
 }
 
 /**
@@ -142,6 +219,20 @@ export function parseApex(apexContent: string): CompilationUnitContext {
  */
 export async function parseApexFromFile(
 	path: string
-): Promise<CompilationUnitContext> {
+): Promise<ReturnType<typeof parseApex>> {
 	return promises.readFile(path, "utf-8").then(parseApex);
+}
+
+export function getInnerClassesNames(apexClassContent: string): Set<string> {
+	const innerClassesNames =
+		parseApex(apexClassContent)
+			.parser.compilationUnit()
+			?.typeDeclaration()
+			?.classDeclaration()
+			?.classBody()
+			?.classBodyDeclaration()
+			?.map((a) => a.memberDeclaration()?.classDeclaration()?.id())
+			?.filter((classDeclarationContext) => classDeclarationContext)
+			?.map((innerClassContext) => innerClassContext.text) ?? [];
+	return new Set(innerClassesNames);
 }
