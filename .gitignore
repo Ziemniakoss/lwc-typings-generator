@@ -13,3 +13,4 @@ sfdx-project.json
 /test-project/
 /.forceignore
 /.config/
+/oclif.manifest.json

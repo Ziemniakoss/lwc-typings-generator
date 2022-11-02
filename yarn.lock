@@ -1084,6 +1084,11 @@
   "resolved" "https://registry.npmjs.org/ansicolors/-/ansicolors-0.3.2.tgz"
   "version" "0.3.2"
 
+"antlr4ts@0.5.0-alpha.4":
+  "integrity" "sha512-WPQDt1B74OfPv/IMS2ekXAKkTZIHl88uMetg6q3OTqgFxZ/dxDXI0EWLyZid/1Pe6hTftyg5N7gel5wNAGxXyQ=="
+  "resolved" "https://registry.npmjs.org/antlr4ts/-/antlr4ts-0.5.0-alpha.4.tgz"
+  "version" "0.5.0-alpha.4"
+
 "anymatch@~3.1.2":
   "integrity" "sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg=="
   "resolved" "https://registry.npmjs.org/anymatch/-/anymatch-3.1.2.tgz"
@@ -1091,6 +1096,14 @@
   dependencies:
     "normalize-path" "^3.0.0"
     "picomatch" "^2.0.4"
+
+"apex-parser@^2.15.0":
+  "integrity" "sha512-Z/pCz4a6dJ+xi5VUviXSJ7QGcB+EWilAaHF99qR1qnlpT87HS2aa0hyJHBFp3k/o08g4ysbcB+NVPJZu1+XTtQ=="
+  "resolved" "https://registry.npmjs.org/apex-parser/-/apex-parser-2.15.0.tgz"
+  "version" "2.15.0"
+  dependencies:
+    "antlr4ts" "0.5.0-alpha.4"
+    "node-dir" "^0.1.17"
 
 "append-transform@^2.0.0":
   "integrity" "sha512-7yeyCEurROLQJFv5Xj4lEGTy0borxepjFv1g22oAdqFu//SrAlDl1O1Nxx15SH1RoliUml6p8dwJW9jvZughhg=="
@@ -3766,7 +3779,7 @@
   "resolved" "https://registry.npmjs.org/min-indent/-/min-indent-1.0.1.tgz"
   "version" "1.0.1"
 
-"minimatch@^3.0.4", "minimatch@2 || 3":
+"minimatch@^3.0.2", "minimatch@^3.0.4", "minimatch@2 || 3":
   "integrity" "sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw=="
   "resolved" "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
   "version" "3.1.2"
@@ -3962,6 +3975,13 @@
     "json-stringify-safe" "^5.0.1"
     "lodash.set" "^4.3.2"
     "propagate" "^2.0.0"
+
+"node-dir@^0.1.17":
+  "integrity" "sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg=="
+  "resolved" "https://registry.npmjs.org/node-dir/-/node-dir-0.1.17.tgz"
+  "version" "0.1.17"
+  dependencies:
+    "minimatch" "^3.0.2"
 
 "node-preload@^0.2.1":
   "integrity" "sha512-RM5oyBy45cLEoHqCeh+MNuFAxO0vTFBLskvQbOKnEE7YTTSN4tbN8QWDIPQ6L+WvKsB/qLEGpYe2ZZ9d4W9OIQ=="
@@ -5431,11 +5451,6 @@
   "integrity" "sha512-Uw5ooOQxRASHgu6C7GVvUxisKXfSgW4oFlO+aa+PAkgmH89O3CXxEEzNRNtHSqtXFTl0nAC1uYj0GMSH27uwtQ=="
   "resolved" "https://registry.npmjs.org/vscode-textmate/-/vscode-textmate-5.2.0.tgz"
   "version" "5.2.0"
-
-"web-tree-sitter@^0.20.5":
-  "integrity" "sha512-mpXlqIeEBE5Q71cnBnt8w6XKhIiKmllPECqsIFBtMvzcfCxA8+614iyMJXBCQo95Vs3y1zORLqiLJn25pYZ4Tw=="
-  "resolved" "https://registry.npmjs.org/web-tree-sitter/-/web-tree-sitter-0.20.5.tgz"
-  "version" "0.20.5"
 
 "websocket-driver@>=0.5.1":
   "integrity" "sha512-b17KeDIQVjvb0ssuSDF2cYXSg2iztliJ4B9WdsuB6J952qCPKmnVq4DyW5motImXHDC1cBT/1UezrJVsKw5zjg=="
