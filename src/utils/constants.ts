@@ -24,3 +24,9 @@ export const AURA_ENABLED_ANNOTATION_NAME = "auraEnabled".toLowerCase();
  * How many records can be read with one query
  */
 export const METADATA_READ_COUNT_LIMIT = 10;
+
+/**
+ * Added to typings at the end of jsDocs
+ */
+export const GENERATED_WITH_PLUGIN_TEXT =
+	"Generated with [lwc-typings-generator](https://github.com/Ziemniakoss/lwc-typings-generator)";

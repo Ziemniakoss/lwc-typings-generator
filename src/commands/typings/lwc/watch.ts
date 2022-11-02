@@ -2,9 +2,6 @@ import { SfdxCommand } from "@salesforce/command";
 import { watch } from "chokidar";
 import { Messages } from "@salesforce/core";
 import { HelperTypesGenerator } from "../../../generators/HelperTypesGenerator";
-import { ApexTypingsGenerator } from "../../../apexTypingsGeneration/ApexTypingsGenerator";
-import WiredMethodTypingsGenerator from "../../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
-import ApexClassTypingsGenerator from "../../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 import StandardLibraryGenerator from "../../../StandardLibraryGenerator";
 import CustomPermissionsTypingsGenerator from "../../../CustomPermissionsTypingsGenerator";
 import UserPermissionsTypingsGenerator from "../../../UserPermissionsTypingsGenerator";
@@ -12,6 +9,7 @@ import StaticResourcesTypingGenerator from "../../../StaticResourcesTypingGenera
 import LabelsTypingsGenerator from "../../../LabelsTypingsGenerator";
 import JsConfigGenerator from "../../../generators/JsConfigGenerator";
 import { PLUGIN_NAME } from "../../../utils/constants";
+import ApexTypesGenerator from "../../../generators/ApexTypesGenerator";
 
 const IGNORED_PATHS = ["**/node_modules", "**/.*", "**/jsconfig.json"];
 
@@ -25,10 +23,7 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	public static requiresUsername = true;
 	public static description = messages.getMessage("description");
 
-	private apexTypingsGenerator = new ApexTypingsGenerator(
-		new WiredMethodTypingsGenerator(),
-		new ApexClassTypingsGenerator()
-	);
+	private apexTypingsGenerator = new ApexTypesGenerator();
 
 	async run() {
 		await this.generateAll();
@@ -121,9 +116,10 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	}
 
 	private async generateApexTypings() {
-		return this.apexTypingsGenerator.generateTypingsForProject(
+		return this.apexTypingsGenerator.generateForProject(
+			this.project,
 			this.org.getConnection(),
-			this.project
+			true
 		);
 	}
 

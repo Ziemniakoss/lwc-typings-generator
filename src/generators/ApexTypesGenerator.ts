@@ -12,18 +12,22 @@ import { basename, join } from "path";
 import { existsSync, promises } from "fs";
 import IWiredMethodsTypesGenerator from "./apexTypesGeneration/IWiredMethodsTypesGenerator";
 import WiredMethodsTypesGenerator from "./apexTypesGeneration/WiredMethodsTypesGenerator ";
+import IApexClassesTypesGenerator from "./apexTypesGeneration/IApexClassesTypesGenerator";
+import ApexClassesTypesGenerator from "./apexTypesGeneration/ApexClassesTypesGenerator";
 
 /**
  * Generates typings for Apex classes using Antlr grammar
  */
 export default class ApexTypesGenerator implements ITypingGenerator {
 	constructor(
-		private sObjectApiNames: string[] | null = null,
-		private wiredTypesGenerator: IWiredMethodsTypesGenerator = new WiredMethodsTypesGenerator()
+		private sObjectApiNamesMap: Map<string, string> = null,
+		private wiredTypesGenerator: IWiredMethodsTypesGenerator = new WiredMethodsTypesGenerator(),
+		private apexClassesTypesGenerator: IApexClassesTypesGenerator = new ApexClassesTypesGenerator()
 	) {}
 
 	async deleteForFile(project: SfdxProject, filePath: string): Promise<any> {
-		return Promise.resolve(undefined);
+		//TODO
+		return;
 	}
 
 	async deleteForMetadata(
@@ -48,14 +52,19 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 		connection: Connection,
 		filePath: string
 	): Promise<any> {
-		if (this.sObjectApiNames == null) {
+		if (this.sObjectApiNamesMap == null) {
 			await this.initializeSObjectNamesCache(connection);
 		}
-		const typings =
-			await this.wiredTypesGenerator.generateWiredMethodTypingsForFile(
+		const [wiredMethodsTypings, apexClassesTypings] = await Promise.all([
+			this.wiredTypesGenerator.generateWiredMethodTypingsForFile(
 				filePath,
-				this.sObjectApiNames
-			);
+				this.sObjectApiNamesMap
+			),
+			this.apexClassesTypesGenerator.generateTypingsForFile(
+				filePath,
+				this.sObjectApiNamesMap
+			),
+		]);
 		const typingsFolder = await getTypingsDir(project);
 		const apexTypingsFolder = join(typingsFolder, "apex");
 		await mkdirs(apexTypingsFolder);
@@ -63,8 +72,10 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 			apexTypingsFolder,
 			`${basename(filePath).replace(".cls", "")}.d.ts`
 		);
-		console.log(typings);
-		return promises.writeFile(classTypingsFile, typings);
+		return promises.writeFile(
+			classTypingsFile,
+			apexClassesTypings + wiredMethodsTypings
+		);
 	}
 
 	async generateForMetadata(
@@ -72,7 +83,8 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 		connection: Connection,
 		metadataFullNames: string[]
 	): Promise<any> {
-		throw Error("Not supported yet");
+		//TODO
+		return;
 	}
 
 	async generateForProject(
@@ -99,18 +111,20 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 		}
 		const typeGenerationPromises: Promise<any>[] = [];
 
-		await this.generateForFile(
-			project,
-			connection,
-			"/home/przemek/WebstormProjects/lwc-typings-generator/force-app/main/default/classes/TestCl.cls"
-		);
-		//TODO uncomment
-		// for(const apexClassFilePath of apexFilesMap.values()) {
-		// 	typeGenerationPromises.push(this.generateForFile(project,connection,apexClassFilePath))
-		// }
-		// if(apexClassesToGenerateFromApi.length > 0) {
-		// 	typeGenerationPromises.push(this.generateForMetadata(project,connection, apexClassesToGenerateFromApi))
-		// }
+		for (const apexClassFilePath of apexFilesMap.values()) {
+			typeGenerationPromises.push(
+				this.generateForFile(project, connection, apexClassFilePath)
+			);
+		}
+		if (apexClassesToGenerateFromApi.length > 0) {
+			typeGenerationPromises.push(
+				this.generateForMetadata(
+					project,
+					connection,
+					apexClassesToGenerateFromApi
+				)
+			);
+		}
 		return Promise.all(typeGenerationPromises);
 	}
 
@@ -133,12 +147,14 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 	}
 
 	private async initializeSObjectNamesCache(connection: Connection) {
-		if (this.sObjectApiNames != null) {
+		if (this.sObjectApiNamesMap != null) {
 			return;
 		}
 		const globalDescribe = await connection.describeGlobal();
-		this.sObjectApiNames = globalDescribe.sobjects.map((sObjectData) =>
-			sObjectData.name.toLowerCase()
+		const sObjectApiNamesRecords = globalDescribe.sobjects.map(
+			(sObjectData) => [sObjectData.name.toLowerCase(), sObjectData.name]
 		);
+		//@ts-ignore
+		this.sObjectApiNamesMap = new Map(sObjectApiNamesRecords);
 	}
 }

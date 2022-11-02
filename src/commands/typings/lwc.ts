@@ -2,13 +2,11 @@ import { SfdxCommand } from "@salesforce/command";
 import StandardLibraryGenerator from "../../StandardLibraryGenerator";
 import JsConfigGenerator from "../../generators/JsConfigGenerator";
 import LabelsTypingsGenerator from "../../LabelsTypingsGenerator";
-import { ApexTypingsGenerator } from "../../apexTypingsGeneration/ApexTypingsGenerator";
-import WiredMethodTypingsGenerator from "../../apexTypingsGeneration/wiredMethodsTypingsGeneration/WiredMethodTypingsGenerator";
-import ApexClassTypingsGenerator from "../../apexTypingsGeneration/apexClassesTypingsGeneration/ApexClassTypingsGenerator";
 import StaticResourcesTypingGenerator from "../../StaticResourcesTypingGenerator";
 import CustomPermissionsTypingsGenerator from "../../CustomPermissionsTypingsGenerator";
 import UserPermissionsTypingsGenerator from "../../UserPermissionsTypingsGenerator";
 import { HelperTypesGenerator } from "../../generators/HelperTypesGenerator";
+import ApexTypesGenerator from "../../generators/ApexTypesGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -48,10 +46,11 @@ and generates proper JSConfigs.
 	}
 
 	private async generateApexTypings() {
-		return new ApexTypingsGenerator(
-			new WiredMethodTypingsGenerator(),
-			new ApexClassTypingsGenerator()
-		).generateTypingsForProject(this.org.getConnection(), this.project);
+		return new ApexTypesGenerator().generateForProject(
+			this.project,
+			this.org.getConnection(),
+			true
+		);
 	}
 
 	private async generateStdblib() {

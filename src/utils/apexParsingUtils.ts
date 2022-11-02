@@ -94,14 +94,16 @@ function convertTypeNameToTsType(
 	sObjectNamesMap: Map<string, string>
 ): string {
 	const typeArgument = typeNameCtx.typeArguments();
-	const typeArgumentsType =
-		typeArgument
-			.typeList()
-			?.typeRef()
-			?.map((typeRef) =>
-				convertToTsType(typeRef, className, innerClassesNames, sObjectNamesMap)
-			)
-			?.join(",") ?? "any";
+	const typeArgumentsType = typeArgument
+		?.typeList()
+		?.typeRef()
+		?.map((typeRef) =>
+			convertToTsType(typeRef, className, innerClassesNames, sObjectNamesMap)
+		)
+		?.join(",");
+	if (typeArgumentsType == null) {
+		return "any";
+	}
 	if (typeNameCtx.LIST()) {
 		return typeArgumentsType + "[]";
 	} else if (typeNameCtx.SET()) {
