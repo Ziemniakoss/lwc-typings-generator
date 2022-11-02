@@ -1,7 +1,6 @@
 # Lwc typings generation
 
-Experimental plugin for better LWC typings using [my unfinished treesitter parser for apex ](https://github.com/Ziemniakoss/tree-sitter-apex).
-Works on linux, should work on Mac and Windows as it only uses js and wasm, but I can't verify this.
+Experimental plugin for better LWC typings.
 
 ![image showing autocompletion for sObject](images/sObjectInterfaces.png)
 
@@ -29,8 +28,6 @@ If for some reason you would want to go back to old typings, just delete jsconfi
 
 ## TODO
 
-- message channels
-- internationalization
 - apexContinuation
 - https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.create_content_assets
 - deeper shema
