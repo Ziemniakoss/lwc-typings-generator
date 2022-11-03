@@ -23,9 +23,12 @@ export default class WiredMethodsTypesGenerator
 		sObjectApiNames: Map<string, string>
 	): Promise<string> {
 		const { parser } = await parseApex(classContent);
+		const className = this.getClassName(classContent);
+		if (className == null) {
+			return "";
+		}
 		const wiredMethods = this.getWiredMethods(parser);
 		const innerClassesNames = getInnerClassesNames(classContent);
-		const className = this.getClassName(classContent);
 		return wiredMethods
 			.map((wiredMethod) =>
 				this.gen(className, wiredMethod, sObjectApiNames, innerClassesNames)
@@ -106,9 +109,9 @@ export default class WiredMethodsTypesGenerator
 	private getClassName(classContent: string): string {
 		return parseApex(classContent)
 			.parser.compilationUnit()
-			.typeDeclaration()
-			.classDeclaration()
-			.id().text;
+			?.typeDeclaration()
+			?.classDeclaration()
+			?.id()?.text;
 	}
 
 	private getWiredMethods(parser: ApexParser) {
