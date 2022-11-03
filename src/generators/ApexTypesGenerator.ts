@@ -56,14 +56,22 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 			await this.initializeSObjectNamesCache(connection);
 		}
 		const [wiredMethodsTypings, apexClassesTypings] = await Promise.all([
-			this.wiredTypesGenerator.generateWiredMethodTypingsForFile(
-				filePath,
-				this.sObjectApiNamesMap
-			),
-			this.apexClassesTypesGenerator.generateTypingsForFile(
-				filePath,
-				this.sObjectApiNamesMap
-			),
+			this.wiredTypesGenerator
+				.generateWiredMethodTypingsForFile(filePath, this.sObjectApiNamesMap)
+				.catch((error) => {
+					console.error(
+						"Error while generating wired methods typings for",
+						filePath,
+						error
+					);
+					return "";
+				}),
+			this.apexClassesTypesGenerator
+				.generateTypingsForFile(filePath, this.sObjectApiNamesMap)
+				.catch((error) => {
+					console.error("Error while generating typings for", filePath, error);
+					return "";
+				}),
 		]);
 		const typingsFolder = await getTypingsDir(project);
 		const apexTypingsFolder = join(typingsFolder, "apex");

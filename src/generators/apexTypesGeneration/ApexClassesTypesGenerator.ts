@@ -97,7 +97,9 @@ export default class ApexClassesTypesGenerator
 		innerClassesNames: Set<string>,
 		sObjectApiNamesMap: Map<string, string>
 	): string {
-		return `\t\t${propertyCtx.id().text}?: ${convertToTsType(
+		return `\t\t${
+			propertyCtx?.id().text ?? "unknownPropertyReportBug"
+		}?: ${convertToTsType(
 			propertyCtx.typeRef(),
 			className,
 			innerClassesNames,
