@@ -54,7 +54,6 @@ export default class WiredMethodsTypesGenerator
 			sObjectApiNames
 		)}>`;
 		const moduleDeclarationHeader = `declare module "@salesforce/apex/${className}.${methodName}"{\n`;
-		wiredMethod.formalParameters().formalParameterList().formalParameter();
 		const functionDocs = this.getWiredMethodDocumentation(
 			className,
 			wiredMethod
