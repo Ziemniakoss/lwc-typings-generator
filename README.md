@@ -1,5 +1,7 @@
 # Lwc typings generation
 
+[![badge with npm package version](https://img.shields.io/npm/v/lwc-typings-generator)](https://www.npmjs.com/package/lwc-typings-generator)
+
 Experimental plugin for better LWC typings.
 
 ![image showing autocompletion for sObject](images/sObjectInterfaces.png)
