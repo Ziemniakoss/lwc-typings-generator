@@ -38,13 +38,18 @@ export function convertToTsType(
 		.typeName()
 		.map((typeName) => typeName.text)
 		.join(".");
-	const typeSuffix = fullTypeName.endsWith("[]") ? "[]" : "";
+	const typeSuffix =
+		typeRefContext
+			.arraySubscripts()
+			?.LBRACK()
+			?.map(() => "[]")
+			?.join("") ?? "";
 	const fullTypeNameLowerCase = fullTypeName.toLowerCase();
 	if (sObjectNamesMap.has(fullTypeNameLowerCase)) {
 		return `schema.${sObjectNamesMap.get(fullTypeNameLowerCase)}${typeSuffix}`;
 	}
 	if (innerClassesNames.has(fullTypeName)) {
-		return `apex.${className}.${fullTypeName}`;
+		return `apex.${className}.${fullTypeName}${typeSuffix}`;
 	}
 	const typeNames = typeRefContext.typeName();
 	if (typeNames.length == 1) {
@@ -80,6 +85,10 @@ function convertTypeNameToTsType(
 		)
 		?.join(",");
 	if (typeArgumentsType == null) {
+		const idCtx = typeNameCtx.id();
+		if (idCtx != null) {
+			return `apex.${idCtx.text}`;
+		}
 		return "any";
 	}
 	if (typeNameCtx.LIST()) {
