@@ -108,4 +108,26 @@ describe("apexParsingUtils # convertToTsType", () => {
 			assert.equal(result, "apex.sbqq.UsageProcessingBatch");
 		});
 	});
+	context("given top level apex class", () => {
+		it("should return apex.ClassName", () => {
+			const result = convertToTsType(
+				getTypeRefContext("ClassName"),
+				"ClassName",
+				new Set(),
+				new Map()
+			);
+			assert.equal(result, "apex.ClassName");
+		});
+	});
+	context("given array", () => {
+		it("should return array type", () => {
+			const result = convertToTsType(
+				getTypeRefContext("Integer[][][]"),
+				"",
+				new Set(),
+				new Map()
+			);
+			assert.equal(result, "apex.Integer[][][]");
+		});
+	});
 });
