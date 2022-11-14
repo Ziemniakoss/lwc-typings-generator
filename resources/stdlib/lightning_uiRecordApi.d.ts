@@ -115,7 +115,7 @@ declare module "lightning/uiRecordApi" {
 	 * This will refresh updated records in other places.
 	 */
 	function getRecordNotifyChange(
-		recordsChangedOutsideOfLds: [{ recordId: apex.Id }]
+		recordsChangedOutsideOfLds: { recordId: apex.Id }[]
 	);
 
 	//TODO better typings for input https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_update_record
