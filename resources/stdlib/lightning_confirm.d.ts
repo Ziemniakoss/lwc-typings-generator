@@ -12,7 +12,7 @@ declare module "lightning/confirm" {
 		/**
 		 * Displayed in header (in variant with header)
 		 */
-		label: string;
+		label?: string;
 	}
 
 	interface LightningConfirmationType {

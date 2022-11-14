@@ -2,7 +2,7 @@ declare module "lightning/prompt" {
 	type PromptTheme = "default" | "error" | "warning" | "info";
 	interface LightningPromptConfig {
 		message: string;
-		label: string;
+		label?: string;
 		theme?: PromptTheme;
 		defaultValue?: string;
 	}
