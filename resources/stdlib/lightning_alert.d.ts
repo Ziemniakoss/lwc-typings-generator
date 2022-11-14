@@ -12,7 +12,7 @@ declare module "lightning/alert" {
 		/**
 		 * Text displayed in header
 		 */
-		label: string;
+		label?: string;
 	}
 	type LightningAlertType = {
 		open: (config: AlertConfig) => Promise<any>;
