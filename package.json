@@ -1,6 +1,6 @@
 {
 	"name": "lwc-typings-generator",
-	"version": "5.0.4",
+	"version": "5.0.5",
 	"description": "LWC typings generation",
 	"author": "Ziemniakoss",
 	"bugs": "https://github.com/Ziemniakoss/lwc-typings-generator/issues",
