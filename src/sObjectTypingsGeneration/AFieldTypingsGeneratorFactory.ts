@@ -1,9 +1,9 @@
 import { DescribeSObjectResult, Field } from "jsforce";
-import IFieldTypingsGenerator from "./fieldTypingsGenerators/IFieldTypingsGenerator";
+import AFieldTypingsGenerator from "./fieldTypingsGenerators/AFieldTypingsGenerator";
 
 export default interface IFieldTypingsGeneratorFactory {
 	getFieldTypingsGenerator(
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
-	): IFieldTypingsGenerator;
+	): AFieldTypingsGenerator;
 }

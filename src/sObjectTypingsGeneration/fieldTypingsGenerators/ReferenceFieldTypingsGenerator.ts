@@ -1,9 +1,7 @@
-import IFieldTypingsGenerator from "./IFieldTypingsGenerator";
+import AFieldTypingsGenerator from "./AFieldTypingsGenerator";
 import { DescribeSObjectResult, Field } from "jsforce";
 
-export default class ReferenceFieldTypingsGenerator
-	implements IFieldTypingsGenerator
-{
+export default class ReferenceFieldTypingsGenerator extends AFieldTypingsGenerator {
 	generateTypings(
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
@@ -16,10 +14,10 @@ export default class ReferenceFieldTypingsGenerator
 				return apiName;
 			})
 			.join(" | ");
-		let typings = `\t\t${field.name}?: apex.Id;\n`;
-		console.log(field.name);
+		const jsDocs = this.generateJsDocs(sObjectDescribe, field);
+		let typings = `${jsDocs}\t\t${field.name}?: apex.Id;\n`;
 		if (field.relationshipName != null) {
-			typings += `\t\t${field.relationshipName}?: (${joinedReferenceToApiNames});\n`;
+			typings += `${jsDocs}\t\t${field.relationshipName}?: (${joinedReferenceToApiNames});\n`;
 		}
 		return typings;
 	}

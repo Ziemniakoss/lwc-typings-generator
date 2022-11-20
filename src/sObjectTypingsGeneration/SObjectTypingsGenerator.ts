@@ -2,12 +2,12 @@ import { ChildRelationship, DescribeSObjectResult } from "jsforce";
 import { join } from "path";
 import { promises } from "fs";
 import { mkdirs } from "../utils/filesUtils";
-import IFieldTypingsGeneratorFactory from "./IFieldTypingsGeneratorFactory";
+import AFieldTypingsGeneratorFactory from "./AFieldTypingsGeneratorFactory";
 import { wrapInArray } from "../utils/collectionUtils";
 
 export default class SObjectTypingsGenerator {
 	constructor(
-		private fieldTypingsGeneratorFactory: IFieldTypingsGeneratorFactory
+		private fieldTypingsGeneratorFactory: AFieldTypingsGeneratorFactory
 	) {}
 
 	async generateSObjectTypings(
@@ -18,7 +18,8 @@ export default class SObjectTypingsGenerator {
 			"// Generated with lwc-typings-generator\ndeclare namespace schema {\n" +
 			this.generateRecordTypesTypings(sObjectDescribe) +
 			`\tdeclare interface ${sObjectDescribe.name}`;
-		if (sObjectDescribe.name == "RecordType") {
+		const isRecordType = sObjectDescribe.name == "RecordType";
+		if (isRecordType) {
 			typings += "<T>";
 		}
 		typings +=
@@ -34,6 +35,9 @@ export default class SObjectTypingsGenerator {
 				);
 			typings += fieldTypingsGenerator.generateTypings(sObjectDescribe, field);
 		}
+		if (!isRecordType) {
+			typings += this.generateRecordTypeTypings(sObjectDescribe);
+		}
 
 		const folder = join(typingsFolder, "sobject_interfaces");
 		mkdirs(folder);
@@ -43,7 +47,11 @@ export default class SObjectTypingsGenerator {
 		);
 	}
 
-	generateTypingForChildRelationships(
+	private generateRecordTypeTypings(sObjectDescribe: DescribeSObjectResult) {
+		return `\t\tRecordTypeId: apex.Id;\n\t\tRecordType:schema.RecordType<${sObjectDescribe.name}__RecordType__DevName>`;
+	}
+
+	private generateTypingForChildRelationships(
 		relationships: ChildRelationship[]
 	): string {
 		let typings = "";
@@ -55,7 +63,7 @@ export default class SObjectTypingsGenerator {
 		return typings;
 	}
 
-	generateRecordTypesTypings(describe: DescribeSObjectResult): string {
+	private generateRecordTypesTypings(describe: DescribeSObjectResult): string {
 		const typeDefinition = `\ttype ${describe.name}__RecordType__DevName =`;
 
 		const recordTypeInfos = wrapInArray(describe.recordTypeInfos);

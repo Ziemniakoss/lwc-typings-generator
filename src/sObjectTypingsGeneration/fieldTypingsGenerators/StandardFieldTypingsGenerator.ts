@@ -1,14 +1,14 @@
-import IFieldTypingsGenerator from "./IFieldTypingsGenerator";
 import { DescribeSObjectResult, Field } from "jsforce";
+import AFieldTypingsGenerator from "./AFieldTypingsGenerator";
 
-export default class StandardFieldTypingsGenerator
-	implements IFieldTypingsGenerator
-{
+export default class StandardFieldTypingsGenerator extends AFieldTypingsGenerator {
 	generateTypings(
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
 	): string {
-		return `\t\t${field.name}?: ${this.getJsType(field)};\n`;
+		return `${this.generateJsDocs(sObjectDescribe, field)}\t\t${
+			field.name
+		}?: ${this.getJsType(field)};\n`;
 	}
 	getJsType(field: Field): string {
 		switch (field.type) {
