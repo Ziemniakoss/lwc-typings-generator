@@ -1,9 +1,7 @@
-import IFieldTypingsGenerator from "./IFieldTypingsGenerator";
+import AFieldTypingsGenerator from "./AFieldTypingsGenerator";
 import { DescribeSObjectResult, Field } from "jsforce";
 
-export default class PicklistFieldTypingsGenerator
-	implements IFieldTypingsGenerator
-{
+export default class PicklistFieldTypingsGenerator extends AFieldTypingsGenerator {
 	generateTypings(
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
@@ -11,6 +9,8 @@ export default class PicklistFieldTypingsGenerator
 		const picklistValues = field.picklistValues
 			.map((p) => `"${p.value}"`)
 			.join(" | ");
-		return `\t\t${field.name}?: ${picklistValues};\n`;
+		return `${this.generateJsDocs(sObjectDescribe, field)}\t\t${
+			field.name
+		}?: ${picklistValues};\n`;
 	}
 }

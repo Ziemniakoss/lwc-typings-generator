@@ -1,18 +1,18 @@
-import IFieldTypingsGenerator from "./fieldTypingsGenerators/IFieldTypingsGenerator";
+import AFieldTypingsGenerator from "./fieldTypingsGenerators/AFieldTypingsGenerator";
 import { DescribeSObjectResult, Field } from "jsforce";
 import RecordTypeDevNameFieldTypingsGenerator from "./fieldTypingsGenerators/RecordTypeDevNameFieldTypingsGenerator";
 import ReferenceFieldTypingsGenerator from "./fieldTypingsGenerators/ReferenceFieldTypingsGenerator";
 import PicklistFieldTypingsGenerator from "./fieldTypingsGenerators/PicklistFieldTypingsGenerator";
 import StandardFieldTypingsGenerator from "./fieldTypingsGenerators/StandardFieldTypingsGenerator";
-import IFieldTypingsGeneratorFactory from "./IFieldTypingsGeneratorFactory";
+import AFieldTypingsGeneratorFactory from "./AFieldTypingsGeneratorFactory";
 
 export default class FieldTypingsGeneratorFactory
-	implements IFieldTypingsGeneratorFactory
+	implements AFieldTypingsGeneratorFactory
 {
 	getFieldTypingsGenerator(
 		sObjectDescribe: DescribeSObjectResult,
 		field: Field
-	): IFieldTypingsGenerator {
+	): AFieldTypingsGenerator {
 		if (sObjectDescribe.name == "RecordType" && field.name == "DeveloperName") {
 			return new RecordTypeDevNameFieldTypingsGenerator();
 		}
