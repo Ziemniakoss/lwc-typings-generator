@@ -16,7 +16,8 @@ export default class ReferenceFieldTypingsGenerator
 				return apiName;
 			})
 			.join(" | ");
-		let typings = `\t\t${field.name}?: ${joinedReferenceToApiNames};\n`;
+		let typings = `\t\t${field.name}?: apex.Id;\n`;
+		console.log(field.name);
 		if (field.relationshipName != null) {
 			typings += `\t\t${field.relationshipName}?: (${joinedReferenceToApiNames});\n`;
 		}
