@@ -45,13 +45,10 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 				typingsFolder,
 				describesMap
 			),
-			this.generateHelperSchemaTypes(typingsFolder),
 		]);
 
 		this.ux.stopSpinner("Generated");
 	}
-
-	async generateHelperSchemaTypes(typingsFolder: string) {}
 
 	async generateTypings(
 		sObjects: string[],
