@@ -58,6 +58,10 @@ export default class StandardLibraryGenerator {
 			["lightning-modal-footer", `import("lightning/modalFooter").default`],
 			["lightning-modal-header", `import("lightning/modalHeader").default`],
 			[
+				"lightning-service-cloud-voice-toolkit-api",
+				`import("lightning/serviceCloudVoiceToolkitApi").default`,
+			],
+			[
 				"lightning-formatted-date-time",
 				`import("lightning/formattedDateTime").default`,
 			],
