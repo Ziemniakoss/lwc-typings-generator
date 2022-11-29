@@ -48,7 +48,7 @@ export default class SObjectTypingsGenerator {
 	}
 
 	private generateRecordTypeTypings(sObjectDescribe: DescribeSObjectResult) {
-		return `\t\tRecordTypeId: apex.Id;\n\t\tRecordType:schema.RecordType<${sObjectDescribe.name}__RecordType__DevName>`;
+		return `\t\tRecordTypeId?: apex.Id;\n\t\tRecordType?:schema.RecordType<${sObjectDescribe.name}__RecordType__DevName>`;
 	}
 
 	private generateTypingForChildRelationships(
