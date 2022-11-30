@@ -43,7 +43,11 @@
 	"oclif": {
 		"commands": "./lib/commands",
 		"bin": "sfdx",
-		"topics": {},
+		"topics": {
+			"typings:lwc:config": {
+				"description": "Manage lwc-typings-generator config"
+			}
+		},
 		"devPlugins": [
 			"@oclif/plugin-help"
 		]
