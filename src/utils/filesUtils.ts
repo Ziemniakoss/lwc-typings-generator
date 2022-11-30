@@ -71,11 +71,7 @@ export function mkdirs(path: string) {
 }
 
 export async function getTypingsDir(project: SfdxProject): Promise<string> {
-	const pathToGeneratorConfig = join(
-		project.getPath(),
-		".config",
-		"lwc-typings-generation-config.json"
-	);
+	const pathToGeneratorConfig = getGeneratorConfigFile(project);
 	const typingsFolder = await promises
 		.readFile(pathToGeneratorConfig, "utf-8")
 		.then((content) => JSON.parse(content))
@@ -90,6 +86,18 @@ export async function getTypingsDir(project: SfdxProject): Promise<string> {
 		});
 	mkdirs(typingsFolder);
 	return typingsFolder;
+}
+
+/**
+ * Returns path to file with plugin configuration
+ * @param project
+ */
+export function getGeneratorConfigFile(project: SfdxProject): string {
+	return join(
+		project.getPath(),
+		".config",
+		"lwc-typings-generation-config.json"
+	);
 }
 
 /**
