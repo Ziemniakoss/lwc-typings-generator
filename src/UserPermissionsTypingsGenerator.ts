@@ -1,8 +1,8 @@
-import { Connection } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
 import { getTypingsDir } from "./utils/filesUtils";
 import { join } from "path";
 import { promises } from "fs";
+import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
 
 interface UserPermission {
 	apiName: string;
@@ -11,7 +11,7 @@ interface UserPermission {
 
 export default class UserPermissionsTypingsGenerator {
 	async generateTypingsForProject(
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		project: SfdxProject
 	) {
 		const [userPermissions, typingsFolder] = await Promise.all([
@@ -38,7 +38,9 @@ declare module "@salesforce/userPermission/${userPermission.apiName}" {
 		}
 	}
 
-	async getUserPermissions(connection: Connection): Promise<UserPermission[]> {
+	async getUserPermissions(
+		connection: CachedConnectionWrapper
+	): Promise<UserPermission[]> {
 		return connection.describe("Profile").then((profileDescribe) => {
 			return profileDescribe.fields
 				.filter((field) => field.name.startsWith("Permissions"))

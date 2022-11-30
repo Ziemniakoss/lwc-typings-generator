@@ -1,13 +1,14 @@
-import { Connection, FileProperties } from "jsforce";
+import { FileProperties } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
 import { getTypingsDir } from "./utils/filesUtils";
 import { join } from "path";
 import { promises } from "fs";
 import { wrapInArray } from "./utils/collectionUtils";
+import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
 
 export default class StaticResourcesTypingGenerator {
 	async generateTypingsForProject(
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		project: SfdxProject
 	) {
 		const [staticResources, typingsFolder] = await Promise.all([
@@ -31,7 +32,7 @@ export default class StaticResourcesTypingGenerator {
 	}
 
 	private async fetchStaticResources(
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<FileProperties[]> {
 		return connection.metadata
 			.list({ type: "StaticResource" })

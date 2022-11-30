@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import ApexTypesGenerator from "../../../generators/ApexTypesGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -12,9 +13,10 @@ export default class GenerateApexTypings extends SfdxCommand {
 			"Generating typings for apex classes",
 			"fetching sobject names"
 		);
+		//@ts-ignore
 		await new ApexTypesGenerator().generateForProject(
 			this.project,
-			this.org.getConnection(),
+			new CachedConnectionWrapper(this.org.getConnection()),
 			true
 		);
 		this.ux.stopSpinner("have fun!");

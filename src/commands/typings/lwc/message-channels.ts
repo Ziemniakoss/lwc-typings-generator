@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import MessageChannelsTypingsGenerator from "../../../generators/MessageChannelsTypingsGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class MessageChannelsGenerator extends SfdxCommand {
 	protected static requiresProject = true;
@@ -10,7 +11,7 @@ export default class MessageChannelsGenerator extends SfdxCommand {
 		this.ux.startSpinner("Generating for message channels");
 		await new MessageChannelsTypingsGenerator().generateForProject(
 			this.project,
-			this.org.getConnection()
+			new CachedConnectionWrapper(this.org.getConnection())
 		);
 		this.ux.stopSpinner();
 	}

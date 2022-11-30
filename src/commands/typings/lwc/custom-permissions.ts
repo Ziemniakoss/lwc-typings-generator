@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import CustomPermissionsTypingsGenerator from "../../../CustomPermissionsTypingsGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class GenerateTypingsForCustomPermissions extends SfdxCommand {
 	protected static requiresProject = true;
@@ -9,7 +10,10 @@ export default class GenerateTypingsForCustomPermissions extends SfdxCommand {
 	async run() {
 		this.ux.startSpinner("Generating typings for custom permissions");
 		return new CustomPermissionsTypingsGenerator()
-			.generateTypingsForProject(this.org.getConnection(), this.project)
+			.generateTypingsForProject(
+				new CachedConnectionWrapper(this.org.getConnection()),
+				this.project
+			)
 			.then(() => this.ux.stopSpinner("lookin good"));
 	}
 }

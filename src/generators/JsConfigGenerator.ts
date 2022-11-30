@@ -9,7 +9,7 @@ import {
 import { LWC_METADATA_FILE_EXTENSION } from "../utils/constants";
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
-import { Connection } from "jsforce";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
 
 interface CompilerOptions {
 	experimentalDecorators: boolean;
@@ -92,7 +92,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string
 	) {
 		const stdlibPath = await getTypingsDir(project);
@@ -105,7 +105,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[]
 	) {
 		// Unsupported
@@ -114,7 +114,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForProject(
 		project: SfdxProject,
-		connection: Connection = null,
+		connection: CachedConnectionWrapper = null,
 		deleteExisting: boolean = false
 	) {
 		const stdlibPath = await getTypingsDir(project);

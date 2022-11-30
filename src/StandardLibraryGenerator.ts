@@ -1,14 +1,14 @@
 import { SfdxCommand } from "@salesforce/command";
-import { Connection } from "jsforce";
 import { getResourcesFolder, getTypingsDir, mkdirs } from "./utils/filesUtils";
 import { promises } from "fs";
 import { basename, join } from "path";
 import { wrapInArray } from "./utils/collectionUtils";
+import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
 
 export default class StandardLibraryGenerator {
 	async generateStandardLibrary(
 		project: SfdxCommand["project"],
-		connection: Connection
+		connection: CachedConnectionWrapper
 	) {
 		const typingsDir = await getTypingsDir(project);
 		return Promise.all([
@@ -47,7 +47,7 @@ export default class StandardLibraryGenerator {
 
 	private async generateBaseLightningComponentFile(
 		typingDir: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	) {
 		const tagNameToLwcComponentImport = new Map<string, string>([
 			["lightning-combobox", `import("lightning/combobox").default`],

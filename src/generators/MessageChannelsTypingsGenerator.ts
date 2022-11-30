@@ -1,6 +1,6 @@
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
-import { Connection, FileProperties } from "jsforce";
+import { FileProperties } from "jsforce";
 import {
 	deleteFiles,
 	getFileNameWithoutExtension,
@@ -17,13 +17,14 @@ import {
 } from "../utils/constants";
 import { splitIntoSubArrays, wrapInArray } from "../utils/collectionUtils";
 import { getMetadataStorageSummary } from "../utils/jsForceUtils";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
 
 export default class MessageChannelsTypingsGenerator
 	implements ITypingGenerator
 {
 	async generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string,
 		typingsDir?: string
 	): Promise<any> {
@@ -44,7 +45,7 @@ export default class MessageChannelsTypingsGenerator
 
 	async generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[],
 		typingsDir?: string
 	): Promise<any> {
@@ -65,7 +66,7 @@ export default class MessageChannelsTypingsGenerator
 	}
 
 	private async generateForMetadataBatch(
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[],
 		typingsDir: string
 	): Promise<any> {
@@ -117,7 +118,7 @@ declare module "@salesforce/messageChannel/${channelFullName}" {
 
 	async generateForProject(
 		project: SfdxProject,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<any> {
 		const typingsDir = await this.getFolder(project);
 		let { filesForMetadata, fullNamesWithoutLocalFiles } =

@@ -1,8 +1,8 @@
 import IHelperTypesGenerator from "./IHelperTypesGenerator";
 import { join } from "path";
 import { promises } from "fs";
-import { Connection } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 export default class SObjectHelperTypesGenerator
 	implements IHelperTypesGenerator
@@ -10,7 +10,7 @@ export default class SObjectHelperTypesGenerator
 	async generateForProject(
 		project: SfdxProject,
 		helperTypesRoot: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<any> {
 		const globalDescribe = await connection.describeGlobal();
 		const fullPath = join(helperTypesRoot, "sobjects.d.ts");

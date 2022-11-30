@@ -1,5 +1,5 @@
 import { SfdxProject } from "@salesforce/core";
-import { Connection } from "jsforce";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
 
 /**
  * Base for typings generators.
@@ -16,7 +16,7 @@ export default interface ITypingGenerator {
 	 */
 	generateForProject(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		deleteExisting: boolean
 	): Promise<any>;
 
@@ -31,7 +31,7 @@ export default interface ITypingGenerator {
 	 */
 	generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string
 	): Promise<any>;
 
@@ -44,7 +44,7 @@ export default interface ITypingGenerator {
 	 */
 	generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[]
 	): Promise<any>;
 

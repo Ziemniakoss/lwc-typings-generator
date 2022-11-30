@@ -1,6 +1,5 @@
 import IHelperTypesGenerator from "./IHelperTypesGenerator";
 import { SfdxProject } from "@salesforce/core";
-import { Connection } from "jsforce";
 import {
 	METADATA_READ_COUNT_LIMIT,
 	METADATA_TYPES,
@@ -8,6 +7,7 @@ import {
 import { splitIntoSubArrays, wrapInArray } from "../../utils/collectionUtils";
 import { join } from "path";
 import { promises } from "fs";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 export default class GlobalValueSetHelperTypesGenerator
 	implements IHelperTypesGenerator
@@ -15,7 +15,7 @@ export default class GlobalValueSetHelperTypesGenerator
 	async generateForProject(
 		project: SfdxProject,
 		helperTypesRoot: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	) {
 		const globalVaueSetsApiNames = await connection.metadata
 			.list({ type: METADATA_TYPES.GLOBAL_VALUE_SET })

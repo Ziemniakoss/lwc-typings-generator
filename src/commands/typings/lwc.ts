@@ -7,6 +7,7 @@ import CustomPermissionsTypingsGenerator from "../../CustomPermissionsTypingsGen
 import UserPermissionsTypingsGenerator from "../../UserPermissionsTypingsGenerator";
 import { HelperTypesGenerator } from "../../generators/HelperTypesGenerator";
 import ApexTypesGenerator from "../../generators/ApexTypesGenerator";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -37,10 +38,20 @@ and generates proper JSConfigs.
 		this.ux.stopSpinner("done");
 	}
 
+	private _cachedConnection: CachedConnectionWrapper;
+	private get cachedConnection() {
+		if (this._cachedConnection == null) {
+			this._cachedConnection = new CachedConnectionWrapper(
+				this.org.getConnection()
+			);
+		}
+		return this._cachedConnection;
+	}
+
 	private async generateHelperTypes() {
 		return new HelperTypesGenerator().generateForProject(
 			this.project,
-			this.org.getConnection(),
+			this.cachedConnection,
 			false
 		);
 	}
@@ -48,7 +59,7 @@ and generates proper JSConfigs.
 	private async generateApexTypings() {
 		return new ApexTypesGenerator().generateForProject(
 			this.project,
-			this.org.getConnection(),
+			this.cachedConnection,
 			true
 		);
 	}
@@ -56,34 +67,34 @@ and generates proper JSConfigs.
 	private async generateStdblib() {
 		return new StandardLibraryGenerator().generateStandardLibrary(
 			this.project,
-			this.org.getConnection()
+			this.cachedConnection
 		);
 	}
 
 	private async generateCustomPermissionsTypings() {
 		return new CustomPermissionsTypingsGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateUserPermsissionsTypings() {
 		return new UserPermissionsTypingsGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateStaticResourcesTypings() {
 		return new StaticResourcesTypingGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateLabelsTypings() {
 		return new LabelsTypingsGenerator().generateForAll(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
