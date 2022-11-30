@@ -4,12 +4,18 @@ import {
 	deleteFiles,
 	findAllFiles,
 	findAllFilesWithExtension,
+	getGeneratorConfigFile,
 	getTypingsDir,
 } from "../utils/filesUtils";
 import { LWC_METADATA_FILE_EXTENSION } from "../utils/constants";
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
 import { Connection } from "jsforce";
+
+interface AdditionalTypesConfig {
+	common: string[];
+	componentSpecific: Record<string, string[]>;
+}
 
 interface CompilerOptions {
 	experimentalDecorators: boolean;
@@ -25,11 +31,16 @@ interface JsConfig {
 	include: string[];
 }
 
+/**
+ * Generates JsConfig files for project.
+ *
+ */
 export default class JsConfigGenerator implements ITypingGenerator {
 	private async generateJsConfig(
 		lwcPath: string,
 		allLwcPaths: string[],
-		dirWithStdlib: string
+		dirWithStdlib: string,
+		additionalTypesConfig: AdditionalTypesConfig
 	) {
 		const jsConfig = this.getBaseJsconfig(lwcPath, dirWithStdlib);
 		for (const lwcMetadataFile of allLwcPaths) {
@@ -44,7 +55,27 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			jsConfig.compilerOptions.paths[`c/${componentName}`] = [componentJsPath];
 			jsConfig.include.push(componentJsPath);
 		}
+		console.log(additionalTypesConfig);
+		this.addAdditionalTypesInfo(lwcPath, jsConfig, additionalTypesConfig);
 		return this.writeJsConfig(lwcPath, jsConfig);
+	}
+
+	private addAdditionalTypesInfo(
+		lwcPath: string,
+		jsConfig: JsConfig,
+		additionalTypesConfig: AdditionalTypesConfig
+	) {
+		const lwcDirname = dirname(lwcPath);
+		const componentKey = `c/${basename(lwcDirname)}`;
+		console.log(componentKey);
+		const allPathsToAdd = [
+			...additionalTypesConfig.common,
+			...(additionalTypesConfig.componentSpecific[componentKey] ?? []),
+		];
+		for (const commonTypingsDir of allPathsToAdd) {
+			const path = relative(lwcDirname, commonTypingsDir);
+			jsConfig.include.push(path);
+		}
 	}
 
 	private getBaseJsconfig(lwcPath: string, dirWithStdLib: string): JsConfig {
@@ -90,6 +121,35 @@ export default class JsConfigGenerator implements ITypingGenerator {
 		return deleteFiles(jsConfigs);
 	}
 
+	private async getAdditionalTypesConfig(
+		project: SfdxProject
+	): Promise<AdditionalTypesConfig> {
+		const fileWithConfig = getGeneratorConfigFile(project);
+		let config = {
+			common: [],
+			componentSpecific: {},
+		};
+		if (existsSync(fileWithConfig)) {
+			const configContent = await promises
+				.readFile(fileWithConfig, "utf-8")
+				.then((a) => JSON.parse(a));
+			config = {
+				...config,
+				...configContent,
+			};
+		}
+		const componentSpecific = {};
+		for (const componentName in config.componentSpecific) {
+			componentSpecific[componentName] = config.componentSpecific[
+				componentName
+			].map((pathAsArray) => join(...pathAsArray));
+		}
+		return {
+			common: config.common.map((pathAsArray) => join(...pathAsArray)),
+			componentSpecific,
+		};
+	}
+
 	async generateForFile(
 		project: SfdxProject,
 		connection: Connection,
@@ -100,7 +160,12 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			project.getPath(),
 			LWC_METADATA_FILE_EXTENSION
 		);
-		return this.generateJsConfig(filePath, lwcMetadataFilesPaths, stdlibPath);
+		return this.generateJsConfig(
+			filePath,
+			lwcMetadataFilesPaths,
+			stdlibPath,
+			await this.getAdditionalTypesConfig(project)
+		);
 	}
 
 	async generateForMetadata(
@@ -122,8 +187,14 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			project.getPath(),
 			LWC_METADATA_FILE_EXTENSION
 		);
+		const additionalTypesConfig = await this.getAdditionalTypesConfig(project);
 		const promises = lwcMetadataFilesPaths.map((lwcMetadataFile) =>
-			this.generateJsConfig(lwcMetadataFile, lwcMetadataFilesPaths, stdlibPath)
+			this.generateJsConfig(
+				lwcMetadataFile,
+				lwcMetadataFilesPaths,
+				stdlibPath,
+				additionalTypesConfig
+			)
 		);
 		return Promise.all(promises);
 	}
