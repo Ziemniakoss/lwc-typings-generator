@@ -15,6 +15,7 @@ export const METADATA_TYPES = {
 	FLOW: "Flow",
 	GLOBAL_VALUE_SET: "GlobalValueSet",
 	APEX_CLASS: "ApexClass",
+	STATIC_RESOURCE: "StaticResource",
 	SOBJECT: "CustomObject",
 };
 

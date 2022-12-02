@@ -55,7 +55,6 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			jsConfig.compilerOptions.paths[`c/${componentName}`] = [componentJsPath];
 			jsConfig.include.push(componentJsPath);
 		}
-		console.log(additionalTypesConfig);
 		this.addAdditionalTypesInfo(lwcPath, jsConfig, additionalTypesConfig);
 		return this.writeJsConfig(lwcPath, jsConfig);
 	}
@@ -67,7 +66,6 @@ export default class JsConfigGenerator implements ITypingGenerator {
 	) {
 		const lwcDirname = dirname(lwcPath);
 		const componentKey = `c/${basename(lwcDirname)}`;
-		console.log(componentKey);
 		const allPathsToAdd = [
 			...additionalTypesConfig.common,
 			...(additionalTypesConfig.componentSpecific[componentKey] ?? []),

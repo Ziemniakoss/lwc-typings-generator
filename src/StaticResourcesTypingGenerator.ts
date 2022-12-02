@@ -5,6 +5,7 @@ import { join } from "path";
 import { promises } from "fs";
 import { wrapInArray } from "./utils/collectionUtils";
 import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
+import { METADATA_TYPES } from "./utils/constants";
 
 export default class StaticResourcesTypingGenerator {
 	async generateTypingsForProject(
@@ -35,7 +36,7 @@ export default class StaticResourcesTypingGenerator {
 		connection: CachedConnectionWrapper
 	): Promise<FileProperties[]> {
 		return connection.metadata
-			.list({ type: "StaticResource" })
+			.list({ type: METADATA_TYPES.STATIC_RESOURCE })
 			.then((staticResources) => wrapInArray(staticResources));
 	}
 }
