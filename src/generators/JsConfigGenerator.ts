@@ -4,13 +4,12 @@ import {
 	deleteFiles,
 	findAllFiles,
 	findAllFilesWithExtension,
-	getGeneratorConfigFile,
-	getTypingsDir,
 } from "../utils/filesUtils";
 import { LWC_METADATA_FILE_EXTENSION } from "../utils/constants";
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
 import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getGeneratorConfigFile, getTypingsDir } from "../utils/configUtils";
 
 interface AdditionalTypesConfig {
 	common: string[];

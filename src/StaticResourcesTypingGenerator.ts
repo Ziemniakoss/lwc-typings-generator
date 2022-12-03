@@ -1,11 +1,11 @@
 import { FileProperties } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
-import { getTypingsDir } from "./utils/filesUtils";
 import { join } from "path";
 import { promises } from "fs";
 import { wrapInArray } from "./utils/collectionUtils";
 import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
 import { METADATA_TYPES } from "./utils/constants";
+import { getTypingsDir } from "./utils/configUtils";
 
 export default class StaticResourcesTypingGenerator {
 	async generateTypingsForProject(

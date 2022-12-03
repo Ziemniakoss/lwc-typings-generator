@@ -4,7 +4,6 @@ import { FileProperties } from "jsforce";
 import {
 	deleteFiles,
 	getFileNameWithoutExtension,
-	getTypingsDir,
 	getXmlFromFile,
 	mkdirs,
 } from "../utils/filesUtils";
@@ -18,6 +17,7 @@ import {
 import { splitIntoSubArrays, wrapInArray } from "../utils/collectionUtils";
 import { getMetadataStorageSummary } from "../utils/jsForceUtils";
 import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getTypingsDir } from "../utils/configUtils";
 
 export default class MessageChannelsTypingsGenerator
 	implements ITypingGenerator

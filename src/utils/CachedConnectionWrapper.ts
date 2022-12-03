@@ -1,5 +1,6 @@
 import {
 	Connection,
+	DescribeSObjectResult,
 	FileProperties,
 	ListMetadataQuery,
 	Metadata,
@@ -11,6 +12,7 @@ import {
 export default class CachedConnectionWrapper {
 	private readonly cache: Map<string, Promise<any>>;
 	private readonly connection: Connection;
+
 	constructor(connection: Connection) {
 		this.connection = connection;
 		this.cache = new Map<string, Promise<any>>();
@@ -24,6 +26,7 @@ export default class CachedConnectionWrapper {
 		}
 		return this._metadata;
 	}
+
 	describeGlobal(): ReturnType<Connection["describeGlobal"]> {
 		const key = "describeGlobal";
 		if (!this.cache.has(key)) {
@@ -32,7 +35,7 @@ export default class CachedConnectionWrapper {
 		return this.cache.get(key);
 	}
 
-	describe(type: string) {
+	describe(type: string): Promise<DescribeSObjectResult> {
 		const key = `describe:${type}`;
 		if (!this.cache.has(key)) {
 			this.cache.set(key, this.connection.describe(type));

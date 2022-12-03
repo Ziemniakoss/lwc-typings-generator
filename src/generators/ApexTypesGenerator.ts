@@ -1,10 +1,6 @@
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
-import {
-	findAllFilesWithExtension,
-	getTypingsDir,
-	mkdirs,
-} from "../utils/filesUtils";
+import { findAllFilesWithExtension, mkdirs } from "../utils/filesUtils";
 import { FILE_EXTENSIONS, METADATA_TYPES } from "../utils/constants";
 import { groupBy, wrapInArray } from "../utils/collectionUtils";
 import { basename, join } from "path";
@@ -14,6 +10,7 @@ import WiredMethodsTypesGenerator from "./apexTypesGeneration/WiredMethodsTypesG
 import IApexClassesTypesGenerator from "./apexTypesGeneration/IApexClassesTypesGenerator";
 import ApexClassesTypesGenerator from "./apexTypesGeneration/ApexClassesTypesGenerator";
 import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getTypingsDir } from "../utils/configUtils";
 
 /**
  * Generates typings for Apex classes using Antlr grammar

@@ -1,6 +1,6 @@
 import { SfdxProject } from "@salesforce/core";
 import { join } from "path";
-import { getTypingsDir, mkdirs } from "../utils/filesUtils";
+import { mkdirs } from "../utils/filesUtils";
 import ITypingGenerator from "./ITypingGenerator";
 import IHelperTypesGenerator from "./helperTypesGenerators/IHelperTypesGenerator";
 import TabsHelperTypesGenerator from "./helperTypesGenerators/TabsHelperTypesGenerator";
@@ -10,6 +10,7 @@ import ApplicationsHelperTypesGenerator from "./helperTypesGenerators/Applicatio
 import FlowHelperTypesGenerator from "./helperTypesGenerators/FlowHelperTypesGenerator";
 import GlobalValueSetHelperTypesGenerator from "./helperTypesGenerators/GlobalValueSetHelperTypesGenerator";
 import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getTypingsDir } from "../utils/configUtils";
 
 export class HelperTypesGenerator implements ITypingGenerator {
 	private helperTypesGenerators: IHelperTypesGenerator[];

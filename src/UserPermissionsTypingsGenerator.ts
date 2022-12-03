@@ -1,8 +1,8 @@
 import { SfdxProject } from "@salesforce/core";
-import { getTypingsDir } from "./utils/filesUtils";
 import { join } from "path";
 import { promises } from "fs";
 import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
+import { getTypingsDir } from "./utils/configUtils";
 
 interface UserPermission {
 	apiName: string;

@@ -3,7 +3,8 @@ import { DescribeSObjectResult } from "jsforce";
 import SchemaGenerator from "../../../SchemaGenerator";
 import SObjectTypingsGenerator from "../../../sObjectTypingsGeneration/SObjectTypingsGenerator";
 import FieldTypingsGeneratorFactory from "../../../sObjectTypingsGeneration/FieldTypingsGeneratorFactory";
-import { getTypingsDir } from "../../../utils/filesUtils";
+import { getTypingsDir } from "../../../utils/configUtils";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class GenerateSObjectTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -16,6 +17,12 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 			description: "Comma separated sObject names",
 			required: true,
 		}),
+		depth: flags.integer({
+			description: "Schema references depth. Bear in mind that higher values will slow down generation time",
+			min: 1,
+			max: 5,
+			default:1
+		})
 	};
 
 	async run() {
@@ -24,7 +31,6 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 			"fetching describes"
 		);
 		const typingsFolder = await getTypingsDir(this.project);
-		const schemaGenerator = new SchemaGenerator();
 		const sObjectTypingsGenerator = new SObjectTypingsGenerator(
 			new FieldTypingsGeneratorFactory()
 		);
@@ -33,12 +39,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 
 		this.ux.setSpinnerStatus("creating interfaces and schemas");
 		await Promise.all([
-			this.generateSchemas(
-				sObjects,
-				schemaGenerator,
-				typingsFolder,
-				describesMap
-			),
+			this.generateSchemas(),
 			this.generateTypings(
 				sObjects,
 				sObjectTypingsGenerator,
@@ -56,6 +57,7 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		typingsFolder: string,
 		describesMap
 	) {
+
 		return Promise.all(
 			sObjects.map((sObjectName) => {
 				const describe = describesMap.get(sObjectName.toLowerCase());
@@ -67,22 +69,17 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		);
 	}
 
-	async generateSchemas(
-		sObjects: string[],
-		schemaGenerator: SchemaGenerator,
-		typingsFolder: string,
-		describesMap
-	) {
-		return Promise.all(
-			sObjects.map((sObjectName) => {
-				const describe = describesMap.get(sObjectName.toLowerCase());
-				const realApiName = describe.name;
-				return schemaGenerator.generateSchemaTypings(
-					realApiName,
-					describesMap,
-					typingsFolder
-				);
-			})
+	async generateSchemas() {
+		const depth = this.flags.depth
+		if(depth == 5){
+			this.ux.warn("Schema typings generation for high depth values can take a lot of time and generated typings can slow down autocompletion in your IDE")
+		}
+		return new SchemaGenerator().generateForProject(
+			this.project,
+			new CachedConnectionWrapper(this.org.getConnection()),
+			false,
+			this.flags.sobject,
+			depth
 		);
 	}
 

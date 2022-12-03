@@ -1,7 +1,6 @@
 import { existsSync, lstatSync, mkdirSync, promises } from "fs";
 import { basename, dirname, join } from "path";
 import { parseStringPromise } from "xml2js";
-import { SfdxProject } from "@salesforce/core";
 
 const SKIPPED_FOLDERS = ["node_modules", ".git", ".github", ".sfdx"];
 
@@ -70,36 +69,6 @@ export function mkdirs(path: string) {
 	}
 }
 
-export async function getTypingsDir(project: SfdxProject): Promise<string> {
-	const pathToGeneratorConfig = getGeneratorConfigFile(project);
-	const typingsFolder = await promises
-		.readFile(pathToGeneratorConfig, "utf-8")
-		.then((content) => JSON.parse(content))
-		.then((parsedConfig) => {
-			const typingsPath = parsedConfig.typingsPath;
-			return Array.isArray(typingsPath)
-				? join(project.getPath(), ...typingsPath)
-				: join(project.getPath(), typingsPath);
-		})
-		.catch(() => {
-			return join(project.getPath(), ".sfdx", "lwc-typings");
-		});
-	mkdirs(typingsFolder);
-	return typingsFolder;
-}
-
-/**
- * Returns path to file with plugin configuration
- * @param project
- */
-export function getGeneratorConfigFile(project: SfdxProject): string {
-	return join(
-		project.getPath(),
-		".config",
-		"lwc-typings-generation-config.json"
-	);
-}
-
 /**
  * Deletes all files asynchronously
  *
@@ -122,6 +91,7 @@ export function getFileNameWithoutExtension(
 	}
 	return fileName;
 }
+
 export async function findFile(
 	fileName: string,
 	directory: string

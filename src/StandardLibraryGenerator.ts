@@ -1,9 +1,10 @@
 import { SfdxCommand } from "@salesforce/command";
-import { getResourcesFolder, getTypingsDir, mkdirs } from "./utils/filesUtils";
+import { getResourcesFolder, mkdirs } from "./utils/filesUtils";
 import { promises } from "fs";
 import { basename, join } from "path";
 import { wrapInArray } from "./utils/collectionUtils";
 import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
+import { getTypingsDir } from "./utils/configUtils";
 
 export default class StandardLibraryGenerator {
 	async generateStandardLibrary(
