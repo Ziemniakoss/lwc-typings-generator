@@ -10,6 +10,7 @@ import LabelsTypingsGenerator from "../../../LabelsTypingsGenerator";
 import JsConfigGenerator from "../../../generators/JsConfigGenerator";
 import { PLUGIN_NAME } from "../../../utils/constants";
 import ApexTypesGenerator from "../../../generators/ApexTypesGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 const IGNORED_PATHS = ["**/node_modules", "**/.*", "**/jsconfig.json"];
 
@@ -22,6 +23,15 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	public static requiresProject = true;
 	public static requiresUsername = true;
 	public static description = messages.getMessage("description");
+	private _cachedConnection: CachedConnectionWrapper;
+	get cachedConnection() {
+		if (this._cachedConnection == null) {
+			this._cachedConnection = new CachedConnectionWrapper(
+				this.org.getConnection()
+			);
+		}
+		return this._cachedConnection;
+	}
 
 	private apexTypingsGenerator = new ApexTypesGenerator();
 
@@ -110,7 +120,7 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	private async generateHelperTypes() {
 		return new HelperTypesGenerator().generateForProject(
 			this.project,
-			this.org.getConnection(),
+			this.cachedConnection,
 			false
 		);
 	}
@@ -118,7 +128,7 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	private async generateApexTypings() {
 		return this.apexTypingsGenerator.generateForProject(
 			this.project,
-			this.org.getConnection(),
+			this.cachedConnection,
 			true
 		);
 	}
@@ -126,34 +136,34 @@ export default class DynamicTypingsGenerator extends SfdxCommand {
 	private async generateStdblib() {
 		return new StandardLibraryGenerator().generateStandardLibrary(
 			this.project,
-			this.org.getConnection()
+			this.cachedConnection
 		);
 	}
 
 	private async generateCustomPermissionsTypings() {
 		return new CustomPermissionsTypingsGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateUserPermsissionsTypings() {
 		return new UserPermissionsTypingsGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateStaticResourcesTypings() {
 		return new StaticResourcesTypingGenerator().generateTypingsForProject(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}
 
 	private async generateLabelsTypings() {
 		return new LabelsTypingsGenerator().generateForAll(
-			this.org.getConnection(),
+			this.cachedConnection,
 			this.project
 		);
 	}

@@ -4,13 +4,12 @@ import {
 	deleteFiles,
 	findAllFiles,
 	findAllFilesWithExtension,
-	getGeneratorConfigFile,
-	getTypingsDir,
 } from "../utils/filesUtils";
 import { LWC_METADATA_FILE_EXTENSION } from "../utils/constants";
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
-import { Connection } from "jsforce";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getGeneratorConfigFile, getTypingsDir } from "../utils/configUtils";
 
 interface AdditionalTypesConfig {
 	common: string[];
@@ -55,7 +54,6 @@ export default class JsConfigGenerator implements ITypingGenerator {
 			jsConfig.compilerOptions.paths[`c/${componentName}`] = [componentJsPath];
 			jsConfig.include.push(componentJsPath);
 		}
-		console.log(additionalTypesConfig);
 		this.addAdditionalTypesInfo(lwcPath, jsConfig, additionalTypesConfig);
 		return this.writeJsConfig(lwcPath, jsConfig);
 	}
@@ -67,7 +65,6 @@ export default class JsConfigGenerator implements ITypingGenerator {
 	) {
 		const lwcDirname = dirname(lwcPath);
 		const componentKey = `c/${basename(lwcDirname)}`;
-		console.log(componentKey);
 		const allPathsToAdd = [
 			...additionalTypesConfig.common,
 			...(additionalTypesConfig.componentSpecific[componentKey] ?? []),
@@ -152,7 +149,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string
 	) {
 		const stdlibPath = await getTypingsDir(project);
@@ -170,7 +167,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[]
 	) {
 		// Unsupported
@@ -179,7 +176,7 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async generateForProject(
 		project: SfdxProject,
-		connection: Connection = null,
+		connection: CachedConnectionWrapper = null,
 		deleteExisting: boolean = false
 	) {
 		const stdlibPath = await getTypingsDir(project);

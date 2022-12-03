@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import StandardLibraryGenerator from "../../../StandardLibraryGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class GenerateStdLib extends SfdxCommand {
 	protected static requiresProject = true;
@@ -8,7 +9,7 @@ export default class GenerateStdLib extends SfdxCommand {
 
 	async run() {
 		const project = this.project;
-		const connection = this.org.getConnection();
+		const connection = new CachedConnectionWrapper(this.org.getConnection());
 		return new StandardLibraryGenerator().generateStandardLibrary(
 			project,
 			connection

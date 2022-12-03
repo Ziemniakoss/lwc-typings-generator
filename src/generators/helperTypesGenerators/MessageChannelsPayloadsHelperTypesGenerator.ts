@@ -1,11 +1,11 @@
 import IHelperTypesGenerator from "./IHelperTypesGenerator";
-import { Connection } from "jsforce";
 import { getMetadataStorageSummary } from "../../utils/jsForceUtils";
 import { SfdxProject } from "@salesforce/core";
 import { FILE_EXTENSIONS, METADATA_TYPES } from "../../utils/constants";
 import { join } from "path";
 import { mkdirs } from "../../utils/filesUtils";
 import { existsSync, promises } from "fs";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 /**
  * Generate typings for message channels payloads
@@ -17,7 +17,7 @@ export default class MessageChannelsPayloadsHelperTypesGenerator
 	async generateForProject(
 		project: SfdxProject,
 		helperTypesRoot: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<any> {
 		const { filesForMetadata, fullNamesWithoutLocalFiles, overrides } =
 			await getMetadataStorageSummary<MessageChannel>(
@@ -68,14 +68,14 @@ export default class MessageChannelsPayloadsHelperTypesGenerator
 	}
 
 	private async generateTypings(
-		typingsDir: string,
-		messageChannel: MessageChannel
+		_typingsDir: string,
+		_messageChannel: MessageChannel
 	) {}
 
 	private async generateWithConnection(
-		typingsDir: string,
-		connection: Connection,
-		fullNames: string[]
+		_typingsDir: string,
+		_connection: CachedConnectionWrapper,
+		_fullNames: string[]
 	) {}
 
 	private async generateFromOverride(
@@ -86,9 +86,9 @@ export default class MessageChannelsPayloadsHelperTypesGenerator
 	}
 
 	private async generateFromLocalFile(
-		typingDir: string,
-		fullName: string,
-		filePath: string
+		_typingDir: string,
+		_fullName: string,
+		_filePath: string
 	) {}
 
 	private getTypingsFolder(helperTypesRoot: string): string {

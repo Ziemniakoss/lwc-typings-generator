@@ -1,10 +1,10 @@
 import IHelperTypesGenerator from "./IHelperTypesGenerator";
-import { Connection } from "jsforce";
 import { METADATA_TYPES } from "../../utils/constants";
 import { wrapInArray } from "../../utils/collectionUtils";
 import { join } from "path";
 import { promises } from "fs";
 import { SfdxProject } from "@salesforce/core";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 export default class ApplicationsHelperTypesGenerator
 	implements IHelperTypesGenerator
@@ -12,7 +12,7 @@ export default class ApplicationsHelperTypesGenerator
 	async generateForProject(
 		project: SfdxProject,
 		helperTypesRoot: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<any> {
 		const typingsHeader =
 			"declare namespace Salesforce {\n\tdeclare type ApplicationApiName = \n";

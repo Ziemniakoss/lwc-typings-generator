@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import { HelperTypesGenerator } from "../../../generators/HelperTypesGenerator";
+import CachedConnectionWrapper from "../../../utils/CachedConnectionWrapper";
 
 export default class GenerateHelperTypes extends SfdxCommand {
 	protected static requiresProject = true;
@@ -11,7 +12,7 @@ export default class GenerateHelperTypes extends SfdxCommand {
 		this.ux.startSpinner("getting help");
 		await new HelperTypesGenerator().generateForProject(
 			this.project,
-			this.org.getConnection(),
+			new CachedConnectionWrapper(this.org.getConnection()),
 			true
 		);
 		this.ux.stopSpinner("helper types created");

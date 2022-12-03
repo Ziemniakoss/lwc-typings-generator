@@ -1,9 +1,10 @@
-import { Connection } from "jsforce";
 import { join } from "path";
 import { existsSync, rmSync, promises } from "fs";
-import { getTypingsDir, mkdirs } from "./utils/filesUtils";
+import { mkdirs } from "./utils/filesUtils";
 import { splitIntoSubArrays } from "./utils/collectionUtils";
 import { SfdxCommand } from "@salesforce/command";
+import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
+import { getTypingsDir } from "./utils/configUtils";
 
 const READ_OPERATION_LIMIT = 10;
 const GENERATED_BY_STRING =
@@ -44,7 +45,7 @@ export default class LabelsTypingsGenerator {
 	}
 
 	async generateForAll(
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		project: SfdxCommand["project"]
 	) {
 		const typingsFolder = await getTypingsDir(project);

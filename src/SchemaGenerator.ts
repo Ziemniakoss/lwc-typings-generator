@@ -1,34 +1,234 @@
-import { DescribeSObjectResult } from "jsforce";
+import { Field } from "jsforce";
 import { join } from "path";
 import { promises } from "fs";
 import { mkdirs } from "./utils/filesUtils";
+import ITypingGenerator from "./generators/ITypingGenerator";
+import { SfdxProject } from "@salesforce/core";
+import CachedConnectionWrapper from "./utils/CachedConnectionWrapper";
+import { getConfig, getTypingsDir } from "./utils/configUtils";
 
-export default class SchemaGenerator {
-	async generateSchemaTypings(
+const MAX_SCHEMA_DEPTH = 5;
+
+type PossibleDepths = 1 | 2 | 3 | 4 | 5;
+export default class SchemaGenerator implements ITypingGenerator {
+	private async generateTypingsForSObject(
 		sObjectName: string,
-		describesMap: Map<string, DescribeSObjectResult>,
-		typingsFolder: string
+		connection: CachedConnectionWrapper,
+		schemaTypingsFolder: string,
+		maxGenerationDepth: PossibleDepths
 	) {
-		const describe = describesMap.get(sObjectName.toLowerCase());
+		console.log(sObjectName, maxGenerationDepth);
+		const sObjectDescribe = await connection.describe(sObjectName);
+		const sObjectApiName = sObjectDescribe.name;
 
-		const schemaFolder = this.getSchemaFolder(typingsFolder);
-		const fullPath = join(schemaFolder, `${describe.name}.d.ts`);
-		await promises.writeFile(fullPath, "");
-
-		for (const field of describe.fields) {
-			const fieldApiName = field.name;
-			const typings = `
-declare module "@salesforce/schema/${describe.name}.${fieldApiName}" {
-	const ${fieldApiName}: schema.FieldIdFromSchema<"${describe.name}", "${fieldApiName}">
-	export default ${fieldApiName}
-}`;
-			await promises.appendFile(fullPath, typings);
+		const fileName = join(schemaTypingsFolder, `${sObjectApiName}.d.ts`);
+		let typings = `
+declare module "@salesforce/schema/${sObjectApiName}" {
+	const ${sObjectApiName}: schema.ObjectIdFromSchema<"${sObjectApiName}">;
+	export default ${sObjectApiName}
+}\n`;
+		await promises.writeFile(fileName, typings);
+		for (const field of sObjectDescribe.fields) {
+			await this.generateTypingsForField(
+				field,
+				sObjectApiName,
+				sObjectApiName,
+				1,
+				connection,
+				fileName,
+				maxGenerationDepth
+			);
 		}
 	}
 
-	getSchemaFolder(typingsFolder: string): string {
+	private async generateTypingsForField(
+		field: Field,
+		sObjectName: string,
+		prefix: string,
+		currentDepth: number,
+		connection: CachedConnectionWrapper,
+		fileName: string,
+		maxGenerationDepth: PossibleDepths
+	) {
+		if (currentDepth > maxGenerationDepth) {
+			return "";
+		}
+		const moduleName = `${prefix}.${field.name}`;
+		const varName = moduleName.split(".").join("_");
+		let fieldDocs = "";
+		if (field.inlineHelpText != null) {
+			fieldDocs = `/**\n${field.inlineHelpText}\n*/\n`;
+		}
+		const fieldTypings =
+			fieldDocs +
+			`
+declare module "@salesforce/schema/${moduleName}" {
+	const ${varName}: schema.FieldIdFromSchema<"${sObjectName}", "${field.name}">
+	export default ${varName}
+}\n`;
+		await promises.appendFile(fileName, fieldTypings);
+		if (field.type !== "reference" || field.relationshipName == null) {
+			return fieldTypings;
+		}
+		const referencedFieldPrefix = `${prefix}.${field.relationshipName}`;
+		const relatedTypingsGenerationPromises = field.referenceTo.map(
+			(referencedType) =>
+				this.generateTypingsForReferencedSObject(
+					referencedType,
+					referencedFieldPrefix,
+					currentDepth + 1,
+					connection,
+					fileName,
+					maxGenerationDepth
+				)
+		);
+		return Promise.all(relatedTypingsGenerationPromises);
+	}
+
+	private async generateTypingsForReferencedSObject(
+		referencedSObjectName: string,
+		parentModuleName: string,
+		currentDepth: number,
+		connection: CachedConnectionWrapper,
+		fileName: string,
+		maxGenerationDepth: PossibleDepths
+	) {
+		if (currentDepth > maxGenerationDepth) {
+			return;
+		}
+		const sObjectDescribe = await connection.describe(referencedSObjectName);
+		const fieldsWithNames = sObjectDescribe.fields.filter(
+			(f) => f.name != null
+		);
+		for (const field of fieldsWithNames) {
+			await this.generateTypingsForField(
+				field,
+				referencedSObjectName,
+				parentModuleName,
+				currentDepth,
+				connection,
+				fileName,
+				maxGenerationDepth
+			);
+		}
+	}
+
+	async getSchemaFolder(project: SfdxProject): Promise<string> {
+		const typingsFolder = await getTypingsDir(project);
 		const folder = join(typingsFolder, "schema");
 		mkdirs(folder);
 		return folder;
+	}
+
+	/**
+	 * This operation is unsupported
+	 */
+	async deleteForFile(project: SfdxProject, filePath: string) {}
+
+	async deleteForMetadata(
+		project: SfdxProject,
+		metadataFullNames: string[]
+	): Promise<any> {
+		return Promise.resolve(undefined);
+	}
+
+	async deleteForProject(project: SfdxProject) {
+		return promises.rm(await this.getSchemaFolder(project), {
+			recursive: true,
+			force: true,
+		});
+	}
+
+	/**
+	 * This operation is unsupported
+	 */
+	async generateForFile(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		filePath: string
+	) {
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 *
+	 * @param project
+	 * @param connection
+	 * @param metadataFullNames
+	 * @param maxGenerationDepth default generation depth.
+	 * This value will be overridden if user set up depth for given sObject in config
+	 */
+	async generateForMetadata(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		metadataFullNames: string[],
+		maxGenerationDepth?: PossibleDepths
+	): Promise<any> {
+		const schemaTypingsFolder = await this.getSchemaFolder(project);
+		const sObjectNameLowerToDepth = new Map<string, PossibleDepths>();
+		const { usedSObjectNames = {} } = await getConfig(project);
+		for (const sObjectName in usedSObjectNames) {
+			let depthOverride = usedSObjectNames[sObjectName];
+			if (depthOverride == null || isNaN(depthOverride)) {
+				continue;
+			}
+			depthOverride = Math.min(MAX_SCHEMA_DEPTH, Math.max(0, depthOverride));
+			sObjectNameLowerToDepth.set(sObjectName.toLowerCase(), depthOverride);
+		}
+
+		// @ts-ignore
+		maxGenerationDepth = Math.min(
+			MAX_SCHEMA_DEPTH,
+			Math.max(maxGenerationDepth, 0)
+		);
+		const generationPromises = metadataFullNames.map((sObjectApiName) => {
+			const depth = sObjectNameLowerToDepth.get(sObjectApiName.toLowerCase());
+			return this.generateTypingsForSObject(
+				sObjectApiName,
+				connection,
+				schemaTypingsFolder,
+				depth ?? maxGenerationDepth
+			);
+		});
+		return Promise.all(generationPromises);
+	}
+
+	/**
+	 * Generates typings for sObject declared in generator config
+	 *
+	 * @param project project for which typings should be generated
+	 * @param connection cached connection
+	 * @param deleteExisting should exisiting typings be deleted
+	 * @param [additionalSObjectApiNames] additional SObject api names that schemes should be generated
+	 * @param [maxGenerationDepth] default generation depth.
+	 * This value will be overridden if user set up depth for given sObject in config.
+	 *
+	 * @return array of SObject names that typings were generated for *in lower case*.
+	 */
+	async generateForProject(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		deleteExisting: boolean,
+		additionalSObjectApiNames?: string[],
+		maxGenerationDepth?: PossibleDepths
+	) {
+		if (deleteExisting) {
+			await this.deleteForProject(project);
+		}
+		let { usedSObjectNames = {} } = await getConfig(project);
+
+		const fullNamesToGenerate = new Set<string>();
+		for (const sObjectApiName of Object.keys(usedSObjectNames)) {
+			fullNamesToGenerate.add(sObjectApiName.toLowerCase());
+		}
+		for (const sObjectApiName of additionalSObjectApiNames ?? []) {
+			fullNamesToGenerate.add(sObjectApiName.toLowerCase());
+		}
+		await this.generateForMetadata(
+			project,
+			connection,
+			[...fullNamesToGenerate],
+			maxGenerationDepth
+		);
 	}
 }

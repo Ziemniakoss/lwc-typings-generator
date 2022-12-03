@@ -1,16 +1,17 @@
 import IHelperTypesGenerator from "./IHelperTypesGenerator";
 import { SfdxProject } from "@salesforce/core";
-import { Connection, FileProperties } from "jsforce";
+import { FileProperties } from "jsforce";
 import { wrapInArray } from "../../utils/collectionUtils";
 import { join } from "path";
 import { promises } from "fs";
 import { METADATA_TYPES } from "../../utils/constants";
+import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
 
 export default class FlowHelperTypesGenerator implements IHelperTypesGenerator {
 	async generateForProject(
 		project: SfdxProject,
 		helperTypesRoot: string,
-		connection: Connection
+		connection: CachedConnectionWrapper
 	): Promise<any> {
 		const flowsMetadata: FileProperties[] = await connection.metadata
 			.list({ type: METADATA_TYPES.FLOW })

@@ -1,11 +1,6 @@
 import ITypingGenerator from "./ITypingGenerator";
-import { Connection } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
-import {
-	findAllFilesWithExtension,
-	getTypingsDir,
-	mkdirs,
-} from "../utils/filesUtils";
+import { findAllFilesWithExtension, mkdirs } from "../utils/filesUtils";
 import { FILE_EXTENSIONS, METADATA_TYPES } from "../utils/constants";
 import { groupBy, wrapInArray } from "../utils/collectionUtils";
 import { basename, join } from "path";
@@ -14,6 +9,8 @@ import IWiredMethodsTypesGenerator from "./apexTypesGeneration/IWiredMethodsType
 import WiredMethodsTypesGenerator from "./apexTypesGeneration/WiredMethodsTypesGenerator ";
 import IApexClassesTypesGenerator from "./apexTypesGeneration/IApexClassesTypesGenerator";
 import ApexClassesTypesGenerator from "./apexTypesGeneration/ApexClassesTypesGenerator";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getTypingsDir } from "../utils/configUtils";
 
 /**
  * Generates typings for Apex classes using Antlr grammar
@@ -49,7 +46,7 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 
 	async generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string
 	): Promise<any> {
 		if (this.sObjectApiNamesMap == null) {
@@ -88,7 +85,7 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 
 	async generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[]
 	): Promise<any> {
 		//TODO
@@ -97,7 +94,7 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 
 	async generateForProject(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		deleteExisting: boolean
 	): Promise<any> {
 		if (deleteExisting) {
@@ -154,7 +151,9 @@ export default class ApexTypesGenerator implements ITypingGenerator {
 		).then((apexFile) => groupBy(apexFile, keyCalculator));
 	}
 
-	private async initializeSObjectNamesCache(connection: Connection) {
+	private async initializeSObjectNamesCache(
+		connection: CachedConnectionWrapper
+	) {
 		if (this.sObjectApiNamesMap != null) {
 			return;
 		}

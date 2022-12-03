@@ -1,9 +1,10 @@
 import { SfdxProject } from "@salesforce/core";
-import { Connection, FileProperties } from "jsforce";
+import { FileProperties } from "jsforce";
 import { wrapInArray } from "./collectionUtils";
 import { findFile } from "./filesUtils";
 import { existsSync, promises } from "fs";
 import { join } from "path";
+import CachedConnectionWrapper from "./CachedConnectionWrapper";
 
 interface MetadataStorageSummary<T> {
 	filesForMetadata: Record<string, string>;
@@ -21,7 +22,7 @@ interface MetadataStorageSummary<T> {
  */
 export async function getMetadataStorageSummary<T>(
 	project: SfdxProject,
-	connection: Connection,
+	connection: CachedConnectionWrapper,
 	metadataType: string,
 	getFileName: (fullName: string) => string
 ): Promise<MetadataStorageSummary<T>> {
@@ -34,7 +35,7 @@ export async function getMetadataStorageSummary<T>(
 	const overridingReadingPromise: Promise<Record<string, T>> = promises
 		.readFile(overridesPath, "utf-8")
 		.then((content) => JSON.parse(content))
-		.catch((error) => ({}));
+		.catch((_error) => ({}));
 	const metadata: FileProperties[] = await connection.metadata
 		.list({ type: metadataType })
 		.then(wrapInArray);

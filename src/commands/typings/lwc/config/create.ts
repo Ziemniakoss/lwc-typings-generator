@@ -1,7 +1,8 @@
 import { SfdxCommand } from "@salesforce/command";
-import { getGeneratorConfigFile, mkdirs } from "../../../../utils/filesUtils";
+import { mkdirs } from "../../../../utils/filesUtils";
 import { existsSync, promises } from "fs";
 import { dirname } from "path";
+import { getGeneratorConfigFile } from "../../../../utils/configUtils";
 
 export default class CreateConfigCommand extends SfdxCommand {
 	public static description = "Create example config file";

@@ -1,16 +1,16 @@
-import { Connection } from "jsforce";
 import { SfdxProject } from "@salesforce/core";
 import { join } from "path";
-import { getTypingsDir, mkdirs } from "../utils/filesUtils";
+import { mkdirs } from "../utils/filesUtils";
 import ITypingGenerator from "./ITypingGenerator";
 import IHelperTypesGenerator from "./helperTypesGenerators/IHelperTypesGenerator";
 import TabsHelperTypesGenerator from "./helperTypesGenerators/TabsHelperTypesGenerator";
 import { existsSync, promises } from "fs";
 import SObjectHelperTypesGenerator from "./helperTypesGenerators/SObjectHelperTypesGenerator";
-// import MessageChannelsPayloadsHelperTypesGenerator from "./helperTypesGenerators/MessageChannelsPayloadsHelperTypesGenerator";
 import ApplicationsHelperTypesGenerator from "./helperTypesGenerators/ApplicationsHelperTypesGenerator";
 import FlowHelperTypesGenerator from "./helperTypesGenerators/FlowHelperTypesGenerator";
 import GlobalValueSetHelperTypesGenerator from "./helperTypesGenerators/GlobalValueSetHelperTypesGenerator";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getTypingsDir } from "../utils/configUtils";
 
 export class HelperTypesGenerator implements ITypingGenerator {
 	private helperTypesGenerators: IHelperTypesGenerator[];
@@ -51,7 +51,7 @@ export class HelperTypesGenerator implements ITypingGenerator {
 
 	async generateForProject(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		deleteExisting: boolean
 	): Promise<any> {
 		if (deleteExisting) {
@@ -66,7 +66,7 @@ export class HelperTypesGenerator implements ITypingGenerator {
 
 	generateForFile(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		filePath: string
 	): Promise<any> {
 		//Operation is not supported
@@ -75,7 +75,7 @@ export class HelperTypesGenerator implements ITypingGenerator {
 
 	generateForMetadata(
 		project: SfdxProject,
-		connection: Connection,
+		connection: CachedConnectionWrapper,
 		metadataFullNames: string[]
 	): Promise<any> {
 		//Operation is not supported
