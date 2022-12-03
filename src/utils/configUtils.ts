@@ -1,7 +1,7 @@
-import {SfdxProject} from "@salesforce/core";
-import {join} from "path";
-import {promises} from "fs";
-import {mkdirs} from "./filesUtils";
+import { SfdxProject } from "@salesforce/core";
+import { join } from "path";
+import { promises } from "fs";
+import { mkdirs } from "./filesUtils";
 
 export async function getTypingsDir(project: SfdxProject): Promise<string> {
 	const pathToGeneratorConfig = getGeneratorConfigFile(project);
@@ -55,15 +55,7 @@ interface GeneratorConfig {
 	/**
 	 * Api names of SObject api names used on frontend
 	 */
-	usedSObjectNames?: Record<string, UsedSObjectConfig>[];
-	defaultDepth: 1 | 2 | 3 | 4 | 5
-}
-
-interface UsedSObjectConfig {
-	/**
-	 * Depth override for given sObject
-	 */
-	depth: number
+	usedSObjectNames?: Record<string, 1 | 2 | 3 | 4 | 5>[];
 }
 
 /**
@@ -82,6 +74,6 @@ export async function getConfig(
 	configReadingPromise = promises
 		.readFile(configFile, "utf-8")
 		.then((fileContent) => JSON.parse(fileContent))
-		.catch((error) => ({}));
+		.catch(() => ({}));
 	return configReadingPromise;
 }

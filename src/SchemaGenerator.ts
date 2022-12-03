@@ -15,8 +15,9 @@ export default class SchemaGenerator implements ITypingGenerator {
 		sObjectName: string,
 		connection: CachedConnectionWrapper,
 		schemaTypingsFolder: string,
-		maxGenerationDepth:PossibleDepths
+		maxGenerationDepth: PossibleDepths
 	) {
+		console.log(sObjectName, maxGenerationDepth);
 		const sObjectDescribe = await connection.describe(sObjectName);
 		const sObjectApiName = sObjectDescribe.name;
 
@@ -47,7 +48,7 @@ declare module "@salesforce/schema/${sObjectApiName}" {
 		currentDepth: number,
 		connection: CachedConnectionWrapper,
 		fileName: string,
-		maxGenerationDepth:PossibleDepths
+		maxGenerationDepth: PossibleDepths
 	) {
 		if (currentDepth > maxGenerationDepth) {
 			return "";
@@ -66,7 +67,7 @@ declare module "@salesforce/schema/${moduleName}" {
 	export default ${varName}
 }\n`;
 		await promises.appendFile(fileName, fieldTypings);
-		if (field.type !== "reference") {
+		if (field.type !== "reference" || field.relationshipName == null) {
 			return fieldTypings;
 		}
 		const referencedFieldPrefix = `${prefix}.${field.relationshipName}`;
@@ -90,13 +91,16 @@ declare module "@salesforce/schema/${moduleName}" {
 		currentDepth: number,
 		connection: CachedConnectionWrapper,
 		fileName: string,
-		maxGenerationDepth:PossibleDepths
+		maxGenerationDepth: PossibleDepths
 	) {
 		if (currentDepth > maxGenerationDepth) {
 			return;
 		}
 		const sObjectDescribe = await connection.describe(referencedSObjectName);
-		for (const field of sObjectDescribe.fields) {
+		const fieldsWithNames = sObjectDescribe.fields.filter(
+			(f) => f.name != null
+		);
+		for (const field of fieldsWithNames) {
 			await this.generateTypingsForField(
 				field,
 				referencedSObjectName,
@@ -146,23 +150,46 @@ declare module "@salesforce/schema/${moduleName}" {
 		return Promise.resolve(undefined);
 	}
 
+	/**
+	 *
+	 * @param project
+	 * @param connection
+	 * @param metadataFullNames
+	 * @param maxGenerationDepth default generation depth.
+	 * This value will be overridden if user set up depth for given sObject in config
+	 */
 	async generateForMetadata(
 		project: SfdxProject,
 		connection: CachedConnectionWrapper,
 		metadataFullNames: string[],
-		maxGenerationDepth?:PossibleDepths
+		maxGenerationDepth?: PossibleDepths
 	): Promise<any> {
 		const schemaTypingsFolder = await this.getSchemaFolder(project);
-		//@ts-ignore
-		maxGenerationDepth = Math.min(MAX_SCHEMA_DEPTH, Math.max(maxGenerationDepth, 0))
-		const generationPromises = metadataFullNames.map((sObjectApiName) =>
-			this.generateTypingsForSObject(
+		const sObjectNameLowerToDepth = new Map<string, PossibleDepths>();
+		const { usedSObjectNames = {} } = await getConfig(project);
+		for (const sObjectName in usedSObjectNames) {
+			let depthOverride = usedSObjectNames[sObjectName];
+			if (depthOverride == null || isNaN(depthOverride)) {
+				continue;
+			}
+			depthOverride = Math.min(MAX_SCHEMA_DEPTH, Math.max(0, depthOverride));
+			sObjectNameLowerToDepth.set(sObjectName.toLowerCase(), depthOverride);
+		}
+
+		// @ts-ignore
+		maxGenerationDepth = Math.min(
+			MAX_SCHEMA_DEPTH,
+			Math.max(maxGenerationDepth, 0)
+		);
+		const generationPromises = metadataFullNames.map((sObjectApiName) => {
+			const depth = sObjectNameLowerToDepth.get(sObjectApiName.toLowerCase());
+			return this.generateTypingsForSObject(
 				sObjectApiName,
 				connection,
 				schemaTypingsFolder,
-				maxGenerationDepth
-			)
-		);
+				depth ?? maxGenerationDepth
+			);
+		});
 		return Promise.all(generationPromises);
 	}
 
@@ -173,6 +200,8 @@ declare module "@salesforce/schema/${moduleName}" {
 	 * @param connection cached connection
 	 * @param deleteExisting should exisiting typings be deleted
 	 * @param [additionalSObjectApiNames] additional SObject api names that schemes should be generated
+	 * @param [maxGenerationDepth] default generation depth.
+	 * This value will be overridden if user set up depth for given sObject in config.
 	 *
 	 * @return array of SObject names that typings were generated for *in lower case*.
 	 */
@@ -181,12 +210,12 @@ declare module "@salesforce/schema/${moduleName}" {
 		connection: CachedConnectionWrapper,
 		deleteExisting: boolean,
 		additionalSObjectApiNames?: string[],
-		maxGenerationDepth?:PossibleDepths
+		maxGenerationDepth?: PossibleDepths
 	) {
 		if (deleteExisting) {
 			await this.deleteForProject(project);
 		}
-		let { usedSObjectNames ={} } = await getConfig(project);
+		let { usedSObjectNames = {} } = await getConfig(project);
 
 		const fullNamesToGenerate = new Set<string>();
 		for (const sObjectApiName of Object.keys(usedSObjectNames)) {
@@ -195,8 +224,11 @@ declare module "@salesforce/schema/${moduleName}" {
 		for (const sObjectApiName of additionalSObjectApiNames ?? []) {
 			fullNamesToGenerate.add(sObjectApiName.toLowerCase());
 		}
-		await this.generateForMetadata(project, connection, [
-			...fullNamesToGenerate,
-		], maxGenerationDepth);
+		await this.generateForMetadata(
+			project,
+			connection,
+			[...fullNamesToGenerate],
+			maxGenerationDepth
+		);
 	}
 }

@@ -18,11 +18,12 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 			required: true,
 		}),
 		depth: flags.integer({
-			description: "Schema references depth. Bear in mind that higher values will slow down generation time",
+			description:
+				"Schema references depth. Bear in mind that higher values will slow down generation time",
 			min: 1,
 			max: 5,
-			default:1
-		})
+			default: 1,
+		}),
 	};
 
 	async run() {
@@ -57,7 +58,6 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 		typingsFolder: string,
 		describesMap
 	) {
-
 		return Promise.all(
 			sObjects.map((sObjectName) => {
 				const describe = describesMap.get(sObjectName.toLowerCase());
@@ -70,9 +70,11 @@ export default class GenerateSObjectTypings extends SfdxCommand {
 	}
 
 	async generateSchemas() {
-		const depth = this.flags.depth
-		if(depth == 5){
-			this.ux.warn("Schema typings generation for high depth values can take a lot of time and generated typings can slow down autocompletion in your IDE")
+		const depth = this.flags.depth;
+		if (depth >= 4) {
+			this.ux.warn(
+				"Schema typings generation for high depth values can take a lot of time and generated typings can slow down autocompletion in your IDE"
+			);
 		}
 		return new SchemaGenerator().generateForProject(
 			this.project,
