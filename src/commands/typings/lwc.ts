@@ -8,6 +8,9 @@ import UserPermissionsTypingsGenerator from "../../UserPermissionsTypingsGenerat
 import { HelperTypesGenerator } from "../../generators/HelperTypesGenerator";
 import ApexTypesGenerator from "../../generators/ApexTypesGenerator";
 import CachedConnectionWrapper from "../../utils/CachedConnectionWrapper";
+import SObjectTypingsGenerator from "../../sObjectTypingsGeneration/SObjectTypingsGenerator";
+import FieldTypingsGeneratorFactory from "../../sObjectTypingsGeneration/FieldTypingsGeneratorFactory";
+import SchemaGenerator from "../../SchemaGenerator";
 
 export default class GenerateLwcTypings extends SfdxCommand {
 	protected static requiresProject = true;
@@ -33,6 +36,8 @@ and generates proper JSConfigs.
 			this.generateStaticResourcesTypings(),
 			this.generateCustomPermissionsTypings(),
 			this.generateUserPermsissionsTypings(),
+			this.generateSObjectSchema(),
+			this.generateSObjectTypings(),
 			this.generateHelperTypes(),
 		]).catch((error) => this.ux.error(error));
 		this.ux.stopSpinner("done");
@@ -46,6 +51,18 @@ and generates proper JSConfigs.
 			);
 		}
 		return this._cachedConnection;
+	}
+
+	private async generateSObjectTypings() {
+		return new SObjectTypingsGenerator(new FieldTypingsGeneratorFactory()).generateForProject(
+			this.project,
+			this.cachedConnection,
+			false
+		);
+	}
+
+	private async generateSObjectSchema() {
+		return new SchemaGenerator().generateForProject(this.project, this.cachedConnection, false, []);
 	}
 
 	private async generateHelperTypes() {

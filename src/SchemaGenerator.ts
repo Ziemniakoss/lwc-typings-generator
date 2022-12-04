@@ -17,7 +17,6 @@ export default class SchemaGenerator implements ITypingGenerator {
 		schemaTypingsFolder: string,
 		maxGenerationDepth: PossibleDepths
 	) {
-		console.log(sObjectName, maxGenerationDepth);
 		const sObjectDescribe = await connection.describe(sObjectName);
 		const sObjectApiName = sObjectDescribe.name;
 
@@ -151,7 +150,6 @@ declare module "@salesforce/schema/${moduleName}" {
 	}
 
 	/**
-	 *
 	 * @param project
 	 * @param connection
 	 * @param metadataFullNames
@@ -163,7 +161,7 @@ declare module "@salesforce/schema/${moduleName}" {
 		connection: CachedConnectionWrapper,
 		metadataFullNames: string[],
 		maxGenerationDepth?: PossibleDepths
-	): Promise<any> {
+	) {
 		const schemaTypingsFolder = await this.getSchemaFolder(project);
 		const sObjectNameLowerToDepth = new Map<string, PossibleDepths>();
 		const { usedSObjectNames = {} } = await getConfig(project);
@@ -187,7 +185,7 @@ declare module "@salesforce/schema/${moduleName}" {
 				sObjectApiName,
 				connection,
 				schemaTypingsFolder,
-				depth ?? maxGenerationDepth
+				depth || maxGenerationDepth || 1
 			);
 		});
 		return Promise.all(generationPromises);
