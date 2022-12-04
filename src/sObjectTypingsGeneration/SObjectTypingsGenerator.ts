@@ -4,16 +4,22 @@ import { promises } from "fs";
 import { mkdirs } from "../utils/filesUtils";
 import AFieldTypingsGeneratorFactory from "./AFieldTypingsGeneratorFactory";
 import { wrapInArray } from "../utils/collectionUtils";
+import ITypingGenerator from "../generators/ITypingGenerator";
+import { SfdxProject } from "@salesforce/core";
+import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
+import { getConfig, getTypingsDir } from "../utils/configUtils";
 
-export default class SObjectTypingsGenerator {
+export default class SObjectTypingsGenerator implements ITypingGenerator {
 	constructor(
 		private fieldTypingsGeneratorFactory: AFieldTypingsGeneratorFactory
 	) {}
 
-	async generateSObjectTypings(
-		sObjectDescribe: DescribeSObjectResult,
-		typingsFolder: string
+	private async generateSObjectTypings(
+		sObjectName: string,
+		typingsFolder: string,
+		connection: CachedConnectionWrapper
 	) {
+		const sObjectDescribe = await connection.describe(sObjectName);
 		let typings =
 			"// Generated with lwc-typings-generator\ndeclare namespace schema {\n" +
 			this.generateRecordTypesTypings(sObjectDescribe) +
@@ -75,5 +81,62 @@ export default class SObjectTypingsGenerator {
 			.map((devName) => `\t\t"${devName}"`)
 			.join(" |\n");
 		return typeDefinition + "\n" + devNamesMerged + ";\n\n";
+	}
+
+	/**
+	 * Not supported
+	 */
+	async deleteForFile(project: SfdxProject, filePath: string) {}
+
+	async deleteForMetadata(project: SfdxProject, metadataFullNames: string[]) {
+		//TODO
+	}
+
+	async deleteForProject(project: SfdxProject): Promise<any> {
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 *  Not supported
+	 */
+	async generateForFile(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		filePath: string
+	) {}
+
+	async generateForMetadata(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		metadataFullNames: string[]
+	) {
+		const typingFolder = await getTypingsDir(project);
+		const generationPromises = metadataFullNames.map((name) =>
+			this.generateSObjectTypings(name, typingFolder, connection)
+		);
+		return Promise.all(generationPromises);
+	}
+
+	async generateForProject(
+		project: SfdxProject,
+		connection: CachedConnectionWrapper,
+		deleteExisting: boolean,
+		additionalSObject?: string[]
+	) {
+		if (deleteExisting) {
+			await this.deleteForProject(project);
+		}
+		const sObjectsToGenerate = new Set<string>();
+		const { usedSObjectNames = {} } = await getConfig(project);
+		for (const sObjectName in usedSObjectNames) {
+			sObjectsToGenerate.add(sObjectName.toLowerCase());
+		}
+		for (const sObjectName of additionalSObject ?? []) {
+			sObjectsToGenerate.add(sObjectName.toLowerCase());
+		}
+		console.log(sObjectsToGenerate);
+		return this.generateForMetadata(project, connection, [
+			...sObjectsToGenerate,
+		]);
 	}
 }
