@@ -54,15 +54,18 @@ and generates proper JSConfigs.
 	}
 
 	private async generateSObjectTypings() {
-		return new SObjectTypingsGenerator(new FieldTypingsGeneratorFactory()).generateForProject(
-			this.project,
-			this.cachedConnection,
-			false
-		);
+		return new SObjectTypingsGenerator(
+			new FieldTypingsGeneratorFactory()
+		).generateForProject(this.project, this.cachedConnection, false);
 	}
 
 	private async generateSObjectSchema() {
-		return new SchemaGenerator().generateForProject(this.project, this.cachedConnection, false, []);
+		return new SchemaGenerator().generateForProject(
+			this.project,
+			this.cachedConnection,
+			false,
+			[]
+		);
 	}
 
 	private async generateHelperTypes() {
