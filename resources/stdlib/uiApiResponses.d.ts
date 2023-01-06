@@ -1,3 +1,4 @@
+type R<Key, Value> = Record<Key, Value>;
 /**
  * [Docs for namesapce](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_top_level.htm)
  */
@@ -123,7 +124,7 @@ declare namespace uiApiResponses {
 		deleteable: boolean;
 		dependentFields: any; //TODO better types
 		feedEnabled: boolean;
-		fields: Record<keyof SObject, Field>;
+		fields: R<keyof SObject, Field>;
 		keyPrefix: string;
 		label: string;
 		labelPlural: string;
@@ -131,7 +132,7 @@ declare namespace uiApiResponses {
 		mruEnabled: boolean;
 		nameFields: ["Name"] | ["FirstName" | "LastName"];
 		queryable: boolean;
-		recordTypeInfos: Record<apex.Id, RecordTypeInfo>;
+		recordTypeInfos: R<apex.Id, RecordTypeInfo>;
 		searchable: boolean;
 		themeInfo; //TODO
 		updateable: boolean;
@@ -333,4 +334,3 @@ declare namespace uiApiResponses {
 		record: Record<Obj>;
 	}
 }
-type R<Key, Value> = Record<Key, Value>;
