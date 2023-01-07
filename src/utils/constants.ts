@@ -31,3 +31,5 @@ export const METADATA_READ_COUNT_LIMIT = 10;
  */
 export const GENERATED_WITH_PLUGIN_TEXT =
 	"Generated with [lwc-typings-generator](https://github.com/Ziemniakoss/lwc-typings-generator)";
+
+export const JSCONFIG_FILE_NAME = "jsconfig.json";
