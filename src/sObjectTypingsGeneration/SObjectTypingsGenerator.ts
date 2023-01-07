@@ -134,7 +134,6 @@ export default class SObjectTypingsGenerator implements ITypingGenerator {
 		for (const sObjectName of additionalSObject ?? []) {
 			sObjectsToGenerate.add(sObjectName.toLowerCase());
 		}
-		console.log(sObjectsToGenerate);
 		return this.generateForMetadata(project, connection, [
 			...sObjectsToGenerate,
 		]);

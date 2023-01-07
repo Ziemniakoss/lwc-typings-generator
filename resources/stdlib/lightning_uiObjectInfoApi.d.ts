@@ -1,11 +1,11 @@
 declare module "lightning/uiObjectInfoApi" {
-	import { uiApiResponses } from "./uiApiResponses";
-
 	export function getObjectInfo<T extends schema.SObjectApiName>(config: {
 		objectApiName: T | schema.ObjectIdFromSchema<T>;
-	}): Promise<uiObjectInfoApiResponses.ObjectInfo<schema.SObjectsMap[T]>>;
+	}): Promise<uiApiResponses.ObjectInfo<schema.SObjectsMap[T]>>;
 
-	export function getObjectInfos(): Promise<uiApiResponses.ObjectInfo<any>[]>; //TODO better typings
+	export function getObjectInfos(
+		config
+	): Promise<uiApiResponses.ObjectInfo<any>[]>; //TODO better typings
 
 	interface GetPicklistValuesConfig<T> {
 		recordTypeId: apex.Id | "012000000000000AAA";
