@@ -5,7 +5,10 @@ import {
 	findAllFiles,
 	findAllFilesWithExtension,
 } from "../utils/filesUtils";
-import { LWC_METADATA_FILE_EXTENSION } from "../utils/constants";
+import {
+	JSCONFIG_FILE_NAME,
+	LWC_METADATA_FILE_EXTENSION,
+} from "../utils/constants";
 import ITypingGenerator from "./ITypingGenerator";
 import { SfdxProject } from "@salesforce/core";
 import CachedConnectionWrapper from "../utils/CachedConnectionWrapper";
@@ -95,15 +98,17 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	private async writeJsConfig(lwcPath: string, jsConfig: JsConfig) {
 		const containingDir = dirname(lwcPath);
-		const path = join(containingDir, "jsconfig.json");
+		const path = join(containingDir, JSCONFIG_FILE_NAME);
 		return promises.writeFile(path, JSON.stringify(jsConfig, null, 4));
 	}
 
 	async deleteForFile(project: SfdxProject, filePath: string) {
-		const jsConfigFileForComponent = join(dirname(filePath), "jsconfig.json");
-		if (existsSync(jsConfigFileForComponent)) {
-			return promises.rm(jsConfigFileForComponent);
-		}
+		const jsConfigFileForComponent = join(
+			dirname(filePath),
+			JSCONFIG_FILE_NAME
+		);
+		const fileToDelete = await this.getFileToDelete(jsConfigFileForComponent);
+		return deleteFiles([fileToDelete]);
 	}
 
 	async deleteForMetadata(project: SfdxProject, metadataFullNames: string[]) {
@@ -113,9 +118,28 @@ export default class JsConfigGenerator implements ITypingGenerator {
 
 	async deleteForProject(project: SfdxProject) {
 		const jsConfigs = await findAllFiles(project.getPath()).then((files) =>
-			files.filter((file) => basename(file) == "jsconfig.json")
+			files.filter((file) => basename(file) == JSCONFIG_FILE_NAME)
 		);
-		return deleteFiles(jsConfigs);
+		const filesToDelete = await Promise.all(
+			jsConfigs.map((jsConfigFile) => this.getFileToDelete(jsConfigFile))
+		);
+		return deleteFiles(filesToDelete);
+	}
+
+	/**
+	 * Returns file or folder which should be removed in order to remov javascript config for component.
+	 *
+	 * @param jsConfigFile jsconfig.json file
+	 * @private
+	 * @return provided jsconfig file if component folder contains other files or component folder path if it only contained jsconfig.json file
+	 */
+	private async getFileToDelete(jsConfigFile): Promise<string> {
+		const dir = dirname(jsConfigFile);
+		const filesInDir = await promises.readdir(dir);
+		if (filesInDir.length == 1 && filesInDir[0] == JSCONFIG_FILE_NAME) {
+			return dir;
+		}
+		return jsConfigFile;
 	}
 
 	private async getAdditionalTypesConfig(

@@ -75,10 +75,10 @@ export function mkdirs(path: string) {
  * @param files files to delete
  */
 export async function deleteFiles(files: string[]) {
-	const promises = files
+	const deletionPromises = files
 		.filter((file) => existsSync(file))
 		.map((file) => promises.rm(file, { recursive: true, force: true }));
-	return Promise.all(promises);
+	return Promise.all(deletionPromises);
 }
 
 export function getFileNameWithoutExtension(
