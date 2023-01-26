@@ -6,7 +6,7 @@ export default class GenerateApexTypings extends SfdxCommand {
 	protected static requiresProject = true;
 	protected static requiresUsername = true;
 	public static description =
-		"Generate typings for Apex classes and aura enabled methods";
+		"Generate typings for Apex classes and aura enabled methods removing";
 
 	async run() {
 		this.ux.startSpinner(

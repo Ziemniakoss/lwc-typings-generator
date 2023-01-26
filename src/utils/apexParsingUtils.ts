@@ -116,6 +116,7 @@ export function parseApex(apexContent: string): ParseApexReturnType {
 	let tokens = new CommonTokenStream(lexer);
 
 	let parser = new ApexParser(tokens);
+	parser.removeErrorListeners();
 	return { lexer, tokens, parser };
 }
 

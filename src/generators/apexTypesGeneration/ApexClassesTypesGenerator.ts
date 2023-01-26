@@ -77,7 +77,27 @@ export default class ApexClassesTypesGenerator
 		if (outerClassName) {
 			namespaceDeclaration += `.${outerClassName}`;
 		}
-		const classTypings = `${namespaceDeclaration}{\n\tdeclare interface ${className}{\n${membersTypings}\n\t}\n}\n`;
+		const parentTypes = classBodyCtx?.typeList()?.typeRef() ?? [];
+		if (classBodyCtx?.typeRef() != null) {
+			parentTypes.push(classBodyCtx.typeRef());
+		}
+		let extendClause = "";
+		if (parentTypes.length > 0) {
+			extendClause =
+				"extends " +
+				parentTypes
+					.map((type) =>
+						convertToTsType(
+							type,
+							outerClassName,
+							innerClassesNames,
+							sObjectApiNamesMap
+						)
+					)
+					.join(", ");
+		}
+
+		const classTypings = `${namespaceDeclaration}{\n\tdeclare interface ${className} ${extendClause} {\n${membersTypings}\n\t}\n}\n`;
 
 		const innerClassesTypings = innerClassesCtxs.map((ctx) =>
 			this.generateTypingsForClass(
