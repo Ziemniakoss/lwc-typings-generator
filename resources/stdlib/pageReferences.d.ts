@@ -150,6 +150,10 @@ declare namespace lightning.navigation {
 		};
 	}
 
+	interface CheckoutPageReference {
+		type: "comm__checkoutPage"
+	}
+
 	interface PageReferenceTypes {
 		comm__externalRecordPage: ExternalRecordPageType;
 		comm__externalRecordRelationshipPage: ExternalRecordRelationshipPageType;
@@ -164,6 +168,8 @@ declare namespace lightning.navigation {
 		standard__recordPage: RecordPageTypePageReference;
 		standard__recordRelationshipPage: RecordRelationshipPageTypePageReference;
 		standard__webPage: WebPageTypePageReference;
+
+		comm__checkoutPage:CheckoutPageReference
 	}
 
 	type PageReference = ValueOf<PageReferenceTypes>;
