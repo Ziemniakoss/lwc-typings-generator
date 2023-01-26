@@ -333,4 +333,29 @@ declare namespace uiApiResponses {
 		objectInfos: uiObjectInfoApiResponses.ObjectInfo<any>[];
 		record: Record<Obj>;
 	}
+
+	declare interface SimplifiedBatchResults {
+		results:BatchResultItem[]
+	}
+
+	/**
+	 * [Full docs](https://developer.salesforce.com/docs/atlas.en-us.uiapi.meta/uiapi/ui_api_responses_related_list_record_collection.htm)
+	 */
+	declare interface RelatedListRecordCollection {
+		count:number
+		/** The token for the current page of records.*/
+		currentPageToken
+		fields:string[]
+		listInfoETag:string
+		listReference:ListReference
+		nextPageToken:string
+		nextPageUrl:string
+		optionalFields?:string[]
+		pageSize:number
+		previousPageToken:string
+		previousPageUrl:string
+		records:Record<any>
+		sortBy:string
+		where:string
+	}
 }
