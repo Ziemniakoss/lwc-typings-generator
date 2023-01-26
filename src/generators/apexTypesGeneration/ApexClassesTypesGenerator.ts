@@ -99,15 +99,17 @@ export default class ApexClassesTypesGenerator
 
 		const classTypings = `${namespaceDeclaration}{\n\tdeclare interface ${className} ${extendClause} {\n${membersTypings}\n\t}\n}\n`;
 
-		const innerClassesTypings = innerClassesCtxs.map((ctx) =>
-			this.generateTypingsForClass(
-				ctx,
-				sObjectApiNamesMap,
-				namespace,
-				className,
-				innerClassesNames
+		const innerClassesTypings = innerClassesCtxs
+			.map((ctx) =>
+				this.generateTypingsForClass(
+					ctx,
+					sObjectApiNamesMap,
+					namespace,
+					className,
+					innerClassesNames
+				)
 			)
-		);
+			.join("\n");
 		return classTypings + innerClassesTypings;
 	}
 
