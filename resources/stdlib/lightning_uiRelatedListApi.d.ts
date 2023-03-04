@@ -40,4 +40,8 @@ declare module "lightning/uiRelatedListApi" {
 		where?
 
 	}):Promise<uiApiResponses.RelatedListRecordCollection>
+
+	//TODO https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_wire_adapters_get_related_list_records_batch
+	//TODO https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_wire_adapters_get_related_lists_info
+	//TODO https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.reference_wire_adapters_get_related_list_count
 }
