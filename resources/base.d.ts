@@ -70,7 +70,7 @@ class NavigableComponent extends LwcComponentBase {
 	 *		.then(url => this.url = url);
 	 * ```
 	 */
-	__navigate__(pageRef: lightning.navigation.PageReference);
+	__navigate__(pageRef: lightning.navigation.PageReference, replace?: boolean);
 	/**
 	 * Don't use directly.
 	 * Use only for reference.
