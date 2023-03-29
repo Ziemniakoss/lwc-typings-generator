@@ -5,7 +5,7 @@ declare module "lightning/actions" {
 	/**
 	 * Closes action represented by current component
 	 */
-	export class CloseActionScreenEvent extends CustomEvent {
+	export class CloseActionScreenEvent<never> extends CustomEvent {
 		constructor();
 	}
 }

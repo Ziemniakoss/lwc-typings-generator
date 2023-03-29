@@ -7,7 +7,7 @@ declare module "lightning/platformShowToastEvent" {
 		messageData: (string | { url: string; label: string })[];
 	}
 
-	export class ShowToastEvent extends CustomEvent {
+	export class ShowToastEvent extends CustomEvent<never> {
 		constructor(config: ToastEventConfig);
 	}
 }
