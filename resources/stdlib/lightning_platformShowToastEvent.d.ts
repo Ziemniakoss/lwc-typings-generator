@@ -4,10 +4,10 @@ declare module "lightning/platformShowToastEvent" {
 		message: string;
 		variant?: "success" | "info" | "warning" | "error";
 		mode?: "dismissible" | "pester" | "sticky";
-		messageData: (string | { url: string; label: string })[];
+		messageData?: (string | { url: string; label: string })[];
 	}
 
-	export class ShowToastEvent extends CustomEvent<never> {
+	export class ShowToastEvent extends CustomEvent<any> {
 		constructor(config: ToastEventConfig);
 	}
 }
