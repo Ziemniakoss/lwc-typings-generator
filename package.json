@@ -5,23 +5,23 @@
 	"author": "Ziemniakoss",
 	"bugs": "https://github.com/Ziemniakoss/lwc-typings-generator/issues",
 	"dependencies": {
-		"@salesforce/command": "^5.2.28",
-		"apex-parser": "^2.16.0",
+		"@salesforce/command": "^5.3.9",
+		"apex-parser": "^2.17.0",
 		"chokidar": "^3.5.3",
-		"tslib": "^2.4.1",
+		"tslib": "^2.5.3",
 		"xml2js": "^0.4.23"
 	},
 	"devDependencies": {
-		"@oclif/plugin-help": "^5.1.19",
-		"@oclif/test": "^2.2.12",
-		"@salesforce/dev-scripts": "^3.1.0",
-		"@salesforce/ts-sinon": "^1.4.2",
-		"jsforce": "^1.11.0",
-		"mocha": "^10.1.0",
+		"@oclif/plugin-help": "^5.2.10",
+		"@oclif/test": "^2.3.23",
+		"@salesforce/dev-scripts": "^3.1.1",
+		"@salesforce/ts-sinon": "^1.4.8",
+		"jsforce": "^1.11.1",
+		"mocha": "^10.2.0",
 		"nyc": "^15.1.0",
-		"prettier": "^2.8.0",
+		"prettier": "^2.8.8",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.9.3"
+		"typescript": "^4.9.5"
 	},
 	"engines": {
 		"node": ">=12.0.0"
