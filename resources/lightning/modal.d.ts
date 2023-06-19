@@ -1,5 +1,3 @@
-// type LightningElement = import("lwc").LightningElement;
-
 declare module "lightning/modal" {
 	/**
 	 * Base for all modals. Example
@@ -18,7 +16,7 @@ declare module "lightning/modal" {
 	 * </template>
 	 * ```
 	 */
-	export default class Modal {
+	export default class Modal extends LwcComponentBase {
 		//extends LightningElement {
 		/**
 		 * Accessible description
